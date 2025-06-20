@@ -3,12 +3,11 @@
 @tailwind utilities;
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  font-family: Arial, sans-serif;
+  line-height: 1;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
+  color: rgba(255, 255, 255, 0.945);
   background-color: #242424;
 
   font-synthesis: none;
@@ -17,7 +16,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
+/*a {
   font-weight: 500;
   color: #646cff;
   text-decoration: inherit;
@@ -69,4 +68,4 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
+} */
