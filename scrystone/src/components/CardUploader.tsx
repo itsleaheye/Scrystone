@@ -1,7 +1,18 @@
 import React, { useEffect } from "react";
 import { useCardParser } from "../hooks/useCardParser";
-import "./CardUploader.css";
-import { ArrowUpTrayIcon, CloudArrowUpIcon } from "@heroicons/react/16/solid";
+import "./styles.css";
+import {
+  ArrowUpTrayIcon,
+  BanknotesIcon,
+  BookOpenIcon,
+  CurrencyDollarIcon,
+  InboxIcon,
+  RectangleStackIcon,
+  WalletIcon,
+} from "@heroicons/react/16/solid";
+import { Card } from "./Card";
+import { TbCards, TbCardsFilled } from "react-icons/tb";
+import { GiCash } from "react-icons/gi";
 
 export default function MTGCardUploader() {
   const { cards, setCards, loading, error, collection, onFileUpload } =
@@ -32,11 +43,13 @@ export default function MTGCardUploader() {
           <p>A Magic the Gathering card management app</p>
         </div>
         <div className="summaryContainer">
-          <h4>Collection size: {collection.size}</h4>
-          <h4>Collection value: ${Math.round(collection.value)}USD</h4>
-          <h4>Filter By</h4>
-          {/* To do filters */}
-          <div>
+          <div className="flexRow borderBottom">
+            {iconItem(<GiCash />, `Value: $${Math.round(collection.value)}`)}
+            {iconItem(<TbCardsFilled />, `Cards: ${cards.length}`)}
+            {iconItem(<WalletIcon />, `My Decks`)}
+          </div>
+
+          <div className="uploadContainer">
             <input
               className="hidden"
               id="fileInput"
@@ -44,16 +57,12 @@ export default function MTGCardUploader() {
               accept=".csv"
               onChange={onFileUpload}
             />
-            <label className="customUploadButton" htmlFor="fileInput">
+            <label htmlFor="fileInput">
               <ArrowUpTrayIcon className="uploadIcon" />
-              Resync Collection
+              Sync Cards
             </label>
+            <p className="subtext">Last synced on MM DD, YYYY</p>
           </div>
-        </div>
-
-        <div className="menuTabs">
-          <a href="#decks">Decks</a>
-          <a href="#cards">Cards</a>
         </div>
       </div>
 
@@ -72,25 +81,22 @@ export default function MTGCardUploader() {
         // To do: Add sort and filter options
         <div className="grid">
           {cards.map((card, index) => (
-            // To do: On hover, flip card to show quantity, details, favourite, deck, etc
-            <div key={index} className="card">
-              {card.imageUrl ? (
-                <img src={card.imageUrl} alt={card.name} className="cardArt" />
-              ) : (
-                // To do: Find placeholder card or generate placeholder based on details.
-                <div className="cardPlaceholder">
-                  <p className="emphasis">{card.name}</p>
-                  <p>{card.type}</p>
-                  <p>
-                    {card.manaCost}
-                    {card.manaType}
-                  </p>
-                </div>
-              )}
-            </div>
+            <Card key={index} card={card} />
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+export function iconItem(
+  icon: React.ReactNode,
+  text: string
+): React.JSX.Element {
+  return (
+    <div className="flexCol iconItem">
+      {icon}
+      <p>{text}</p>
     </div>
   );
 }

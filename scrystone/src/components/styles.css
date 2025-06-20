@@ -1,0 +1,143 @@
+.pageTitle {
+  text-align: center;
+  width: 350px;
+  margin: 1rem auto;
+
+  h1 {
+    color: var(--white);
+    margin-bottom: 0;
+  }
+  p {
+    font-weight: 500;
+  }
+}
+
+.headingContainer {
+  background-image: url("../assets/wallpaper.png");
+  background-size: cover;
+  background-position: center;
+  padding: 2rem 5rem;
+  height: 390px;
+}
+
+.summaryContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pad-xxs);
+  background-color: var(--black);
+  border-radius: var(--border-radius-base);
+  max-width: 400px;
+  margin: auto;
+  padding: var(--pad-sm) var(--pad-sm) var(--pad-xs) var(--pad-sm);
+}
+.uploadContainer {
+  label {
+    display: flex;
+    align-items: center;
+    background-color: var(--blue);
+    padding: var(--pad-xxs) var(--pad-xxs);
+    justify-content: center;
+    border-radius: var(--border-radius-base);
+    font-weight: 600;
+    margin-bottom: var(--pad-xxs);
+
+    svg {
+      width: 1.25rem;
+      height: 1.25rem;
+      margin-right: 0.5rem;
+    }
+
+    &:hover {
+      cursor: pointer;
+      opacity: 0.5;
+      transition: var(--ease-in);
+    }
+  }
+}
+
+.iconItem {
+  padding: 0 var(--pad-xs);
+  font-weight: 600;
+
+  svg {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  &:hover {
+    cursor: pointer;
+    color: var(--green);
+    transition: var(--ease-in);
+
+    svg {
+      fill: var(--green);
+      transition: var(--ease-in);
+    }
+  }
+}
+
+.subtext {
+  opacity: 0.75;
+  font-size: var(--font-size-sm);
+  margin-bottom: 0;
+}
+
+.emphasis {
+  font-weight: 600;
+  color: var(--black);
+}
+
+.borderBottom {
+  border-bottom: 2px solid var(--dark-gray);
+  padding-bottom: var(--pad-xxs);
+  margin-bottom: var(--pad-xs);
+}
+
+.flexRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+
+.flexCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.grid {
+  margin: 1rem;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.card {
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  padding: 0.25rem;
+  color: var(--black);
+
+  .cardArt {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--border-radius-base);
+  }
+
+  .cardPlaceholder {
+    width: 100%;
+    height: 100%;
+    background-color: var(--white);
+    border-radius: var(--border-radius-base);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #888;
+  }
+}
