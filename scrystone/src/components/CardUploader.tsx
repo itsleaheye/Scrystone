@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useCardParser } from "../hooks/useCardParser";
 import "./CardUploader.css";
+import { ArrowUpTrayIcon, CloudArrowUpIcon } from "@heroicons/react/16/solid";
 
 export default function MTGCardUploader() {
   const { cards, setCards, loading, error, collection, onFileUpload } =
@@ -25,15 +26,36 @@ export default function MTGCardUploader() {
 
   return (
     <div className="container">
-      <div className="pageTitle">
-        <h1>Scrystone</h1>
-        <p>A Magic the Gathering card management app</p>
+      <div className="headingContainer">
+        <div className="pageTitle">
+          <h1>Scrystone</h1>
+          <p>A Magic the Gathering card management app</p>
+        </div>
+        <div className="summaryContainer">
+          <h4>Collection size: {collection.size}</h4>
+          <h4>Collection value: ${Math.round(collection.value)}USD</h4>
+          <h4>Filter By</h4>
+          {/* To do filters */}
+          <div>
+            <input
+              className="hidden"
+              id="fileInput"
+              type="file"
+              accept=".csv"
+              onChange={onFileUpload}
+            />
+            <label className="customUploadButton" htmlFor="fileInput">
+              <ArrowUpTrayIcon className="uploadIcon" />
+              Resync Collection
+            </label>
+          </div>
+        </div>
+
+        <div className="menuTabs">
+          <a href="#decks">Decks</a>
+          <a href="#cards">Cards</a>
+        </div>
       </div>
-      <div>
-        <h4>Collection size: {collection.size}</h4>
-        <h4>Collection value: ${Math.round(collection.value)}USD</h4>
-      </div>
-      <input type="file" accept=".csv" onChange={onFileUpload} />
 
       {error && (
         <div>
