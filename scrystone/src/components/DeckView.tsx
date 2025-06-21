@@ -21,7 +21,7 @@ export const DeckView = ({
     name: <p>{deck?.name}</p>,
     playStyle: (
       <div className="playStyleTag">
-        <p>{deck?.playStyle}</p>
+        <p>{deck?.format}</p>
       </div>
     ),
     description: <p>{deck?.description}</p>,

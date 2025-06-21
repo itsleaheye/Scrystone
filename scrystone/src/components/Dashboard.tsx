@@ -10,13 +10,14 @@ import { DeckView } from "./DeckView";
 import { FaArrowLeft, FaPlus } from "react-icons/fa6";
 import { FaSave } from "react-icons/fa";
 import { CardsView } from "./CardsView";
+import { PrimaryActions } from "./PrimaryActions";
 
 export default function MTGCardUploader() {
   const { cards, setCards, loading, error, collection, onFileUpload } =
     useCardParser();
   const { decks } = useDeckParser();
 
-  const [currentView, setCurrentView] = React.useState("cards");
+  const [currentView, setCurrentView] = React.useState("dashboard");
 
   useEffect(() => {
     const stored = localStorage.getItem("mtg_cards");
@@ -44,10 +45,10 @@ export default function MTGCardUploader() {
             {iconItem(
               <GiCash />,
               `Value: $${Math.round(collection.value)}`,
-              () => setCurrentView("cards")
+              () => setCurrentView("dashboard")
             )}
             {iconItem(<TbCardsFilled />, `Cards: ${cards.length}`, () =>
-              setCurrentView("cards")
+              setCurrentView("dashboard")
             )}
             {iconItem(<WalletIcon />, `My Decks`, () =>
               setCurrentView("decks")
@@ -85,44 +86,15 @@ export default function MTGCardUploader() {
       ) : (
         // To do: Add sort and filter options
         <div className="dataContainer">
-          <div className="actionRow flexRow">
-            {currentView !== "cards" ? (
-              <a onClick={() => setCurrentView("cards")}>
-                <FaArrowLeft /> Go Back
-              </a>
-            ) : (
-              <a>Placeholder for filtering and search...</a>
-            )}
-            {currentView === "deckEditView" ? (
-              // <button
-              //   className="primaryButton"
-              //   onClick={() => setCurrentView("editDeck")}
-              // >
-              //   <FaEdit />
-              //   Edit
-              // </button>
-              <div className="flexRow">
-                <button> Cancel </button>
-                <button
-                  className="primaryButton"
-                  onClick={() => setCurrentView("decks")}
-                >
-                  <FaSave /> Save{" "}
-                </button>
-              </div>
-            ) : (
-              <button
-                className="primaryButton"
-                onClick={() => setCurrentView("deckEditView")}
-              >
-                <FaPlus />
-                New Deck
-              </button>
-            )}
-          </div>
+          <PrimaryActions
+            currentView={currentView}
+            setCurrentView={setCurrentView}
+          />
 
-          {currentView === "cards" && <CardsView cards={cards} />}
-          {currentView === "deckEditView" && <DeckView isEditable={true} />}
+          {currentView === "dashboard" && <CardsView cards={cards} />}
+          {currentView === "deckCreateEditView" && (
+            <DeckView isEditable={true} />
+          )}
           {currentView === "decks" && (
             <>
               {decks.map((deck, index) => (

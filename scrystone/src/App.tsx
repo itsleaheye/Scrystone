@@ -1,6 +1,5 @@
-import React from "react";
-import CardUploader from "./components/CardUploader";
+import Dashboard from "./components/Dashboard";
 
 export default function App() {
-  return <CardUploader />;
+  return <Dashboard />;
 }

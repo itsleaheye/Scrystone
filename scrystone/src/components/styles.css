@@ -98,6 +98,19 @@
   }
 }
 
+.tertiaryButton {
+  display: flex;
+  align-items: center;
+
+  svg {
+    margin-right: var(--pad-xs);
+  }
+}
+
+.centred {
+  text-align: center;
+}
+
 .dataContainer {
   padding: var(--pad-sm);
   max-width: 1600px;

@@ -6,26 +6,33 @@ export interface Card {
   name: string;
   number?: string;
   price?: number;
-  quantity: number;
   rarity?: string;
   set?: string;
   type?: string;
   isFoil?: boolean;
 }
 
-type PlayStyle = "Commander" | "Standard";
+export interface CollectionCard extends Card {
+  quantityOwned: number;
+}
 
-interface DeckCards extends Card {
-  isOwned?: boolean;
+export interface DeckCard extends Card {
+  quantityNeeded: number;
+}
+
+export interface MissingCard extends Card {
+  card: Card;
+  quantityNeeded: number;
+  quantityOwned: number;
 }
 
 export interface Deck {
-  cards: DeckCards[];
+  cards: DeckCard[];
+  colours?: string[];
   description?: string;
   isFavorite?: boolean;
   name: string;
-  playStyle: PlayStyle;
+  format: "Commander" | "Standard";
   size: number;
   value?: number;
-  colours?: string[];
 }
