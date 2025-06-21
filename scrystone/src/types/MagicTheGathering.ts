@@ -15,12 +15,17 @@ export interface Card {
 
 type PlayStyle = "Commander" | "Standard";
 
+interface DeckCards extends Card {
+  isOwned?: boolean;
+}
+
 export interface Deck {
-  cards: Card[];
+  cards: DeckCards[];
   description?: string;
   isFavorite?: boolean;
   name: string;
   playStyle: PlayStyle;
   size: number;
   value?: number;
+  colours?: string[];
 }

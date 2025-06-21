@@ -96,9 +96,9 @@ export function useCardParser() {
         );
 
         // Build card map
-        cardNames.forEach((name, idx) => {
+        cardNames.forEach((name, id) => {
           cardMap[name] = {
-            ...cardDetails[idx],
+            ...cardDetails[id],
             name,
             quantity: nameQuantityMap[name],
           } as Card;

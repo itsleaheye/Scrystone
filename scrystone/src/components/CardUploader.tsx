@@ -1,28 +1,25 @@
 import React, { useEffect } from "react";
 import { useCardParser } from "../hooks/useCardParser";
 import "./styles.css";
-import {
-  ArrowUpTrayIcon,
-  BanknotesIcon,
-  BookOpenIcon,
-  CurrencyDollarIcon,
-  InboxIcon,
-  RectangleStackIcon,
-  WalletIcon,
-} from "@heroicons/react/16/solid";
-import { Card } from "./Card";
-import { TbCards, TbCardsFilled } from "react-icons/tb";
+import { ArrowUpTrayIcon, WalletIcon } from "@heroicons/react/16/solid";
+import { TbCardsFilled } from "react-icons/tb";
 import { GiCash } from "react-icons/gi";
+import { useDeckParser } from "../hooks/useDeckParser";
+import { Deck } from "./Deck";
+import { DeckView } from "./DeckView";
+import { FaArrowLeft, FaPlus } from "react-icons/fa6";
+import { FaSave } from "react-icons/fa";
+import { CardsView } from "./CardsView";
 
 export default function MTGCardUploader() {
   const { cards, setCards, loading, error, collection, onFileUpload } =
     useCardParser();
-  // const [cards, setCards] = useState<Card[]>([]);
+  const { decks } = useDeckParser();
 
-  // Load cards from localStorage on initial render
+  const [currentView, setCurrentView] = React.useState("cards");
+
   useEffect(() => {
     const stored = localStorage.getItem("mtg_cards");
-    // Check if stored data exists and ensure it is valid JSON
     if (stored) {
       setCards(JSON.parse(stored));
     }
@@ -39,14 +36,22 @@ export default function MTGCardUploader() {
     <div className="container">
       <div className="headingContainer">
         <div className="pageTitle">
-          <h1>Scrystone</h1>
-          <p>A Magic the Gathering card management app</p>
+          <h1>SCRYSTONE</h1>
+          <p>A Magic the Gathering collection tool</p>
         </div>
         <div className="summaryContainer">
           <div className="flexRow borderBottom">
-            {iconItem(<GiCash />, `Value: $${Math.round(collection.value)}`)}
-            {iconItem(<TbCardsFilled />, `Cards: ${cards.length}`)}
-            {iconItem(<WalletIcon />, `My Decks`)}
+            {iconItem(
+              <GiCash />,
+              `Value: $${Math.round(collection.value)}`,
+              () => setCurrentView("cards")
+            )}
+            {iconItem(<TbCardsFilled />, `Cards: ${cards.length}`, () =>
+              setCurrentView("cards")
+            )}
+            {iconItem(<WalletIcon />, `My Decks`, () =>
+              setCurrentView("decks")
+            )}
           </div>
 
           <div className="uploadContainer">
@@ -79,10 +84,52 @@ export default function MTGCardUploader() {
         </div>
       ) : (
         // To do: Add sort and filter options
-        <div className="grid">
-          {cards.map((card, index) => (
-            <Card key={index} card={card} />
-          ))}
+        <div className="dataContainer">
+          <div className="actionRow flexRow">
+            {currentView !== "cards" ? (
+              <a onClick={() => setCurrentView("cards")}>
+                <FaArrowLeft /> Go Back
+              </a>
+            ) : (
+              <a>Placeholder for filtering and search...</a>
+            )}
+            {currentView === "deckEditView" ? (
+              // <button
+              //   className="primaryButton"
+              //   onClick={() => setCurrentView("editDeck")}
+              // >
+              //   <FaEdit />
+              //   Edit
+              // </button>
+              <div className="flexRow">
+                <button> Cancel </button>
+                <button
+                  className="primaryButton"
+                  onClick={() => setCurrentView("decks")}
+                >
+                  <FaSave /> Save{" "}
+                </button>
+              </div>
+            ) : (
+              <button
+                className="primaryButton"
+                onClick={() => setCurrentView("deckEditView")}
+              >
+                <FaPlus />
+                New Deck
+              </button>
+            )}
+          </div>
+
+          {currentView === "cards" && <CardsView cards={cards} />}
+          {currentView === "deckEditView" && <DeckView isEditable={true} />}
+          {currentView === "decks" && (
+            <>
+              {decks.map((deck, index) => (
+                <Deck key={index} deck={deck} />
+              ))}
+            </>
+          )}
         </div>
       )}
     </div>
@@ -91,10 +138,11 @@ export default function MTGCardUploader() {
 
 export function iconItem(
   icon: React.ReactNode,
-  text: string
+  text: string,
+  onClick?: () => void
 ): React.JSX.Element {
   return (
-    <div className="flexCol iconItem">
+    <div className="flexCol iconItem" onClick={onClick}>
       {icon}
       <p>{text}</p>
     </div>
