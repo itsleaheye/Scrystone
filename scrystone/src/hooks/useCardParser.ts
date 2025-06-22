@@ -3,6 +3,7 @@ import type {
   Card,
   CollectionCard,
   DeckCard,
+  MissingCard,
 } from "../types/MagicTheGathering";
 import Papa from "papaparse";
 
@@ -14,7 +15,7 @@ interface ScryfallDetails {
   type: string;
 }
 
-const fetchCardScryfallDetails = async (
+const getScryfallCardDetails = async (
   cardName: string
 ): Promise<ScryfallDetails | undefined> => {
   try {
@@ -54,10 +55,12 @@ const fetchCardScryfallDetails = async (
 };
 
 export function useCardParser() {
-  const [deckCards, setDeckCards] = React.useState<Card[]>([]);
+  const [cards, setCards] = React.useState<Card[] | DeckCard[] | MissingCard[]>(
+    []
+  ); // Used to track temporary cards
   const [collectionCards, setCollectionCards] = React.useState<
     CollectionCard[]
-  >([]);
+  >([]); // Used to track owned cards
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -66,14 +69,7 @@ export function useCardParser() {
     setError(message);
   };
 
-  // const onDeckCardChange = async (cardName: string) => {
-  //   const cardDetails = fetchCardScryfallDetails(cardName);
-  //   const deckCard: DeckCard = {};
-  // };
-
-  const onCardCollectionUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const onCollectionUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) {
       return handleError("Please select a .csv file to upload");
@@ -93,7 +89,7 @@ export function useCardParser() {
               const name = rawCard.Name?.trim();
               if (!name) return null;
 
-              const scryfallDetails = await fetchCardScryfallDetails(name);
+              const scryfallDetails = await getScryfallCardDetails(name);
 
               const collectionCard: CollectionCard = {
                 name,
@@ -129,11 +125,21 @@ export function useCardParser() {
     });
   };
 
+  const onDeckCardAdd = async (cardName: string) => {
+    const scryfallDetails = await getScryfallCardDetails(cardName);
+    const newCard = {
+      imageUrl: scryfallDetails?.previewUrl,
+      name: cardName,
+      quantityNeeded: 1,
+    } as DeckCard;
+    setCards((prevCards) => [...prevCards, newCard]);
+  };
+
   // To do: Fetch summary of cards and filtering
 
   return {
-    deckCards,
-    setDeckCards,
+    cards,
+    setCards,
     collectionCards,
     setCollectionCards,
     loading,
@@ -145,8 +151,7 @@ export function useCardParser() {
         0
       ),
     },
-    onCardCollectionUpload,
-    fetchCardScryfallDetails,
-    // onDeckCardChange,
+    onCollectionUpload,
+    onDeckCardAdd,
   };
 }

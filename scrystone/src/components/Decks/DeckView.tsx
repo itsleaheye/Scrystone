@@ -6,6 +6,7 @@ import { CardsView } from "../CardsView";
 import { CardSearchBar } from "../CardSearchBar";
 import { GiCash } from "react-icons/gi";
 import { RiCheckboxCircleFill, RiErrorWarningFill } from "react-icons/ri";
+import { useCardParser } from "../../hooks/useCardParser";
 
 export const DeckView = ({
   deck,
@@ -14,7 +15,8 @@ export const DeckView = ({
   deck?: Deck;
   isEditable: boolean;
 }): React.JSX.Element => {
-  const { onCreateDeck } = useDeckParser();
+  const { cards, onDeckCardAdd } = useCardParser();
+  // const { onCreateDeck } = useDeckParser();
   const [format, setFormat] = useState("Commander");
 
   if (deck && deck.cards && deck.cards.length === 0) {
@@ -100,10 +102,8 @@ export const DeckView = ({
           {statusIcon(deck)}
         </div>
       </div>
-      {isEditable && <CardSearchBar deck={deck} />}
-      {/* Figure out the UI how to add cards to deck
-      Fetch all cards in thedeck and display them */}
-      <CardsView cards={deck?.cards} />
+      {isEditable && <CardSearchBar onDeckCardAdd={onDeckCardAdd} />}
+      <CardsView cards={isEditable ? cards : deck?.cards} />
     </>
   );
 };

@@ -17,7 +17,7 @@ export default function MTGCardUploader() {
     loading,
     error,
     collection,
-    onCardCollectionUpload,
+    onCollectionUpload,
   } = useCardParser();
   const { decks } = useDeckParser();
 
@@ -65,7 +65,7 @@ export default function MTGCardUploader() {
               id="fileInput"
               type="file"
               accept=".csv"
-              onChange={onCardCollectionUpload}
+              onChange={onCollectionUpload}
             />
             <label htmlFor="fileInput">
               <ArrowUpTrayIcon className="uploadIcon" />

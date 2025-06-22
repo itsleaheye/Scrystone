@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useCardParser } from "../hooks/useCardParser";
-import type { Deck } from "../types/MagicTheGathering";
 
-export function CardSearchBar({ deck }: { deck?: Deck }) {
-  const { deckCards, setDeckCards, fetchCardScryfallDetails } = useCardParser();
+interface Props {
+  onDeckCardAdd: (cardName: string) => Promise<void>;
+}
+
+export function CardSearchBar({ onDeckCardAdd }: Props) {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
 
@@ -24,8 +25,7 @@ export function CardSearchBar({ deck }: { deck?: Deck }) {
   }, [query]);
 
   const handleSuggestionClick = (cardName: string) => {
-    // const cardDetails = fetchCardScryfallDetails(cardName);
-    // setDeckCards(cardDetails);
+    onDeckCardAdd(cardName);
     setQuery("");
     setSuggestions([]);
   };
