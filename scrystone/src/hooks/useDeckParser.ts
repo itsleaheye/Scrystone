@@ -1,5 +1,5 @@
 import React from "react";
-import type { Card, Deck } from "../types/MagicTheGathering";
+import type { Card, Deck, DeckCard } from "../types/MagicTheGathering";
 
 export function useDeckParser() {
   const [decks, setDecks] = React.useState<Deck[]>([]);

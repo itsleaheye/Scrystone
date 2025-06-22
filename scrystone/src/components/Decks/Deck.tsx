@@ -1,6 +1,6 @@
-import { useCardParser } from "../hooks/useCardParser";
-import type { Card, Deck } from "../types/MagicTheGathering";
-import "./styles.css";
+import { useCardParser } from "../../hooks/useCardParser";
+import type { Card, Deck } from "../../types/MagicTheGathering";
+import "../styles.css";
 
 export function Deck({ deck }: { deck: Deck }) {
   return (
@@ -29,7 +29,7 @@ export function Deck({ deck }: { deck: Deck }) {
           );
         })}
       <div className="playStyleTag">
-        <p>{deck.playStyle}</p>
+        <p>{deck.format}</p>
       </div>
     </div>
   );
@@ -47,12 +47,12 @@ export function CardTypeDetailRow({
   }
 
   // Match owned cards of type by name to the matching cards required in the deck
-  const { cards: ownedCards } = useCardParser();
+  const { collectionCards: collectionCards } = useCardParser();
   const ownedDeckCardsofType = allCardsofType.filter((cardOfType) =>
-    ownedCards.some(
-      (ownedCard) =>
-        ownedCard.type?.toLowerCase() === type &&
-        ownedCard.name.toLowerCase() === cardOfType.name.toLowerCase()
+    collectionCards.some(
+      (collectionCard) =>
+        collectionCard.type?.toLowerCase() === type &&
+        collectionCard.name.toLowerCase() === cardOfType.name.toLowerCase()
     )
   ).length;
 

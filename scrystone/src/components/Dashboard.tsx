@@ -5,8 +5,8 @@ import { ArrowUpTrayIcon, WalletIcon } from "@heroicons/react/16/solid";
 import { TbCardsFilled } from "react-icons/tb";
 import { GiCash } from "react-icons/gi";
 import { useDeckParser } from "../hooks/useDeckParser";
-import { Deck } from "./Deck";
-import { DeckView } from "./DeckView";
+import { Deck } from "./Decks/Deck.tsx";
+import { DeckView } from "./Decks/DeckView";
 import { CardsView } from "./CardsView";
 import { PrimaryActions } from "./PrimaryActions";
 

@@ -1,5 +1,9 @@
 import React from "react";
-import type { Card, CollectionCard } from "../types/MagicTheGathering";
+import type {
+  Card,
+  CollectionCard,
+  DeckCard,
+} from "../types/MagicTheGathering";
 import Papa from "papaparse";
 
 interface ScryfallDetails {
@@ -50,7 +54,7 @@ const fetchCardScryfallDetails = async (
 };
 
 export function useCardParser() {
-  const [cards, setCards] = React.useState<Card[]>([]);
+  const [deckCards, setDeckCards] = React.useState<Card[]>([]);
   const [collectionCards, setCollectionCards] = React.useState<
     CollectionCard[]
   >([]);
@@ -61,6 +65,11 @@ export function useCardParser() {
     setLoading(false);
     setError(message);
   };
+
+  // const onDeckCardChange = async (cardName: string) => {
+  //   const cardDetails = fetchCardScryfallDetails(cardName);
+  //   const deckCard: DeckCard = {};
+  // };
 
   const onCardCollectionUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
@@ -98,7 +107,9 @@ export function useCardParser() {
                 set: rawCard["Set"],
                 type: scryfallDetails?.type,
                 isFoil: rawCard.isFoil,
-                imageUrl: scryfallDetails?.previewUrl,
+                imageUrl:
+                  scryfallDetails?.previewUrl ||
+                  "../assets/cardBackDefault.jpg", //This fallback is broken :( Fix it Leah
                 quantityOwned: rawCard["Quantity"] || 1,
               };
 
@@ -121,8 +132,8 @@ export function useCardParser() {
   // To do: Fetch summary of cards and filtering
 
   return {
-    cards,
-    setCards,
+    deckCards,
+    setDeckCards,
     collectionCards,
     setCollectionCards,
     loading,
@@ -135,5 +146,7 @@ export function useCardParser() {
       ),
     },
     onCardCollectionUpload,
+    fetchCardScryfallDetails,
+    // onDeckCardChange,
   };
 }

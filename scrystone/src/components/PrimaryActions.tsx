@@ -73,7 +73,7 @@ function getActionsForView(
     case "deckCreateEditView":
       return {
         leftActions: tertiaryButton(
-          "Cancel and Go Back",
+          "Cancel and go back",
           <FaArrowLeft />,
           "decks"
         ),
@@ -91,7 +91,7 @@ function getActionsForView(
     // Decks by default
     default:
       return {
-        leftActions: tertiaryButton("Go Back", <FaArrowLeft />, "dashboard"),
+        leftActions: tertiaryButton("Go back", <FaArrowLeft />, "dashboard"),
         rightActions: primaryButton(
           "New Deck",
           <FaPlus />,

@@ -66,6 +66,53 @@
   }
 }
 
+.searchContainer {
+  margin: var(--pad-xs) auto var(--pad-xs) auto;
+  max-width: 400px;
+}
+
+.manaPlaceholder {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 100%;
+  background-color: var(--off-white);
+}
+
+.searchBar {
+  width: 100%;
+  display: block;
+  line-height: 24px;
+  font-size: var(--font-size-base);
+  margin-top: -6px;
+  border-radius: var(--border-radius-base);
+  background-color: var(--dark-gray);
+  border: none;
+  padding: var(--pad-xxs) var(--pad-xs);
+  color: var(--white);
+
+  &::placeholder {
+    color: var(--black);
+  }
+}
+
+.searchResults {
+  overflow-y: scroll;
+  list-style: none;
+  max-height: 300px;
+  max-width: 400px;
+  border-radius: var(--border-radius-base);
+
+  li {
+    padding: var(--pad-xs);
+    text-decoration: none !important;
+    background-color: var(--darker-gray);
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
 .actionRow {
   justify-content: space-between;
 
@@ -98,6 +145,10 @@
   }
 }
 
+.bold {
+  font-weight: 600;
+}
+
 .tertiaryButton {
   display: flex;
   align-items: center;
@@ -122,6 +173,70 @@
   background-color: var(--white);
   border-radius: var(--border-radius-base);
   height: 150px;
+  padding: var(--pad-sm);
+  justify-content: space-between;
+
+  .manaRow {
+    margin: var(--pad-xs) 0;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: var(--font-size-base);
+    border-radius: var(--border-radius-base);
+    border: 2px solid var(--dark-gray);
+    padding: var(--pad-xxs) var(--pad-xs);
+    color: var(--black);
+    margin-bottom: var(--pad-xs);
+  }
+
+  textarea {
+    font-family: "Quattrocento Sans", sans-serif;
+    width: 358px;
+    height: 25px;
+    font-weight: 500;
+    resize: none;
+  }
+
+  .deckCardSummary {
+    border-left: 2px var(--off-white) solid;
+    color: var(--black);
+    margin-left: var(--pad-xs);
+
+    ul {
+      list-style: none;
+    }
+
+    li {
+      padding: var(--pad-xxs) 0;
+      text-decoration: none;
+    }
+  }
+
+  .iconItem {
+    display: flex;
+    flex-direction: column;
+    color: var(--black);
+    text-align: center;
+
+    &:hover {
+      cursor: initial;
+      color: var(--black);
+
+      svg {
+        fill: var(--black);
+      }
+    }
+
+    p {
+      margin-bottom: -10px;
+    }
+
+    svg {
+      margin: 0 auto;
+    }
+  }
 }
 
 .iconItem {
