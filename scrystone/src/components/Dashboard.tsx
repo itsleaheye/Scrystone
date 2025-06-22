@@ -7,14 +7,18 @@ import { GiCash } from "react-icons/gi";
 import { useDeckParser } from "../hooks/useDeckParser";
 import { Deck } from "./Deck";
 import { DeckView } from "./DeckView";
-import { FaArrowLeft, FaPlus } from "react-icons/fa6";
-import { FaSave } from "react-icons/fa";
 import { CardsView } from "./CardsView";
 import { PrimaryActions } from "./PrimaryActions";
 
 export default function MTGCardUploader() {
-  const { cards, setCards, loading, error, collection, onFileUpload } =
-    useCardParser();
+  const {
+    collectionCards,
+    setCollectionCards,
+    loading,
+    error,
+    collection,
+    onCardCollectionUpload,
+  } = useCardParser();
   const { decks } = useDeckParser();
 
   const [currentView, setCurrentView] = React.useState("dashboard");
@@ -22,16 +26,16 @@ export default function MTGCardUploader() {
   useEffect(() => {
     const stored = localStorage.getItem("mtg_cards");
     if (stored) {
-      setCards(JSON.parse(stored));
+      setCollectionCards(JSON.parse(stored));
     }
   }, []);
 
   // Save cards to localStorage whenever they change
   useEffect(() => {
-    if (cards.length) {
-      localStorage.setItem("mtg_cards", JSON.stringify(cards));
+    if (collectionCards.length) {
+      localStorage.setItem("mtg_cards", JSON.stringify(collectionCards));
     }
-  }, [cards]);
+  }, [collectionCards]);
 
   return (
     <div className="container">
@@ -47,7 +51,7 @@ export default function MTGCardUploader() {
               `Value: $${Math.round(collection.value)}`,
               () => setCurrentView("dashboard")
             )}
-            {iconItem(<TbCardsFilled />, `Cards: ${cards.length}`, () =>
+            {iconItem(<TbCardsFilled />, `Cards: ${collection.size}`, () =>
               setCurrentView("dashboard")
             )}
             {iconItem(<WalletIcon />, `My Decks`, () =>
@@ -61,7 +65,7 @@ export default function MTGCardUploader() {
               id="fileInput"
               type="file"
               accept=".csv"
-              onChange={onFileUpload}
+              onChange={onCardCollectionUpload}
             />
             <label htmlFor="fileInput">
               <ArrowUpTrayIcon className="uploadIcon" />
@@ -91,7 +95,7 @@ export default function MTGCardUploader() {
             setCurrentView={setCurrentView}
           />
 
-          {currentView === "dashboard" && <CardsView cards={cards} />}
+          {currentView === "dashboard" && <CardsView cards={collectionCards} />}
           {currentView === "deckCreateEditView" && (
             <DeckView isEditable={true} />
           )}

@@ -1,5 +1,4 @@
 export interface Card {
-  artist?: string;
   imageUrl?: string;
   manaCost?: number;
   manaType?: string;

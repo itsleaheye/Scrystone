@@ -1,55 +1,59 @@
 import React from "react";
-import type { Card } from "../types/MagicTheGathering";
+import type { Card, CollectionCard } from "../types/MagicTheGathering";
 import Papa from "papaparse";
 
-const parseMana = (
-  manaCostStr: string
-): { number?: number; letter?: string } => {
-  const numberMatch = manaCostStr.match(/{(\d+)}/);
-  const letterMatch = manaCostStr.match(/{([WUBRG])}/);
+interface ScryfallDetails {
+  previewUrl?: string;
+  price: number;
+  manaCost?: number;
+  manaType?: string;
+  type: string;
+}
 
-  return {
-    number: numberMatch ? parseInt(numberMatch[1], 10) : undefined,
-    letter: letterMatch ? letterMatch[1] : undefined,
-  };
-};
-
-const fetchCardDetails = async (cardName: string): Promise<Partial<Card>> => {
+const fetchCardScryfallDetails = async (
+  cardName: string
+): Promise<ScryfallDetails | undefined> => {
   try {
+    const query = encodeURIComponent(cardName);
     const response = await fetch(
-      `https://api.scryfall.com/cards/named?exact=${encodeURIComponent(
-        cardName
-      )}`
+      `https://api.scryfall.com/cards/named?exact=${query}`
     );
+    if (!response.ok) return;
+
     const data = await response.json();
 
-    // To do, based on the type of card, we can generate different images like art crop, border crop, large, normal, png small
-    const imageUrl =
-      data.image_uris?.normal || data.card_faces?.[0]?.image_uris?.normal;
+    const parseMana = (
+      manaCostStr: string
+    ): { cost?: number; colour?: string } => {
+      const numberMatch = manaCostStr.match(/{(\d+)}/);
+      const letterMatch = manaCostStr.match(/{([WUBRG])}/);
 
-    const manaType = parseMana(data.mana_cost || "");
+      return {
+        cost: numberMatch ? parseInt(numberMatch[1], 10) : undefined,
+        colour: letterMatch ? letterMatch[1] : undefined,
+      };
+    };
+    const { cost, colour } = parseMana(data.mana_cost);
 
     return {
-      artist: data.artist,
-      imageUrl: imageUrl || "",
-      isFoil: data.foil || false,
-      manaCost: manaType.number,
-      manaType: manaType.letter,
-      name: data.name,
-      number: data.collector_number,
-      price: parseFloat(data.prices?.usd ?? "0"), //To do: Fetch price based on card condition then translate into CAD
-      rarity: data.rarity,
-      set: data.set_name,
-      type: data.type_line,
+      previewUrl:
+        data.image_uris?.normal || data.card_faces?.[0]?.image_uris?.normal,
+      price: data.prices.usd,
+      manaCost: cost,
+      manaType: colour,
+      type: data.type_line.split("—")[0].trim().split(" ")[0],
     };
   } catch (error) {
-    console.error(`Error fetching card details for "${cardName}":`, error);
-    return {};
+    console.error(`Error fetching card preview for "${cardName}":`, error);
+    return;
   }
 };
 
 export function useCardParser() {
   const [cards, setCards] = React.useState<Card[]>([]);
+  const [collectionCards, setCollectionCards] = React.useState<
+    CollectionCard[]
+  >([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -58,10 +62,12 @@ export function useCardParser() {
     setError(message);
   };
 
-  const onFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onCardCollectionUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (!file) {
-      return handleError("Please select a file to upload.");
+      return handleError("Please select a .csv file to upload");
     }
 
     setLoading(true);
@@ -71,41 +77,43 @@ export function useCardParser() {
       header: true,
       skipEmptyLines: true,
       complete: async (results) => {
-        const rawCards = results.data as any[];
-        const cardMap: { [key: string]: Card } = {};
+        try {
+          const rawCards = results.data as any[];
+          const cardsWithDetails = await Promise.all(
+            rawCards.map(async (rawCard) => {
+              const name = rawCard.Name?.trim();
+              if (!name) return null;
 
-        // Collect unique card names and their quantities
-        const nameQuantityMap: { [key: string]: number } = {};
-        for (const row of rawCards) {
-          const name = row["Product Name"] || row["Card Name"] || row["Name"];
-          // Skip rows without a valid name
-          if (!name) continue;
+              const scryfallDetails = await fetchCardScryfallDetails(name);
 
-          let quantity = parseInt(row["Quantity"] || "1", 10);
-          // Ensure quantity is a valid number and at least 1
-          if (isNaN(quantity) || quantity < 1) quantity = 1;
+              const collectionCard: CollectionCard = {
+                name,
+                manaCost: scryfallDetails?.manaCost,
+                manaType: scryfallDetails?.manaType,
+                number: rawCard["Card Number"],
+                price: scryfallDetails?.price
+                  ? scryfallDetails?.price * 1.37
+                  : undefined, //Find a way to grab the real time exchange rate
+                rarity: rawCard["Rarity"],
+                set: rawCard["Set"],
+                type: scryfallDetails?.type,
+                isFoil: rawCard.isFoil,
+                imageUrl: scryfallDetails?.previewUrl,
+                quantityOwned: rawCard["Quantity"] || 1,
+              };
 
-          // Aggregate quantities for the same card name
-          nameQuantityMap[name] = (nameQuantityMap[name] || 0) + quantity;
+              return collectionCard;
+            })
+          );
+
+          setCollectionCards(
+            cardsWithDetails.filter(Boolean) as CollectionCard[]
+          );
+          setLoading(false);
+        } catch {
+          setLoading(false);
+          handleError("Error uploading cards. Try again later.");
         }
-
-        // Fetch all card details in parallel
-        const cardNames = Object.keys(nameQuantityMap);
-        const cardDetails = await Promise.all(
-          cardNames.map((name) => fetchCardDetails(name))
-        );
-
-        // Build card map
-        cardNames.forEach((name, id) => {
-          cardMap[name] = {
-            ...cardDetails[id],
-            name,
-            quantity: nameQuantityMap[name],
-          } as Card;
-        });
-
-        setCards(Object.values(cardMap));
-        setLoading(false);
       },
     });
   };
@@ -115,15 +123,17 @@ export function useCardParser() {
   return {
     cards,
     setCards,
+    collectionCards,
+    setCollectionCards,
     loading,
     error,
     collection: {
-      size: cards.length,
-      value: cards.reduce(
-        (sum, card) => sum + (card.price ?? 0) * card.quantity,
+      size: collectionCards.length,
+      value: collectionCards.reduce(
+        (sum, card) => sum + (card.price ?? 0) * card.quantityOwned,
         0
       ),
     },
-    onFileUpload,
+    onCardCollectionUpload,
   };
 }
