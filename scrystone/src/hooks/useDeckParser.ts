@@ -47,16 +47,13 @@ export function useDeckParser() {
   };
 
   const getDeckTypeSummary = (cards: DeckCard[] | Card[] | MissingCard[]) => {
-    // Fetch owned cards and the quantities of these cards
-    const ownedRawCards = localStorage.getItem("mtg_cards");
-    const ownedCards: CollectionCard[] = ownedRawCards
-      ? JSON.parse(ownedRawCards)
-      : [];
+    const ownedCards: CollectionCard[] = JSON.parse(
+      localStorage.getItem("mtg_cards") || "[]"
+    );
 
-    const ownedByName = new Map<string, CollectionCard>();
-    ownedCards.forEach((card) => {
-      ownedByName.set(normalizeName(card.name), card);
-    });
+    const ownedByName = new Map(
+      ownedCards.map((card) => [normalizeName(card.name), card])
+    );
 
     const deckCountByName = new Map<
       string,
@@ -66,20 +63,20 @@ export function useDeckParser() {
     cards.forEach((card) => {
       if (!card.name || !card.type) return;
 
-      const normalizedName = normalizeName(card.name);
-      console.log("cards.foreach normalized name", normalizeName);
-      const existingCard = deckCountByName.get(normalizedName);
-      if (existingCard) {
-        deckCountByName.set(normalizedName, {
-          type: card.type,
-          quantityNeeded: existingCard.quantityNeeded + 1,
-        });
-      } else {
-        deckCountByName.set(normalizedName, {
-          type: card.type,
-          quantityNeeded: 1,
-        });
-      }
+      const cardName = normalizeName(card.name);
+      const deckCard = deckCountByName.get(cardName);
+
+      // if (existingCard) {
+      //   deckCountByName.set(cardName, {
+      //     type: card.type,
+      //     quantityNeeded: existingCard.quantityNeeded + 1,
+      //   });
+      // } else {
+      deckCountByName.set(cardName, {
+        type: card.type,
+        quantityNeeded: (deckCard?.quantityNeeded ?? 0) + 1,
+      });
+      // }
     });
 
     const quantityNeededByType = new Map<string, number>();
@@ -112,12 +109,12 @@ export function useDeckParser() {
   const getDeckTypeSummaryWithDefaults = (
     cards: DeckCard[] | Card[] | MissingCard[]
   ): CardTypeSummary[] => {
-    const summary = getDeckTypeSummary(cards);
-    const summaryMap = new Map(summary.map((item) => [item.type, item]));
+    const deckTypeSummary = getDeckTypeSummary(cards);
+    const summaries = new Map(deckTypeSummary.map((item) => [item.type, item]));
 
-    const merged = CARD_TYPES.map((type) => {
-      if (summaryMap.has(type)) {
-        return summaryMap.get(type)!;
+    const mergedSummary = CARD_TYPES.map((type) => {
+      if (summaries.has(type)) {
+        return summaries.get(type)!;
       } else {
         return {
           type,
@@ -127,7 +124,7 @@ export function useDeckParser() {
       }
     });
 
-    return merged;
+    return mergedSummary;
   };
 
   return {
