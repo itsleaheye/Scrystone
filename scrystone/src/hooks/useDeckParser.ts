@@ -10,6 +10,10 @@ import type {
 
 const CARD_TYPES = ["Creature", "Enchantment", "Instant", "Land"];
 
+const normalizeName = (name: string) => {
+  return name.trim().toLowerCase().replace(/\s+/g, " ");
+};
+
 export function useDeckParser() {
   const [decks, setDecks] = React.useState<Deck[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
@@ -51,25 +55,48 @@ export function useDeckParser() {
 
     const ownedByName = new Map<string, CollectionCard>();
     ownedCards.forEach((card) => {
-      ownedByName.set(card.name, card);
+      ownedByName.set(normalizeName(card.name), card);
+    });
+
+    const deckCountByName = new Map<
+      string,
+      { type: string; quantityNeeded: number }
+    >();
+
+    cards.forEach((card) => {
+      if (!card.name || !card.type) return;
+
+      const normalizedName = normalizeName(card.name);
+      console.log("cards.foreach normalized name", normalizeName);
+      const existingCard = deckCountByName.get(normalizedName);
+      if (existingCard) {
+        deckCountByName.set(normalizedName, {
+          type: card.type,
+          quantityNeeded: existingCard.quantityNeeded + 1,
+        });
+      } else {
+        deckCountByName.set(normalizedName, {
+          type: card.type,
+          quantityNeeded: 1,
+        });
+      }
     });
 
     const quantityNeededByType = new Map<string, number>();
     const quantityOwnedByType = new Map<string, number>();
 
-    cards.forEach((deckCard) => {
-      if (!deckCard.type) return;
+    deckCountByName.forEach(({ type, quantityNeeded }, name) => {
+      const quantityOwned = ownedByName.get(name)?.quantityOwned ?? 0;
 
       quantityNeededByType.set(
-        deckCard.type,
-        (quantityNeededByType.get(deckCard.type) ?? 0) + 1
+        type,
+        (quantityNeededByType.get(type) ?? 0) + quantityNeeded
       );
 
-      const ownedCard = ownedByName.get(deckCard.name);
       quantityOwnedByType.set(
-        deckCard.type,
-        (quantityOwnedByType.get(deckCard.type) ?? 0) +
-          (ownedCard?.quantityOwned ?? 0)
+        type,
+        (quantityOwnedByType.get(type) ?? 0) +
+          Math.min(quantityOwned, quantityNeeded)
       );
     });
 
@@ -77,7 +104,7 @@ export function useDeckParser() {
       ([type, quantityNeeded]) => ({
         type,
         quantityNeeded,
-        quantityOwned: Number(quantityOwnedByType.get(type)) ?? 0,
+        quantityOwned: quantityOwnedByType.get(type) ?? 0,
       })
     );
   };

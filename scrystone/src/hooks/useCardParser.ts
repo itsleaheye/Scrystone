@@ -113,9 +113,26 @@ export function useCardParser() {
             })
           );
 
-          setCollectionCards(
+          const combineCardQuantities = (
             cardsWithDetails.filter(Boolean) as CollectionCard[]
-          );
+          ).reduce((acc, card) => {
+            const cardName = card.name.toLowerCase();
+            const existingCard = acc.find(
+              (c) => c.name.toLowerCase() === cardName
+            );
+
+            if (existingCard) {
+              existingCard.quantityOwned += Number(card.quantityOwned) || 1;
+            } else {
+              acc.push({
+                ...card,
+                quantityOwned: Number(card.quantityOwned) || 1,
+              });
+            }
+            return acc;
+          }, [] as CollectionCard[]);
+
+          setCollectionCards(combineCardQuantities);
           setLoading(false);
         } catch {
           setLoading(false);
