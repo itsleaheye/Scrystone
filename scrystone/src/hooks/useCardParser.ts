@@ -130,6 +130,8 @@ export function useCardParser() {
     const newCard = {
       imageUrl: scryfallDetails?.previewUrl,
       name: cardName,
+      price: scryfallDetails?.price,
+      type: scryfallDetails?.type,
       quantityNeeded: 1,
     } as DeckCard;
     setCards((prevCards) => [...prevCards, newCard]);

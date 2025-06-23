@@ -1,6 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDeckParser } from "../../hooks/useDeckParser";
-import type { Deck } from "../../types/MagicTheGathering";
+import type {
+  Card,
+  CardTypeSummary,
+  Deck,
+  DeckCard,
+  MissingCard,
+} from "../../types/MagicTheGathering";
 import { DeckMana } from "./Deck";
 import { CardsView } from "../CardsView";
 import { CardSearchBar } from "../CardSearchBar";
@@ -16,8 +22,21 @@ export const DeckView = ({
   isEditable: boolean;
 }): React.JSX.Element => {
   const { cards, onDeckCardAdd } = useCardParser();
-  // const { onCreateDeck } = useDeckParser();
+  const { getDeckTypeSummaryWithDefaults } = useDeckParser();
   const [format, setFormat] = useState("Commander");
+  const [summary, setSummary] = useState<CardTypeSummary[]>([]);
+
+  useEffect(() => {
+    const result = getDeckTypeSummaryWithDefaults(cards);
+    setSummary(result);
+  }, [cards]);
+
+  const deckCost = cards.reduce(
+    (sum, card) =>
+      sum +
+      (typeof card.price === "number" ? card.price : Number(card.price) || 0),
+    0
+  );
 
   if (deck && deck.cards && deck.cards.length === 0) {
     return <CardsView cards={deck.cards} />;
@@ -46,9 +65,12 @@ export const DeckView = ({
     );
   }
 
-  const statusIcon = (deck?: Deck) => {
+  const statusIcon = (
+    cards: DeckCard[] | Card[] | MissingCard[],
+    deck?: Deck
+  ) => {
     const requiredSize = format === "Commander" ? 100 : 60;
-    const currentSize = deck?.cards.length || 0;
+    const currentSize = isEditable ? cards.length : deck?.cards.length || 0;
     const isReady = deck && currentSize >= requiredSize;
 
     return (
@@ -86,10 +108,11 @@ export const DeckView = ({
           </div>
           <div className="deckCardSummary">
             <ul>
-              <li>Creatures 0/0</li>
-              <li>Instants 0/0</li>
-              <li>Enchantments 0/0</li>
-              <li>Land 0/0</li>
+              {summary.map(({ type, quantityNeeded, quantityOwned }) => (
+                <li key={type}>
+                  {type} {quantityOwned}/{quantityNeeded}
+                </li>
+              ))}
             </ul>
           </div>
         </div>
@@ -97,9 +120,9 @@ export const DeckView = ({
           <div className="iconItem">
             <GiCash />
             <p>Deck Cost</p>
-            <p className="subtext">${(deck?.value || 0).toFixed(2)}</p>
+            <p className="subtext">${deckCost.toFixed(2)}</p>
           </div>
-          {statusIcon(deck)}
+          {statusIcon(cards, deck)}
         </div>
       </div>
       {isEditable && <CardSearchBar onDeckCardAdd={onDeckCardAdd} />}

@@ -33,5 +33,11 @@ export interface Deck {
   name: string;
   format: "Commander" | "Standard";
   size: number;
-  value?: number;
+  price?: number;
+}
+
+export interface CardTypeSummary {
+  type: string;
+  quantityNeeded: number;
+  quantityOwned: number;
 }
