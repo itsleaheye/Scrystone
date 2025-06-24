@@ -45,7 +45,7 @@ export const DeckDetailView = ({
   }, [deckId]);
 
   const [summary, setSummary] = useState<CardTypeSummary[]>([]);
-  const [editable, setEditable] = useState<Boolean>(deckId === undefined);
+  const [editable, setEditable] = useState<boolean>(deckId === undefined);
   const [nameInput, setNameInput] = useState(activeDeck ? activeDeck.name : "");
   const [descriptionInput, setDescriptionInput] = useState(
     activeDeck ? activeDeck.description : ""
@@ -171,7 +171,14 @@ export const DeckDetailView = ({
           <div className="deckCardSummary">
             <ul>
               {summary.map(({ type, quantityNeeded, quantityOwned }) => (
-                <li key={type}>
+                <li
+                  key={type}
+                  className={`${
+                    quantityNeeded !== quantityOwned && quantityNeeded != 0
+                      ? "bold"
+                      : undefined
+                  }`}
+                >
                   {type} {quantityOwned}/{quantityNeeded}
                 </li>
               ))}
@@ -190,7 +197,7 @@ export const DeckDetailView = ({
         </div>
       </div>
       {editable && <CardSearchBar onDeckCardAdd={onDeckCardAdd} />}
-      <CardsView cards={cards} />
+      <CardsView cards={cards} isDeckView={true} editable={editable} />
     </>
   );
 };

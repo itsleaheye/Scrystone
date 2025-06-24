@@ -159,6 +159,10 @@
 
 .bold {
   font-weight: 600;
+
+  p {
+    font-weight: 600;
+  }
 }
 
 .tertiaryButton {
@@ -197,6 +201,7 @@
 
 .deckOverview {
   margin-top: var(--pad-sm);
+  margin-bottom: var(--pad-sm);
   background-color: var(--white);
   border-radius: var(--border-radius-base);
   height: 150px;
@@ -320,6 +325,52 @@
   color: var(--black);
 }
 
+.editableCard {
+  .cardChip {
+    opacity: 0;
+  }
+  .cardFooterGroup .cardFooter {
+    justify-content: space-between;
+    display: flex;
+    opacity: 1;
+    transition: var(--ease-in);
+  }
+
+  &:hover {
+    .cardQuantity {
+      display: none;
+    }
+
+    .cardChip {
+      opacity: 1;
+      transition: var(--ease-in);
+    }
+  }
+}
+
+.cardChip {
+  width: 3.25rem;
+  height: 3.25rem;
+  background-color: var(--blackest);
+  margin-top: -55px;
+
+  &:hover {
+    cursor: pointer;
+    color: var(--blue);
+  }
+
+  svg {
+    padding-top: 5px;
+    padding-left: 20px;
+  }
+}
+
+.cardChipLeft {
+  svg {
+    padding-left: 15px;
+  }
+}
+
 .card {
   background: var(--blackest);
   border-radius: var(--border-radius-lg);
@@ -338,7 +389,7 @@
       font-size: var(--font-size-base);
       font-weight: bolder;
       margin-top: 24px;
-      margin-left: 15px;
+      margin-left: 12px;
     }
   }
 
