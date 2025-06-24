@@ -29,7 +29,7 @@ A 'Magic the Gathering' web app built with React, Tailwind CSS, and the Scryfall
 **To run the app on your machine:**
 1. Clone this repository
 2. Open a terminal at the root folder `/scrystone` and run `cd scrystone` to open the project folder
-3. If you don't have NPM locally, install NPM `npm install`
+3. If you don't have NPM locally, install NPM `npm install` _(Run this command if you see an error like `'vite' is not recognized as an internal or external command`)_
 4. Start the development server `npm run dev`
 5. Open your browser and go to `http://localhost:5173`
 
