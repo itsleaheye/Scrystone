@@ -72,7 +72,7 @@ export function useDeckParser() {
 
     const deckCards: DeckCard[] = cards.map((card) => ({
       ...card,
-      quantityNeeded: 1,
+      quantityNeeded: 1, // to do
       quantityOwned: 0,
     }));
 
@@ -104,6 +104,8 @@ export function useDeckParser() {
 
     localStorage.setItem("mtg_decks", JSON.stringify(updatedDecks));
     setDecks(updatedDecks);
+
+    return deck;
   };
 
   const getDeckTypeSummary = (cards: DeckCard[] | Card[]) => {

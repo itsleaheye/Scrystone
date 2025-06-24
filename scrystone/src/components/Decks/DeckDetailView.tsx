@@ -29,10 +29,12 @@ export const DeckDetailView = ({
   const { cards, onDeckCardAdd, setCards } = useCardParser();
   const { getDeckTypeSummaryWithDefaults, onDeckSave } = useDeckParser();
 
-  let activeDeck: Deck | undefined;
+  const [activeDeck, setActiveDeck] = useState<Deck | undefined>();
+
   useEffect(() => {
     if (deckId !== undefined) {
       const foundDeck = getDecksFromStorage(deckId)[0];
+      setActiveDeck(foundDeck);
       if (foundDeck) {
         setCards(foundDeck.cards);
         setNameInput(foundDeck.name);
@@ -54,10 +56,10 @@ export const DeckDetailView = ({
 
   useEffect(() => {
     const result = getDeckTypeSummaryWithDefaults(
-      activeDeck ? activeDeck.cards : cards
+      editable ? cards : activeDeck?.cards || []
     );
     setSummary(result);
-  }, [cards]);
+  }, [cards, editable, activeDeck]);
 
   const fields = {
     name: (
@@ -124,18 +126,22 @@ export const DeckDetailView = ({
   return (
     <>
       <div className="actionRow flexRow">
-        {tertiaryButton("Cancel and go back", <FaArrowLeft />, () =>
-          setCurrentView("deckCollection")
+        {tertiaryButton(
+          editable ? "Cancel and go back" : "Go back",
+          <FaArrowLeft />,
+          () => setCurrentView("deckCollection")
         )}
         {editable
           ? primaryButton("Save", <FaSave />, () => {
-              onDeckSave(
+              const savedDeck = onDeckSave(
                 cards,
                 nameInput,
                 formatInput,
-                activeDeck ? activeDeck?.id : undefined,
+                activeDeck?.id,
                 descriptionInput
               );
+
+              setActiveDeck(savedDeck);
               setEditable(false);
             })
           : primaryButton("Edit", <FaEdit />, () => {
