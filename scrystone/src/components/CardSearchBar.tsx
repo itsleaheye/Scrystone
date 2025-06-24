@@ -40,7 +40,7 @@ export function CardSearchBar({ onDeckCardAdd }: Props) {
         className="searchBar"
         placeholder="Search for card..."
       />
-      {suggestions.length > 0 && (
+      {suggestions.length > 0 ? (
         <ul className="searchResults">
           {suggestions.map((name) => (
             <li key={name} onClick={() => handleSuggestionClick(name)}>
@@ -48,6 +48,10 @@ export function CardSearchBar({ onDeckCardAdd }: Props) {
             </li>
           ))}
         </ul>
+      ) : query.length > 0 ? (
+        <p className="italic text-center">No matching cards found</p>
+      ) : (
+        <></>
       )}
     </div>
   );

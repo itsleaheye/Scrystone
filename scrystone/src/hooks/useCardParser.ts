@@ -3,7 +3,6 @@ import type {
   Card,
   CollectionCard,
   DeckCard,
-  MissingCard,
 } from "../types/MagicTheGathering";
 import Papa from "papaparse";
 
@@ -19,7 +18,10 @@ const getScryfallCardDetails = async (
   cardName: string
 ): Promise<ScryfallDetails | undefined> => {
   try {
-    const query = encodeURIComponent(cardName);
+    // This will remove anything in brackets at the end of the card name (e.g., "Card Name (Set)") and trim whitespace
+    const normalizedCardName = cardName.replace(/\s*\(.*\)\s*$/, "").trim();
+
+    const query = encodeURIComponent(normalizedCardName);
     const response = await fetch(
       `https://api.scryfall.com/cards/named?exact=${query}`
     );
@@ -55,9 +57,7 @@ const getScryfallCardDetails = async (
 };
 
 export function useCardParser() {
-  const [cards, setCards] = React.useState<Card[] | DeckCard[] | MissingCard[]>(
-    []
-  ); // Used to track temporary cards
+  const [cards, setCards] = React.useState<Card[] | DeckCard[]>([]); // Used to track temporary cards
   const [collectionCards, setCollectionCards] = React.useState<
     CollectionCard[]
   >([]); // Used to track owned cards
@@ -87,7 +87,7 @@ export function useCardParser() {
           const cardsWithDetails = await Promise.all(
             rawCards.map(async (rawCard) => {
               const name = rawCard.Name?.trim();
-              if (!name) return null;
+              if (!name || name.toLowerCase().includes("token")) return null;
 
               const scryfallDetails = await getScryfallCardDetails(name);
 
@@ -103,9 +103,7 @@ export function useCardParser() {
                 set: rawCard["Set"],
                 type: scryfallDetails?.type,
                 isFoil: rawCard.isFoil,
-                imageUrl:
-                  scryfallDetails?.previewUrl ||
-                  "../assets/cardBackDefault.jpg", //This fallback is broken :( Fix it Leah
+                imageUrl: scryfallDetails?.previewUrl,
                 quantityOwned: rawCard["Quantity"] || 1,
               };
 

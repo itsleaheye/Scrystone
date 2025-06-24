@@ -4,13 +4,13 @@ import "./styles.css";
 import { ArrowUpTrayIcon, WalletIcon } from "@heroicons/react/16/solid";
 import { TbCardsFilled } from "react-icons/tb";
 import { GiCash } from "react-icons/gi";
-import { useDeckParser } from "../hooks/useDeckParser";
-import { Deck } from "./Decks/Deck.tsx";
-import { DeckView } from "./Decks/DeckView";
+import { getDecksFromStorage, useDeckParser } from "../hooks/useDeckParser";
+import { DeckDetailView } from "./Decks/DeckDetailView.tsx";
 import { CardsView } from "./CardsView";
-import { PrimaryActions } from "./PrimaryActions";
+import { DecksView } from "./Decks/DecksView.tsx";
 
 export default function MTGCardUploader() {
+  const decks = getDecksFromStorage();
   const {
     collectionCards,
     setCollectionCards,
@@ -19,7 +19,6 @@ export default function MTGCardUploader() {
     collection,
     onCollectionUpload,
   } = useCardParser();
-  const { decks } = useDeckParser();
 
   const [currentView, setCurrentView] = React.useState("dashboard");
 
@@ -30,7 +29,6 @@ export default function MTGCardUploader() {
     }
   }, []);
 
-  // Save cards to localStorage whenever they change
   useEffect(() => {
     if (collectionCards.length) {
       localStorage.setItem("mtg_cards", JSON.stringify(collectionCards));
@@ -55,7 +53,7 @@ export default function MTGCardUploader() {
               setCurrentView("dashboard")
             )}
             {iconItem(<WalletIcon />, `My Decks`, () =>
-              setCurrentView("decks")
+              setCurrentView("deckCollection")
             )}
           </div>
 
@@ -85,26 +83,35 @@ export default function MTGCardUploader() {
       {loading ? (
         <div>
           {/* To be replaced by spinning planewalker logo */}
-          <p>Loading cards...</p>
+          <p className="text-center">Loading cards...</p>
         </div>
       ) : (
         // To do: Add sort and filter options
         <div className="dataContainer">
-          <PrimaryActions
-            currentView={currentView}
-            setCurrentView={setCurrentView}
-          />
-
           {currentView === "dashboard" && <CardsView cards={collectionCards} />}
-          {currentView === "deckCreateEditView" && (
-            <DeckView isEditable={true} />
-          )}
-          {currentView === "decks" && (
-            <>
-              {decks.map((deck, index) => (
-                <Deck key={index} deck={deck} />
-              ))}
-            </>
+          {currentView.startsWith("deckCreateEditView") &&
+            (() => {
+              const match = currentView.match(/^deckCreateEditView=(.+)$/);
+              if (match) {
+                const deckId = Number(match[1]);
+                const deck = decks.find((d) => d.id === deckId);
+
+                if (deck) {
+                  return (
+                    <DeckDetailView
+                      setCurrentView={setCurrentView}
+                      deck={deck}
+                    />
+                  );
+                }
+                return <div>Deck not found.</div>;
+              } else if (currentView === "deckCreateEditView") {
+                return <DeckDetailView setCurrentView={setCurrentView} />;
+              }
+              return null;
+            })()}
+          {currentView === "deckCollection" && (
+            <DecksView setCurrentView={setCurrentView} />
           )}
         </div>
       )}

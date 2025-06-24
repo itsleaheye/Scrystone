@@ -1,11 +1,10 @@
 import React from "react";
 import type {
   CollectionCard,
-  Card,
-  MissingCard,
   Deck,
   DeckCard,
   CardTypeSummary,
+  Card,
 } from "../types/MagicTheGathering";
 
 const CARD_TYPES = ["Creature", "Enchantment", "Instant", "Land"];
@@ -13,6 +12,27 @@ const CARD_TYPES = ["Creature", "Enchantment", "Instant", "Land"];
 const normalizeName = (name: string) => {
   return name.trim().toLowerCase().replace(/\s+/g, " ");
 };
+
+const generateUniqueDeckId = (): number => {
+  return Number(`${Date.now()}${Math.floor(Math.random() * 1000)}`);
+};
+
+export const getDeckCost = (cards: Card[] | DeckCard[]) => {
+  const sumOfCards = cards.reduce(
+    (sum, card) =>
+      sum +
+      (typeof card.price === "number" ? card.price : Number(card.price) || 0),
+    0
+  );
+
+  return sumOfCards.toFixed(2);
+};
+
+export function getDecksFromStorage(): Deck[] {
+  const rawDecks = localStorage.getItem("mtg_decks");
+
+  return rawDecks ? (JSON.parse(rawDecks) as Deck[]) : [];
+}
 
 export function useDeckParser() {
   const [decks, setDecks] = React.useState<Deck[]>([]);
@@ -24,29 +44,64 @@ export function useDeckParser() {
     setError(message);
   };
 
-  const onCreateDeck = (deck: Deck) => {
-    const stored = localStorage.getItem("mtg_decks");
-    let decksArray: Deck[] = [];
-    setLoading(true);
-
-    if (stored) {
-      try {
-        decksArray = JSON.parse(stored);
-      } catch {
-        handleError(
-          "Error parsing stored decks. Please check your localStorage config."
-        );
-        decksArray = [];
-      }
-    }
-    decksArray.push(deck);
-    localStorage.setItem("mtg_decks", JSON.stringify(decksArray));
-
-    setDecks(decksArray);
-    setLoading(false);
+  const deckCost = (cards: Card[]) => {
+    cards.reduce(
+      (sum, card) =>
+        sum +
+        (typeof card.price === "number" ? card.price : Number(card.price) || 0),
+      0
+    );
   };
 
-  const getDeckTypeSummary = (cards: DeckCard[] | Card[] | MissingCard[]) => {
+  const onDeckSave = (
+    cards: Card[],
+    name: string,
+    format: string,
+    id?: number,
+    description?: string
+  ) => {
+    const existingRawDecks = localStorage.getItem("mtg_decks");
+    const existingDecks: Deck[] = existingRawDecks
+      ? JSON.parse(existingRawDecks)
+      : [];
+
+    const deckCards: DeckCard[] = cards.map((card) => ({
+      ...card,
+      quantityNeeded: 1,
+      quantityOwned: 0,
+    }));
+
+    const colours = ["B"]; // To do, fetch based on deckCards mana types
+
+    const deck: Deck = {
+      id: id ?? generateUniqueDeckId(),
+      name: name ?? "Unnamed Deck",
+      description,
+      format: format == "Commander" ? "Commander" : "Standard",
+      colours,
+      cards: deckCards,
+      size: cards.length,
+      price: deckCost(cards) ?? 0,
+    };
+
+    const updatedDecks = (() => {
+      const index = existingDecks.findIndex((d) => d.id === deck.id);
+
+      if (index !== -1) {
+        const decksCopy = [...existingDecks];
+        decksCopy[index] = deck;
+
+        return decksCopy;
+      } else {
+        return [...existingDecks, deck];
+      }
+    })();
+
+    localStorage.setItem("mtg_decks", JSON.stringify(updatedDecks));
+    setDecks(updatedDecks);
+  };
+
+  const getDeckTypeSummary = (cards: DeckCard[] | Card[]) => {
     const ownedCards: CollectionCard[] = JSON.parse(
       localStorage.getItem("mtg_cards") || "[]"
     );
@@ -66,17 +121,10 @@ export function useDeckParser() {
       const cardName = normalizeName(card.name);
       const deckCard = deckCountByName.get(cardName);
 
-      // if (existingCard) {
-      //   deckCountByName.set(cardName, {
-      //     type: card.type,
-      //     quantityNeeded: existingCard.quantityNeeded + 1,
-      //   });
-      // } else {
       deckCountByName.set(cardName, {
         type: card.type,
         quantityNeeded: (deckCard?.quantityNeeded ?? 0) + 1,
       });
-      // }
     });
 
     const quantityNeededByType = new Map<string, number>();
@@ -107,7 +155,7 @@ export function useDeckParser() {
   };
 
   const getDeckTypeSummaryWithDefaults = (
-    cards: DeckCard[] | Card[] | MissingCard[]
+    cards: DeckCard[] | Card[]
   ): CardTypeSummary[] => {
     const deckTypeSummary = getDeckTypeSummary(cards);
     const summaries = new Map(deckTypeSummary.map((item) => [item.type, item]));
@@ -129,9 +177,11 @@ export function useDeckParser() {
 
   return {
     decks,
+    setDecks,
     loading,
     error,
-    onCreateDeck,
+    onDeckSave,
+    deckCost,
     getDeckTypeSummary,
     getDeckTypeSummaryWithDefaults,
   };

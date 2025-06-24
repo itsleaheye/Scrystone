@@ -1,132 +1,92 @@
-import React, { useEffect, useState } from "react";
-import { useDeckParser } from "../../hooks/useDeckParser";
-import type {
-  Card,
-  CardTypeSummary,
-  Deck,
-  DeckCard,
-  MissingCard,
-} from "../../types/MagicTheGathering";
-import { DeckMana } from "./Deck";
-import { CardsView } from "../CardsView";
-import { CardSearchBar } from "../CardSearchBar";
-import { GiCash } from "react-icons/gi";
-import { RiCheckboxCircleFill, RiErrorWarningFill } from "react-icons/ri";
 import { useCardParser } from "../../hooks/useCardParser";
+import type { Card, Deck } from "../../types/MagicTheGathering";
+import "../styles.css";
 
-export const DeckView = ({
-  deck,
-  isEditable,
-}: {
-  deck?: Deck;
-  isEditable: boolean;
-}): React.JSX.Element => {
-  const { cards, onDeckCardAdd } = useCardParser();
-  const { getDeckTypeSummaryWithDefaults } = useDeckParser();
-  const [format, setFormat] = useState("Commander");
-  const [summary, setSummary] = useState<CardTypeSummary[]>([]);
+interface Props {
+  deck: Deck;
+  setCurrentView?: (view: string) => void;
+}
 
-  useEffect(() => {
-    const result = getDeckTypeSummaryWithDefaults(cards);
-    setSummary(result);
-  }, [cards]);
-
-  const deckCost = cards.reduce(
-    (sum, card) =>
-      sum +
-      (typeof card.price === "number" ? card.price : Number(card.price) || 0),
-    0
-  );
-
-  if (deck && deck.cards && deck.cards.length === 0) {
-    return <CardsView cards={deck.cards} />;
-  }
-
-  const fields = {
-    name: <p>{deck?.name}</p>,
-    playStyle: (
-      <div className="playStyleTag">
-        <p>{deck?.format}</p>
-      </div>
-    ),
-    description: <p>{deck?.description}</p>,
-  };
-
-  if (isEditable) {
-    fields.name = <input type="text" placeholder="Deck name..." />;
-    fields.playStyle = (
-      <select value={format} onChange={(e) => setFormat(e.target.value)}>
-        <option value="Commander">Commander</option>
-        <option value="Standard">Standard</option>
-      </select>
-    );
-    fields.description = (
-      <textarea placeholder="Deck description..." rows={3} />
-    );
-  }
-
-  const statusIcon = (
-    cards: DeckCard[] | Card[] | MissingCard[],
-    deck?: Deck
-  ) => {
-    const requiredSize = format === "Commander" ? 100 : 60;
-    const currentSize = isEditable ? cards.length : deck?.cards.length || 0;
-    const isReady = deck && currentSize >= requiredSize;
-
-    return (
-      <div className="iconItem">
-        {isReady ? <RiCheckboxCircleFill /> : <RiErrorWarningFill />}
-        <p>{isReady ? "Deck is ready" : "Deck not ready"}</p>
-        <p className="subtext">
-          {currentSize}/{requiredSize} Cards
-        </p>
-      </div>
-    );
+export function DeckView({ deck, setCurrentView }: Props) {
+  const handleClick = () => {
+    if (typeof setCurrentView === "function") {
+      setCurrentView(`deckCreateEditView=${deck.id}`);
+    }
   };
 
   return (
-    <>
-      <div className="deckOverview flexRow">
-        <div className="flexRow">
-          <div>
-            {deck?.colours ? (
-              <DeckMana colours={deck?.colours} />
-            ) : (
-              <div className="flexRow manaRow">
-                <span className="manaPlaceholder" />
-                <span className="manaPlaceholder" />
-                <span className="manaPlaceholder" />
-                <span className="manaPlaceholder" />
-                <span className="manaPlaceholder" />
-              </div>
-            )}
-            <div className="flexRow">
-              {fields.name}
-              {fields.playStyle}
-            </div>
-            {fields.description}
-          </div>
-          <div className="deckCardSummary">
-            <ul>
-              {summary.map(({ type, quantityNeeded, quantityOwned }) => (
-                <li key={type}>
-                  {type} {quantityOwned}/{quantityNeeded}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-        <div className="deckBreakdown flexRow">
-          <div className="iconItem">
-            <GiCash />
-            <p>Deck Cost</p>
-            <p className="subtext">${deckCost.toFixed(2)}</p>
-          </div>
-          {statusIcon(cards, deck)}
-        </div>
+    <div className="deck cursor-pointer" onClick={handleClick}>
+      <div className="deckTop">
+        <p className="emphasis">{deck.name}</p>
+        {deck.description && <p>{deck.description}</p>}
       </div>
-      {isEditable && <CardSearchBar onDeckCardAdd={onDeckCardAdd} />}
-      <CardsView cards={isEditable ? cards : deck?.cards} />
+      {deck.colours && deck.colours.length > 0 && (
+        <DeckMana colours={deck.colours} />
+      )}
+      {[...new Set(deck.cards.map((card) => card.type?.toLowerCase()))]
+        .filter((type) => type)
+        .map((type) => {
+          const cardsOfType = deck.cards.filter(
+            (card) => card.type?.toLowerCase() === type
+          );
+
+          return (
+            <CardTypeDetailRow
+              key={type}
+              type={type?.toLowerCase()}
+              allCardsofType={cardsOfType}
+            />
+          );
+        })}
+      <div className="playStyleTag">
+        <p>{deck.format}</p>
+      </div>
+    </div>
+  );
+}
+
+export function CardTypeDetailRow({
+  allCardsofType,
+  type,
+}: {
+  allCardsofType: Card[];
+  type?: string;
+}) {
+  if (!type) return <></>;
+
+  // Match owned cards of type by name to the matching cards required in the deck
+  const { collectionCards: collectionCards } = useCardParser();
+  const ownedDeckCardsofType = allCardsofType.filter((cardOfType) =>
+    collectionCards.some(
+      (collectionCard) =>
+        collectionCard.type?.toLowerCase() === type &&
+        collectionCard.name.toLowerCase() === cardOfType.name.toLowerCase()
+    )
+  ).length;
+
+  const cardTypeLabels: Record<string, string> = {
+    creature: "Creatures",
+    planeswalker: "Planeswalkers",
+    enchantment: "Enchantments",
+    artifact: "Artifacts",
+    land: "Lands",
+    instant: "Instants",
+  };
+  const cardTypeLabel = cardTypeLabels[type as string] || type;
+
+  return (
+    <div className="flexRow">{`${cardTypeLabel} ${ownedDeckCardsofType}/${allCardsofType.length}`}</div>
+  );
+}
+
+export function DeckMana({ colours }: { colours: string[] }) {
+  return (
+    <>
+      {colours.map((colour, index) => (
+        <span key={index} className={`manaSymbol ${colour.toLowerCase()}`}>
+          {colour}
+        </span>
+      ))}
     </>
   );
-};
+}

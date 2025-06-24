@@ -17,15 +17,11 @@ export interface CollectionCard extends Card {
 
 export interface DeckCard extends Card {
   quantityNeeded: number;
-}
-
-export interface MissingCard extends Card {
-  card: Card;
-  quantityNeeded: number;
   quantityOwned: number;
 }
 
 export interface Deck {
+  id: number;
   cards: DeckCard[];
   colours?: string[];
   description?: string;
