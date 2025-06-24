@@ -180,6 +180,21 @@
   margin: 0 auto;
 }
 
+.deckCardSummary {
+  border-left: 2px var(--off-white) solid;
+  color: var(--black);
+  margin-left: var(--pad-xs);
+
+  ul {
+    list-style: none;
+  }
+
+  li {
+    padding: var(--pad-xxs) 0;
+    text-decoration: none;
+  }
+}
+
 .deckOverview {
   margin-top: var(--pad-sm);
   background-color: var(--white);
@@ -213,21 +228,6 @@
     height: 25px;
     font-weight: 500;
     resize: none;
-  }
-
-  .deckCardSummary {
-    border-left: 2px var(--off-white) solid;
-    color: var(--black);
-    margin-left: var(--pad-xs);
-
-    ul {
-      list-style: none;
-    }
-
-    li {
-      padding: var(--pad-xxs) 0;
-      text-decoration: none;
-    }
   }
 
   .iconItem {

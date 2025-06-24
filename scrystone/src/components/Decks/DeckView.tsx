@@ -1,4 +1,5 @@
 import { getCardsFromStorage } from "../../hooks/useCardParser";
+import { useDeckParser } from "../../hooks/useDeckParser";
 import type { Card, Deck } from "../../types/MagicTheGathering";
 import "../styles.css";
 
@@ -8,6 +9,9 @@ interface Props {
 }
 
 export function DeckView({ deck, setCurrentView }: Props) {
+  const { getDeckTypeSummaryWithDefaults } = useDeckParser();
+  const summary = getDeckTypeSummaryWithDefaults(deck.cards);
+
   const handleClick = () => {
     if (typeof setCurrentView === "function") {
       setCurrentView(`deckCreateEditView=${deck.id}`);
@@ -23,21 +27,15 @@ export function DeckView({ deck, setCurrentView }: Props) {
       {deck.colours && deck.colours.length > 0 && (
         <DeckMana colours={deck.colours} />
       )}
-      {[...new Set(deck.cards.map((card) => card.type?.toLowerCase()))]
-        .filter((type) => type)
-        .map((type) => {
-          const cardsOfType = deck.cards.filter(
-            (card) => card.type?.toLowerCase() === type
-          );
-
-          return (
-            <CardTypeDetailRow
-              key={type}
-              type={type?.toLowerCase()}
-              allCardsofType={cardsOfType}
-            />
-          );
-        })}
+      <div className="deckCardSummary">
+        <ul>
+          {summary.map(({ type, quantityNeeded, quantityOwned }) => (
+            <li key={type}>
+              {type} {quantityOwned}/{quantityNeeded}
+            </li>
+          ))}
+        </ul>
+      </div>
       <div className="playStyleTag">
         <p>{deck.format}</p>
       </div>

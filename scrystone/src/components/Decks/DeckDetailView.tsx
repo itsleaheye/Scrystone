@@ -26,12 +26,10 @@ export const DeckDetailView = ({
   deckId?: number;
   setCurrentView: (view: string) => void;
 }): React.JSX.Element => {
-  console.log("DeckDetailView", deckId);
   let activeDeck: Deck | undefined;
   if (deckId !== undefined) {
     activeDeck = getDecksFromStorage(deckId)[0];
   }
-  console.log("activeDeck", activeDeck);
 
   const { cards, onDeckCardAdd } = useCardParser();
   const { getDeckTypeSummaryWithDefaults, onDeckSave } = useDeckParser();
@@ -47,7 +45,9 @@ export const DeckDetailView = ({
   );
 
   useEffect(() => {
-    const result = getDeckTypeSummaryWithDefaults(cards);
+    const result = getDeckTypeSummaryWithDefaults(
+      activeDeck ? activeDeck.cards : cards
+    );
     setSummary(result);
   }, [cards]);
 
@@ -97,7 +97,9 @@ export const DeckDetailView = ({
 
   const statusIcon = (cards: DeckCard[] | Card[], deck?: Deck) => {
     const requiredSize = formatInput === "Commander" ? 100 : 60;
-    const currentSize = activeDeck ? cards.length : deck?.cards.length || 0;
+    const currentSize = activeDeck
+      ? activeDeck.cards.length
+      : cards.length || 0;
     const isReady = deck && currentSize >= requiredSize;
 
     return (
@@ -166,7 +168,9 @@ export const DeckDetailView = ({
           <div className="iconItem">
             <GiCash />
             <p>Deck Cost</p>
-            <p className="subtext">${getDeckCost(cards)}</p>
+            <p className="subtext">
+              ${getDeckCost(activeDeck ? activeDeck.cards : cards)}
+            </p>
           </div>
           {statusIcon(cards, activeDeck)}
         </div>
