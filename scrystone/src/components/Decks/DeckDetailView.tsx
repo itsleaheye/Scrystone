@@ -26,16 +26,24 @@ export const DeckDetailView = ({
   deckId?: number;
   setCurrentView: (view: string) => void;
 }): React.JSX.Element => {
-  let activeDeck: Deck | undefined;
-  if (deckId !== undefined) {
-    activeDeck = getDecksFromStorage(deckId)[0];
-  }
-
-  const { cards, onDeckCardAdd } = useCardParser();
+  const { cards, onDeckCardAdd, setCards } = useCardParser();
   const { getDeckTypeSummaryWithDefaults, onDeckSave } = useDeckParser();
 
+  let activeDeck: Deck | undefined;
+  useEffect(() => {
+    if (deckId !== undefined) {
+      const foundDeck = getDecksFromStorage(deckId)[0];
+      if (foundDeck) {
+        setCards(foundDeck.cards);
+        setNameInput(foundDeck.name);
+        setDescriptionInput(foundDeck.description);
+        setFormatInput(foundDeck.format);
+      }
+    }
+  }, [deckId]);
+
   const [summary, setSummary] = useState<CardTypeSummary[]>([]);
-  const [editable, setEditable] = useState<Boolean>(activeDeck === undefined);
+  const [editable, setEditable] = useState<Boolean>(deckId === undefined);
   const [nameInput, setNameInput] = useState(activeDeck ? activeDeck.name : "");
   const [descriptionInput, setDescriptionInput] = useState(
     activeDeck ? activeDeck.description : ""
@@ -176,8 +184,7 @@ export const DeckDetailView = ({
         </div>
       </div>
       {editable && <CardSearchBar onDeckCardAdd={onDeckCardAdd} />}
-      {activeDeck && <CardsView cards={activeDeck?.cards} />}
-      {editable && <CardsView cards={cards} />}
+      <CardsView cards={cards} />
     </>
   );
 };
