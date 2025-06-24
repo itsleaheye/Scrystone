@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useDeckParser, getDeckCost } from "../../hooks/useDeckParser";
+import {
+  useDeckParser,
+  getDeckCost,
+  getDecksFromStorage,
+} from "../../hooks/useDeckParser";
 import type {
   Card,
   CardTypeSummary,
@@ -16,25 +20,30 @@ import { primaryButton, tertiaryButton } from "../PrimaryActions";
 import { FaArrowLeft, FaEdit, FaSave } from "react-icons/fa";
 
 export const DeckDetailView = ({
-  deck,
+  deckId,
   setCurrentView,
 }: {
-  deck?: Deck;
+  deckId?: number;
   setCurrentView: (view: string) => void;
 }): React.JSX.Element => {
+  console.log("DeckDetailView", deckId);
+  let activeDeck: Deck | undefined;
+  if (deckId !== undefined) {
+    activeDeck = getDecksFromStorage(deckId)[0];
+  }
+  console.log("activeDeck", activeDeck);
+
   const { cards, onDeckCardAdd } = useCardParser();
   const { getDeckTypeSummaryWithDefaults, onDeckSave } = useDeckParser();
 
-  const hasDeck = deck !== undefined;
-
   const [summary, setSummary] = useState<CardTypeSummary[]>([]);
-  const [editable, setEditable] = useState<Boolean>(!hasDeck);
-  const [nameInput, setNameInput] = useState(hasDeck ? deck.name : "");
+  const [editable, setEditable] = useState<Boolean>(activeDeck === undefined);
+  const [nameInput, setNameInput] = useState(activeDeck ? activeDeck.name : "");
   const [descriptionInput, setDescriptionInput] = useState(
-    hasDeck ? deck.description : ""
+    activeDeck ? activeDeck.description : ""
   );
   const [formatInput, setFormatInput] = useState(
-    hasDeck ? deck.format : "Commander"
+    activeDeck ? activeDeck.format : "Commander"
   );
 
   useEffect(() => {
@@ -43,13 +52,15 @@ export const DeckDetailView = ({
   }, [cards]);
 
   const fields = {
-    name: <p className="bold">{hasDeck ? deck.name : "Unnamed Deck"}</p>,
+    name: (
+      <p className="bold">{activeDeck ? activeDeck.name : "Unnamed Deck"}</p>
+    ),
     playStyle: (
       <div className="playStyleTag">
-        <p>{deck?.format}</p>
+        <p>{activeDeck?.format}</p>
       </div>
     ),
-    description: <p>{deck?.description}</p>,
+    description: <p>{activeDeck?.description}</p>,
   };
 
   if (editable) {
@@ -64,7 +75,11 @@ export const DeckDetailView = ({
     fields.playStyle = (
       <select
         value={formatInput}
-        onChange={(e) => setFormatInput(e.target.value)}
+        onChange={(e) =>
+          setFormatInput(
+            e.target.value == "Commander" ? "Commander" : "Standard"
+          )
+        }
       >
         <option value="Commander">Commander</option>
         <option value="Standard">Standard</option>
@@ -82,7 +97,7 @@ export const DeckDetailView = ({
 
   const statusIcon = (cards: DeckCard[] | Card[], deck?: Deck) => {
     const requiredSize = formatInput === "Commander" ? 100 : 60;
-    const currentSize = hasDeck ? cards.length : deck?.cards.length || 0;
+    const currentSize = activeDeck ? cards.length : deck?.cards.length || 0;
     const isReady = deck && currentSize >= requiredSize;
 
     return (
@@ -108,7 +123,7 @@ export const DeckDetailView = ({
                 cards,
                 nameInput,
                 formatInput,
-                deck ? deck?.id : undefined,
+                activeDeck ? activeDeck?.id : undefined,
                 descriptionInput
               );
               setEditable(false);
@@ -120,8 +135,8 @@ export const DeckDetailView = ({
       <div className="deckOverview flexRow">
         <div className="flexRow">
           <div>
-            {deck?.colours ? (
-              <DeckMana colours={deck?.colours} />
+            {activeDeck?.colours ? (
+              <DeckMana colours={activeDeck.colours} />
             ) : (
               <div className="flexRow manaRow">
                 <span className="manaPlaceholder" />
@@ -153,11 +168,12 @@ export const DeckDetailView = ({
             <p>Deck Cost</p>
             <p className="subtext">${getDeckCost(cards)}</p>
           </div>
-          {statusIcon(cards, deck)}
+          {statusIcon(cards, activeDeck)}
         </div>
       </div>
       {editable && <CardSearchBar onDeckCardAdd={onDeckCardAdd} />}
-      <CardsView cards={deck ? deck.cards : cards} />
+      {activeDeck && <CardsView cards={activeDeck?.cards} />}
+      {editable && <CardsView cards={cards} />}
     </>
   );
 };

@@ -28,10 +28,15 @@ export const getDeckCost = (cards: Card[] | DeckCard[]) => {
   return sumOfCards.toFixed(2);
 };
 
-export function getDecksFromStorage(): Deck[] {
+export function getDecksFromStorage(deckId?: number): Deck[] {
   const rawDecks = localStorage.getItem("mtg_decks");
+  const allDecks = rawDecks ? (JSON.parse(rawDecks) as Deck[]) : [];
 
-  return rawDecks ? (JSON.parse(rawDecks) as Deck[]) : [];
+  if (deckId === undefined) {
+    return allDecks;
+  } else {
+    return allDecks.filter((d) => d.id == deckId);
+  }
 }
 
 export function useDeckParser() {

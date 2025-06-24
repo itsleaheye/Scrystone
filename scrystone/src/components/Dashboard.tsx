@@ -4,13 +4,11 @@ import "./styles.css";
 import { ArrowUpTrayIcon, WalletIcon } from "@heroicons/react/16/solid";
 import { TbCardsFilled } from "react-icons/tb";
 import { GiCash } from "react-icons/gi";
-import { getDecksFromStorage } from "../hooks/useDeckParser";
 import { DeckDetailView } from "./Decks/DeckDetailView.tsx";
 import { CardsView } from "./CardsView";
 import { DecksView } from "./Decks/DecksView.tsx";
 
 export default function MTGCardUploader() {
-  const decks = getDecksFromStorage();
   const cards = getCardsFromStorage();
   const { loading, error, collection, onCollectionUpload } = useCardParser();
 
@@ -74,24 +72,18 @@ export default function MTGCardUploader() {
           {currentView.startsWith("deckCreateEditView") &&
             (() => {
               const match = currentView.match(/^deckCreateEditView=(.+)$/);
+              const deckId = match ? match[1] : undefined;
+
               if (match) {
-                const deckId = Number(match[1]);
-                const matchingDeck = decks.find((d) => d.id === deckId);
-
-                if (matchingDeck) {
-                  return (
-                    <DeckDetailView
-                      setCurrentView={setCurrentView}
-                      deck={matchingDeck}
-                    />
-                  );
-                }
-
-                return <div>Deck not found.</div>;
-              } else if (currentView === "deckCreateEditView") {
+                return (
+                  <DeckDetailView
+                    setCurrentView={setCurrentView}
+                    deckId={Number(deckId)}
+                  />
+                );
+              } else {
                 return <DeckDetailView setCurrentView={setCurrentView} />;
               }
-              return null;
             })()}
           {currentView === "deckCollection" && (
             <DecksView setCurrentView={setCurrentView} />
