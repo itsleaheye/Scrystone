@@ -12,6 +12,25 @@ export function getCardsFromStorage(): CollectionCard[] {
   return rawCards ? (JSON.parse(rawCards) as CollectionCard[]) : [];
 }
 
+function normalizeCardName(cardname: string) {
+  // Remove parenthetical suffixes like (Showcase)
+  let normalized = cardname.replace(/\s*\([^)]+\)\s*$/, "").trim();
+
+  // Remove anything after ' - ', e.g. 'Ardyn Izunia - Varragoth, Bloodsky Sire' -> 'Ardyn Izunia'
+  normalized = normalized.split(" - ")[0].trim();
+
+  // Remove prefixes like "Checklist Card - ", "Token - ", etc.
+  normalized = normalized.replace(
+    /^(Checklist Card|Token|Token Card|Emblem|Plane) - /i,
+    ""
+  );
+
+  // Remove quotation marks (") and trim
+  normalized = normalized.replace(/"/g, "").trim();
+
+  return normalized;
+}
+
 interface ScryfallDetails {
   previewUrl?: string;
   price: number;
@@ -24,16 +43,25 @@ const getScryfallCardDetails = async (
   cardName: string
 ): Promise<ScryfallDetails | undefined> => {
   try {
-    // This will remove anything in brackets at the end of the card name (e.g., "Card Name (Set)") and trim whitespace
-    const normalizedCardName = cardName.replace(/\s*\(.*\)\s*$/, "").trim();
-
+    // This will remove anything in brackets at the end of the card name ("Card Name (Set)")
+    // const normalizedCardName = cardName.replace(/\s*\(.*\)\s*$/, "").trim();
+    const normalizedCardName = normalizeCardName(cardName);
     const query = encodeURIComponent(normalizedCardName);
-    const response = await fetch(
+
+    // Exact match
+    let response = await fetch(
       `https://api.scryfall.com/cards/named?exact=${query}`
     );
-    if (!response.ok) return;
+    if (!response.ok) {
+      response = await fetch(
+        `https://api.scryfall.com/cards/search?q=${query}`
+      );
 
-    const data = await response.json();
+      if (!response.ok) return;
+    }
+
+    let data = await response.json();
+    data = Array.isArray(data.data) ? data.data[0] : data;
 
     const parseMana = (
       manaCostStr: string
@@ -63,10 +91,7 @@ const getScryfallCardDetails = async (
 };
 
 export function useCardParser() {
-  const [cards, setCards] = React.useState<Card[] | DeckCard[]>([]); // Used to track temporary cards
-  // const [collectionCards, setCollectionCards] = React.useState<
-  //   CollectionCard[]
-  // >([]); // Used to track owned cards
+  const [cards, setCards] = React.useState<Card[] | DeckCard[]>([]); // Track temp cards
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -83,7 +108,7 @@ export function useCardParser() {
 
     setLoading(true);
 
-    // Parse the CSV file of MTG cards
+    // Parse the CSV file of your MTG cards
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
@@ -93,7 +118,12 @@ export function useCardParser() {
           const cardsWithDetails = await Promise.all(
             rawCards.map(async (rawCard) => {
               const name = rawCard.Name?.trim();
-              if (!name || name.toLowerCase().includes("token")) return null;
+              if (
+                !name ||
+                name.toLowerCase().includes("token") ||
+                name.toLowerCase().includes("checklist")
+              )
+                return null;
 
               const scryfallDetails = await getScryfallCardDetails(name);
 

@@ -3,6 +3,7 @@ import type {
   CollectionCard,
   DeckCard,
 } from "../types/MagicTheGathering";
+import cardBackDefault from "../assets/cardBackDefault.jpg";
 
 interface Props {
   cards: Card[] | CollectionCard[] | DeckCard[];
@@ -32,18 +33,25 @@ export function CardsView({
             ) : (
               // To do: Find placeholder card or generate placeholder based on details.
               <div className="cardPlaceholder">
-                <p className="emphasis">{card.name}</p>
-                <p>{card.type}</p>
-                <p>
-                  {card.manaCost}
-                  {card.manaType}
-                </p>
+                <img
+                  src={cardBackDefault}
+                  alt={card.name}
+                  className="cardArt"
+                />
+                <span>
+                  <p className="emphasis">{card.name}</p>
+                  <p>{card.type}</p>
+                  <p>
+                    {card.manaCost}
+                    {card.manaType}
+                  </p>
+                </span>
               </div>
             )}
             {Array.isArray(cards) &&
               "quantityOwned" in cards[0] &&
               (card as CollectionCard | DeckCard).quantityOwned > 0 && (
-                <div className="quantity rounded-tr-[100%]">
+                <div className="quantity rounded-tr-[100%] rounded-bl-[10%]">
                   <p>x{(card as CollectionCard | DeckCard).quantityOwned}</p>
                 </div>
               )}

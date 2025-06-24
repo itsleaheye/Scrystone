@@ -24,11 +24,18 @@ export const DeckDetailView = ({
 }): React.JSX.Element => {
   const { cards, onDeckCardAdd } = useCardParser();
   const { getDeckTypeSummaryWithDefaults, onDeckSave } = useDeckParser();
+
+  const hasDeck = deck !== undefined;
+
   const [summary, setSummary] = useState<CardTypeSummary[]>([]);
-  const [editable, setEditable] = useState<Boolean>(deck == undefined);
-  const [nameInput, setNameInput] = useState("");
-  const [descriptionInput, setDescriptionInput] = useState("");
-  const [formatInput, setFormatInput] = useState("Commander");
+  const [editable, setEditable] = useState<Boolean>(!hasDeck);
+  const [nameInput, setNameInput] = useState(hasDeck ? deck.name : "");
+  const [descriptionInput, setDescriptionInput] = useState(
+    hasDeck ? deck.description : ""
+  );
+  const [formatInput, setFormatInput] = useState(
+    hasDeck ? deck.format : "Commander"
+  );
 
   useEffect(() => {
     const result = getDeckTypeSummaryWithDefaults(cards);
@@ -36,7 +43,7 @@ export const DeckDetailView = ({
   }, [cards]);
 
   const fields = {
-    name: <p className="bold">{deck?.name}</p>,
+    name: <p className="bold">{hasDeck ? deck.name : "Unnamed Deck"}</p>,
     playStyle: (
       <div className="playStyleTag">
         <p>{deck?.format}</p>
@@ -75,7 +82,7 @@ export const DeckDetailView = ({
 
   const statusIcon = (cards: DeckCard[] | Card[], deck?: Deck) => {
     const requiredSize = formatInput === "Commander" ? 100 : 60;
-    const currentSize = editable ? cards.length : deck?.cards.length || 0;
+    const currentSize = hasDeck ? cards.length : deck?.cards.length || 0;
     const isReady = deck && currentSize >= requiredSize;
 
     return (

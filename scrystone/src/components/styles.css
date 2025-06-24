@@ -321,19 +321,20 @@
 }
 
 .card {
-  background: var(--white);
+  background: var(--blackest);
   border-radius: var(--border-radius-lg);
   padding: 0.25rem 0.25rem 0 0.25rem;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.2), 0px -5px 5px rgba(0, 0, 0, 0.2);
 
   .quantity {
     width: 3.25rem;
     height: 3.25rem;
     position: absolute;
-    background-color: var(--white);
+    background-color: var(--blackest);
     margin-top: -55px;
 
     p {
-      color: var(--darker-gray);
+      color: var(--off-white);
       font-size: var(--font-size-base);
       font-weight: bolder;
       margin-top: 24px;
@@ -341,8 +342,20 @@
     }
   }
 
-  .cardArt {
+  .cardArt,
+  .cardPlaceholder {
     width: 100%;
-    border-radius: var(--border-radius-base);
+    border-radius: var(--border-radius-lg);
+  }
+
+  .cardPlaceholder {
+    span {
+      position: absolute;
+      height: 100px;
+      width: 200px;
+      p {
+        color: var(--white);
+      }
+    }
   }
 }
