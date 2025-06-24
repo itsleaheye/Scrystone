@@ -334,6 +334,7 @@
     display: flex;
     opacity: 1;
     transition: var(--ease-in);
+    position: relative;
   }
 
   &:hover {
@@ -342,7 +343,7 @@
     }
 
     .cardChip {
-      opacity: 1;
+      opacity: 1 !important;
       transition: var(--ease-in);
     }
   }
@@ -353,8 +354,10 @@
   height: 3.25rem;
   background-color: var(--blackest);
   margin-top: -55px;
+  position: absolute;
 
   &:hover {
+    opacity: 1 !important;
     cursor: pointer;
     color: var(--blue);
   }
@@ -369,6 +372,11 @@
   svg {
     padding-left: 15px;
   }
+}
+
+.cardChipRight {
+  right: 0;
+  bottom: 0;
 }
 
 .card {

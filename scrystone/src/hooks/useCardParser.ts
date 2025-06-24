@@ -16,7 +16,7 @@ function normalizeCardName(cardname: string) {
   // Remove parenthetical suffixes like (Showcase)
   let normalized = cardname.replace(/\s*\([^)]+\)\s*$/, "").trim();
 
-  // Remove anything after ' - ', e.g. 'Ardyn Izunia - Varragoth, Bloodsky Sire' -> 'Ardyn Izunia'
+  // Remove anything after ' - '
   normalized = normalized.split(" - ")[0].trim();
 
   // Remove prefixes like "Checklist Card - ", "Token - ", etc.
@@ -91,7 +91,7 @@ const getScryfallCardDetails = async (
 };
 
 export function useCardParser() {
-  const [cards, setCards] = React.useState<Card[] | DeckCard[]>([]); // Track temp cards
+  const [cards, setCards] = React.useState<DeckCard[]>([]); // Track temp cards
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -180,6 +180,11 @@ export function useCardParser() {
   };
 
   const onDeckCardAdd = async (cardName: string) => {
+    const ownedCards = getCardsFromStorage();
+    const ownedMatch = ownedCards.find(
+      (card) => card.name.trim().toLowerCase() === cardName.trim().toLowerCase()
+    );
+
     const scryfallDetails = await getScryfallCardDetails(cardName);
     const newCard = {
       imageUrl: scryfallDetails?.previewUrl,
@@ -187,7 +192,9 @@ export function useCardParser() {
       price: scryfallDetails?.price,
       type: scryfallDetails?.type,
       quantityNeeded: 1,
+      quantityOwned: ownedMatch?.quantityOwned,
     } as DeckCard;
+
     setCards((prevCards) => [...prevCards, newCard]);
   };
 

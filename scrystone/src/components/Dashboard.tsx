@@ -5,8 +5,8 @@ import { ArrowUpTrayIcon, WalletIcon } from "@heroicons/react/16/solid";
 import { TbCardsFilled } from "react-icons/tb";
 import { GiCash } from "react-icons/gi";
 import { DeckDetailView } from "./Decks/DeckDetailView.tsx";
-import { CardsView } from "./CardsView";
 import { DecksView } from "./Decks/DecksView.tsx";
+import { CardListView } from "./Cards/CardListView.tsx";
 
 export default function MTGCardUploader() {
   const cards = getCardsFromStorage();
@@ -67,7 +67,7 @@ export default function MTGCardUploader() {
       ) : (
         <div className="dataContainer">
           {currentView === "dashboard" && (
-            <CardsView cards={cards} showSearchAndFilters={true} />
+            <CardListView collectionCards={cards} />
           )}
           {currentView.startsWith("deckCreateEditView") &&
             (() => {

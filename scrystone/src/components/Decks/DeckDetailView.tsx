@@ -11,13 +11,13 @@ import type {
   DeckCard,
 } from "../../types/MagicTheGathering";
 import { DeckMana } from "./DeckView";
-import { CardsView } from "../CardsView";
 import { CardSearchBar } from "../CardSearchBar";
 import { GiCash } from "react-icons/gi";
 import { RiCheckboxCircleFill, RiErrorWarningFill } from "react-icons/ri";
 import { useCardParser } from "../../hooks/useCardParser";
 import { primaryButton, tertiaryButton } from "../PrimaryActions";
 import { FaArrowLeft, FaEdit, FaSave } from "react-icons/fa";
+import { CardListView } from "../Cards/CardListView";
 
 export const DeckDetailView = ({
   deckId,
@@ -27,8 +27,8 @@ export const DeckDetailView = ({
   setCurrentView: (view: string) => void;
 }): React.JSX.Element => {
   const { cards, onDeckCardAdd, setCards } = useCardParser();
-  const { getDeckTypeSummaryWithDefaults, onDeckSave } = useDeckParser();
 
+  const { getDeckTypeSummaryWithDefaults, onDeckSave } = useDeckParser();
   const [activeDeck, setActiveDeck] = useState<Deck | undefined>();
 
   useEffect(() => {
@@ -197,7 +197,13 @@ export const DeckDetailView = ({
         </div>
       </div>
       {editable && <CardSearchBar onDeckCardAdd={onDeckCardAdd} />}
-      <CardsView cards={cards} isDeckView={true} editable={editable} />
+
+      <CardListView
+        deckCards={cards}
+        editable={editable}
+        setCards={setCards}
+        isDeckView={true}
+      />
     </>
   );
 };
