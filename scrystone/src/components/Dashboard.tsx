@@ -1,39 +1,20 @@
-import React, { useEffect } from "react";
-import { useCardParser } from "../hooks/useCardParser";
+import React from "react";
+import { getCardsFromStorage, useCardParser } from "../hooks/useCardParser";
 import "./styles.css";
 import { ArrowUpTrayIcon, WalletIcon } from "@heroicons/react/16/solid";
 import { TbCardsFilled } from "react-icons/tb";
 import { GiCash } from "react-icons/gi";
-import { getDecksFromStorage, useDeckParser } from "../hooks/useDeckParser";
+import { getDecksFromStorage } from "../hooks/useDeckParser";
 import { DeckDetailView } from "./Decks/DeckDetailView.tsx";
 import { CardsView } from "./CardsView";
 import { DecksView } from "./Decks/DecksView.tsx";
 
 export default function MTGCardUploader() {
   const decks = getDecksFromStorage();
-  const {
-    collectionCards,
-    setCollectionCards,
-    loading,
-    error,
-    collection,
-    onCollectionUpload,
-  } = useCardParser();
+  const cards = getCardsFromStorage();
+  const { loading, error, collection, onCollectionUpload } = useCardParser();
 
   const [currentView, setCurrentView] = React.useState("dashboard");
-
-  useEffect(() => {
-    const stored = localStorage.getItem("mtg_cards");
-    if (stored) {
-      setCollectionCards(JSON.parse(stored));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (collectionCards.length) {
-      localStorage.setItem("mtg_cards", JSON.stringify(collectionCards));
-    }
-  }, [collectionCards]);
 
   return (
     <div className="container">
@@ -86,24 +67,26 @@ export default function MTGCardUploader() {
           <p className="text-center">Loading cards...</p>
         </div>
       ) : (
-        // To do: Add sort and filter options
         <div className="dataContainer">
-          {currentView === "dashboard" && <CardsView cards={collectionCards} />}
+          {currentView === "dashboard" && (
+            <CardsView cards={cards} showSearchAndFilters={true} />
+          )}
           {currentView.startsWith("deckCreateEditView") &&
             (() => {
               const match = currentView.match(/^deckCreateEditView=(.+)$/);
               if (match) {
                 const deckId = Number(match[1]);
-                const deck = decks.find((d) => d.id === deckId);
+                const matchingDeck = decks.find((d) => d.id === deckId);
 
-                if (deck) {
+                if (matchingDeck) {
                   return (
                     <DeckDetailView
                       setCurrentView={setCurrentView}
-                      deck={deck}
+                      deck={matchingDeck}
                     />
                   );
                 }
+
                 return <div>Deck not found.</div>;
               } else if (currentView === "deckCreateEditView") {
                 return <DeckDetailView setCurrentView={setCurrentView} />;

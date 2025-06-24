@@ -6,6 +6,12 @@ import type {
 } from "../types/MagicTheGathering";
 import Papa from "papaparse";
 
+export function getCardsFromStorage(): CollectionCard[] {
+  const rawCards = localStorage.getItem("mtg_cards");
+
+  return rawCards ? (JSON.parse(rawCards) as CollectionCard[]) : [];
+}
+
 interface ScryfallDetails {
   previewUrl?: string;
   price: number;
@@ -58,9 +64,9 @@ const getScryfallCardDetails = async (
 
 export function useCardParser() {
   const [cards, setCards] = React.useState<Card[] | DeckCard[]>([]); // Used to track temporary cards
-  const [collectionCards, setCollectionCards] = React.useState<
-    CollectionCard[]
-  >([]); // Used to track owned cards
+  // const [collectionCards, setCollectionCards] = React.useState<
+  //   CollectionCard[]
+  // >([]); // Used to track owned cards
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -130,7 +136,10 @@ export function useCardParser() {
             return acc;
           }, [] as CollectionCard[]);
 
-          setCollectionCards(combineCardQuantities);
+          localStorage.setItem(
+            "mtg_cards",
+            JSON.stringify(combineCardQuantities)
+          );
           setLoading(false);
         } catch {
           setLoading(false);
@@ -152,18 +161,16 @@ export function useCardParser() {
     setCards((prevCards) => [...prevCards, newCard]);
   };
 
-  // To do: Fetch summary of cards and filtering
+  const storedCards = getCardsFromStorage();
 
   return {
     cards,
     setCards,
-    collectionCards,
-    setCollectionCards,
     loading,
     error,
     collection: {
-      size: collectionCards.length,
-      value: collectionCards.reduce(
+      size: storedCards.length,
+      value: storedCards.reduce(
         (sum, card) => sum + (card.price ?? 0) * card.quantityOwned,
         0
       ),

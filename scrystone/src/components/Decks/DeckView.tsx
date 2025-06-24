@@ -1,4 +1,4 @@
-import { useCardParser } from "../../hooks/useCardParser";
+import { getCardsFromStorage } from "../../hooks/useCardParser";
 import type { Card, Deck } from "../../types/MagicTheGathering";
 import "../styles.css";
 
@@ -54,13 +54,12 @@ export function CardTypeDetailRow({
 }) {
   if (!type) return <></>;
 
-  // Match owned cards of type by name to the matching cards required in the deck
-  const { collectionCards: collectionCards } = useCardParser();
+  const cards = getCardsFromStorage();
   const ownedDeckCardsofType = allCardsofType.filter((cardOfType) =>
-    collectionCards.some(
-      (collectionCard) =>
-        collectionCard.type?.toLowerCase() === type &&
-        collectionCard.name.toLowerCase() === cardOfType.name.toLowerCase()
+    cards.some(
+      (card) =>
+        card.type?.toLowerCase() === type &&
+        card.name.toLowerCase() === cardOfType.name.toLowerCase()
     )
   ).length;
 

@@ -32,13 +32,13 @@ export function CardSearchBar({ onDeckCardAdd }: Props) {
 
   return (
     <div className="searchContainer">
-      <p className="bold"> Card Name</p>
+      <p className="bold">Add Card</p>
       <input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         className="searchBar"
-        placeholder="Search for card..."
+        placeholder="Search for card name..."
       />
       {suggestions.length > 0 ? (
         <ul className="searchResults">

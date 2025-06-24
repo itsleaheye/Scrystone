@@ -4,20 +4,26 @@ import type {
   DeckCard,
 } from "../types/MagicTheGathering";
 
+interface Props {
+  cards: Card[] | CollectionCard[] | DeckCard[];
+  showSearchAndFilters?: boolean;
+}
+
 export function CardsView({
   cards,
-}: {
-  cards?: Card[] | CollectionCard[] | DeckCard[];
-}): React.JSX.Element {
+  showSearchAndFilters = false,
+}: Props): React.JSX.Element {
   if (!cards || cards.length === 0) {
     return <></>;
   }
 
   return (
     <>
-      <div className="flexRow centred">
-        <p>Filters and sorting tbd...</p>
-      </div>
+      {showSearchAndFilters && (
+        <div className="flexRow centred">
+          <p>Filters and sorting tbd...</p>
+        </div>
+      )}
       <div className="grid">
         {cards.map((card, index) => (
           <div key={index} className="card">
