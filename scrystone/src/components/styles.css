@@ -231,7 +231,8 @@
   }
 
   .deckCol1 {
-    max-width: 350px;
+    max-width: 500px;
+    margin-right: var(--pad-xs);
   }
 
   p {

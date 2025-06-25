@@ -7,6 +7,7 @@ import {
 import type {
   Card,
   CardTypeSummary,
+  CollectionCard,
   Deck,
   DeckCard,
 } from "../../types/MagicTheGathering";
@@ -107,12 +108,14 @@ export const DeckDetailView = ({
     );
   }
 
-  const statusIcon = (cards: DeckCard[] | Card[], deck?: Deck) => {
+  const statusIcon = (cards: DeckCard[]) => {
     const requiredSize = formatInput === "Commander" ? 100 : 60;
-    const currentSize = activeDeck
-      ? activeDeck.cards.length
-      : cards.length || 0;
-    const isReady = deck && currentSize >= requiredSize;
+
+    const currentSize = cards.reduce(
+      (sum, card) => sum + (card.quantityNeeded || 0),
+      0
+    );
+    const isReady = currentSize >= requiredSize;
 
     return (
       <div className="iconItem">
@@ -192,11 +195,9 @@ export const DeckDetailView = ({
           <div className="iconItem">
             <GiCash />
             <p>Deck Cost</p>
-            <p className="subtext">
-              ${getDeckCost(activeDeck ? activeDeck.cards : cards)}
-            </p>
+            <p className="subtext">${getDeckCost(cards)}</p>
           </div>
-          {statusIcon(cards, activeDeck)}
+          {statusIcon(cards)}
         </div>
       </div>
       {editable && (
