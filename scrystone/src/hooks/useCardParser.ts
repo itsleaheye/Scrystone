@@ -12,7 +12,7 @@ export function getCardsFromStorage(): CollectionCard[] {
   return rawCards ? (JSON.parse(rawCards) as CollectionCard[]) : [];
 }
 
-function normalizeCardName(cardname: string) {
+export function normalizeCardName(cardname: string) {
   // Remove parenthetical suffixes like (Showcase)
   let normalized = cardname.replace(/\s*\([^)]+\)\s*$/, "").trim();
 

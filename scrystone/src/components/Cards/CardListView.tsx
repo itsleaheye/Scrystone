@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import type { CollectionCard, DeckCard } from "../../types/MagicTheGathering";
 import { FaMinus, FaPlus } from "react-icons/fa6";
-import { getCardsFromStorage } from "../../hooks/useCardParser";
+import {
+  getCardsFromStorage,
+  normalizeCardName,
+} from "../../hooks/useCardParser";
 
 interface CardListViewProps {
   collectionCards?: CollectionCard[];
@@ -10,23 +13,6 @@ interface CardListViewProps {
   isDeckView?: boolean;
   setCards?: React.Dispatch<React.SetStateAction<DeckCard[]>>;
 }
-
-// function isDeckCard(card: any): card is DeckCard {
-//   return (
-//     card &&
-//     typeof card.quantityOwned === "number" &&
-//     typeof card.quantityNeeded === "number"
-//   );
-// }
-
-function isCollectionCard(card: any): card is CollectionCard {
-  return (
-    card &&
-    typeof card.quantityOwned === "number" &&
-    !("quantityNeeded" in card)
-  );
-}
-
 export function CardListView({
   collectionCards,
   deckCards,
@@ -45,7 +31,7 @@ export function CardListView({
     (card) => {
       const ownedMatch = ownedCards.find(
         (owned) =>
-          owned.name.trim().toLowerCase() === card.name.trim().toLowerCase()
+          normalizeCardName(owned.name) === normalizeCardName(card.name)
       );
       const quantityOwned = ownedMatch?.quantityOwned ?? 0;
 
@@ -176,8 +162,6 @@ function CardFooter({
     } else {
       return <div className="cardQuantity">{quantityChip}</div>;
     }
-
-    return null;
   } else if (quantityOwned > 1) {
     return <>{quantityChip}</>;
   }

@@ -6,6 +6,7 @@ import type {
   CardTypeSummary,
   Card,
 } from "../types/MagicTheGathering";
+import { getCardsFromStorage } from "./useCardParser";
 
 const CARD_TYPES = ["Creature", "Enchantment", "Instant", "Land"];
 
@@ -108,11 +109,8 @@ export function useDeckParser() {
     return deck;
   };
 
-  const getDeckTypeSummary = (cards: DeckCard[] | Card[]) => {
-    const ownedCards: CollectionCard[] = JSON.parse(
-      localStorage.getItem("mtg_cards") || "[]"
-    );
-
+  const getDeckTypeSummary = (cards: DeckCard[]) => {
+    const ownedCards: CollectionCard[] = getCardsFromStorage();
     const ownedByName = new Map(
       ownedCards.map((card) => [normalizeName(card.name), card])
     );
@@ -126,19 +124,18 @@ export function useDeckParser() {
       if (!card.name || !card.type) return;
 
       const cardName = normalizeName(card.name);
-      const deckCard = deckCountByName.get(cardName);
 
       deckCountByName.set(cardName, {
         type: card.type,
-        quantityNeeded: (deckCard?.quantityNeeded ?? 0) + 1,
+        quantityNeeded: card?.quantityNeeded ?? 0,
       });
     });
 
     const quantityNeededByType = new Map<string, number>();
     const quantityOwnedByType = new Map<string, number>();
 
-    deckCountByName.forEach(({ type, quantityNeeded }, name) => {
-      const quantityOwned = ownedByName.get(name)?.quantityOwned ?? 0;
+    deckCountByName.forEach(({ type, quantityNeeded }, cardName) => {
+      const quantityOwned = ownedByName.get(cardName)?.quantityOwned ?? 0;
 
       quantityNeededByType.set(
         type,
@@ -162,9 +159,10 @@ export function useDeckParser() {
   };
 
   const getDeckTypeSummaryWithDefaults = (
-    cards: DeckCard[] | Card[]
+    cards: DeckCard[]
   ): CardTypeSummary[] => {
     const deckTypeSummary = getDeckTypeSummary(cards);
+
     const summaries = new Map(deckTypeSummary.map((item) => [item.type, item]));
 
     const mergedSummary = CARD_TYPES.map((type) => {
