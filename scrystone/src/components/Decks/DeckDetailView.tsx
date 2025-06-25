@@ -133,6 +133,7 @@ export const DeckDetailView = ({
         )}
         {editable
           ? primaryButton("Save", <FaSave />, () => {
+              console.log("HIT SAVE", cards);
               const savedDeck = onDeckSave(
                 cards,
                 nameInput,

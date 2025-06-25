@@ -60,7 +60,7 @@ export function useDeckParser() {
   };
 
   const onDeckSave = (
-    cards: Card[],
+    cards: DeckCard[],
     name: string,
     format: string,
     id?: number,
@@ -73,8 +73,8 @@ export function useDeckParser() {
 
     const deckCards: DeckCard[] = cards.map((card) => ({
       ...card,
-      quantityNeeded: 1, // to do
-      quantityOwned: 0,
+      quantityNeeded: card.quantityNeeded, // to do
+      quantityOwned: card.quantityOwned,
     }));
 
     const colours = ["B"]; // To do, fetch based on deckCards mana types
