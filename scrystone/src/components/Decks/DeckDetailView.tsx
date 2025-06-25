@@ -63,7 +63,9 @@ export const DeckDetailView = ({
 
   const fields = {
     name: (
-      <p className="bold">{activeDeck ? activeDeck.name : "Unnamed Deck"}</p>
+      <p className="bold deckName">
+        {activeDeck ? activeDeck.name : "Unnamed Deck"}
+      </p>
     ),
     playStyle: (
       <div className="playStyleTag">
@@ -151,7 +153,7 @@ export const DeckDetailView = ({
       </div>
       <div className="deckOverview flexRow">
         <div className="flexRow">
-          <div>
+          <div className="deckCol1">
             {activeDeck?.colours ? (
               <DeckMana colours={activeDeck.colours} />
             ) : (
@@ -197,7 +199,9 @@ export const DeckDetailView = ({
           {statusIcon(cards, activeDeck)}
         </div>
       </div>
-      {editable && <CardSearchBar onDeckCardAdd={onDeckCardAdd} />}
+      {editable && (
+        <CardSearchBar onDeckCardAdd={onDeckCardAdd} deckCards={cards} />
+      )}
 
       <CardListView
         deckCards={cards}

@@ -1,9 +1,5 @@
 import React from "react";
-import type {
-  Card,
-  CollectionCard,
-  DeckCard,
-} from "../types/MagicTheGathering";
+import type { CollectionCard, DeckCard } from "../types/MagicTheGathering";
 import Papa from "papaparse";
 
 export function getCardsFromStorage(): CollectionCard[] {

@@ -8,7 +8,7 @@ interface Props {
   setCurrentView: (view: string) => void;
 }
 
-export function DecksView({ setCurrentView }: Props) {
+export function DeckListView({ setCurrentView }: Props) {
   const decks = getDecksFromStorage();
 
   return (
@@ -22,9 +22,11 @@ export function DecksView({ setCurrentView }: Props) {
         )}
       </div>
 
-      {decks.map((deck, index) => (
-        <DeckView key={index} deck={deck} setCurrentView={setCurrentView} />
-      ))}
+      <div className="grid">
+        {decks.map((deck, index) => (
+          <DeckView key={index} deck={deck} setCurrentView={setCurrentView} />
+        ))}
+      </div>
     </>
   );
 }

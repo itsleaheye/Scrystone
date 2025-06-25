@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import type { CollectionCard, DeckCard } from "../../types/MagicTheGathering";
 import { FaMinus, FaPlus } from "react-icons/fa6";
 import {

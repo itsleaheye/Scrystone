@@ -22,15 +22,24 @@ export function DeckView({ deck, setCurrentView }: Props) {
     <div className="deck cursor-pointer" onClick={handleClick}>
       <div className="deckTop">
         <p className="emphasis">{deck.name}</p>
-        {deck.description && <p>{deck.description}</p>}
+        {deck.description && (
+          <p className="truncate w-40">{deck.description}</p>
+        )}
       </div>
-      {deck.colours && deck.colours.length > 0 && (
+      {/* {deck.colours && deck.colours.length > 0 && (
         <DeckMana colours={deck.colours} />
-      )}
+      )} */}
       <div className="deckCardSummary">
         <ul>
           {summary.map(({ type, quantityNeeded, quantityOwned }) => (
-            <li key={type}>
+            <li
+              key={type}
+              className={`${
+                quantityNeeded !== quantityOwned && quantityNeeded != 0
+                  ? "bold"
+                  : undefined
+              }`}
+            >
               {type} {quantityOwned}/{quantityNeeded}
             </li>
           ))}

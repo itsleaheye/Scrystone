@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
+import type { DeckCard } from "../types/MagicTheGathering";
+import { normalizeCardName } from "../hooks/useCardParser";
 
-interface Props {
+interface CardSearchBarProps {
   onDeckCardAdd: (cardName: string) => Promise<void>;
+  deckCards: DeckCard[];
 }
 
-export function CardSearchBar({ onDeckCardAdd }: Props) {
+export function CardSearchBar({
+  onDeckCardAdd,
+  deckCards,
+}: CardSearchBarProps) {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
+  const deckCardNames = new Set(
+    deckCards.map((c) => normalizeCardName(c.name))
+  );
 
   useEffect(() => {
     const controller = new AbortController();
@@ -16,7 +25,13 @@ export function CardSearchBar({ onDeckCardAdd }: Props) {
         signal: controller.signal,
       })
         .then((response) => response.json())
-        .then((data) => setSuggestions(data.data));
+        .then((data) => {
+          // Filter out cards already in the deck
+          const filtered = data.data.filter(
+            (name: string) => !deckCardNames.has(normalizeCardName(name))
+          );
+          setSuggestions(filtered);
+        });
     } else {
       setSuggestions([]);
     }

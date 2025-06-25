@@ -41,6 +41,25 @@
   padding: var(--pad-sm) var(--pad-sm) var(--pad-xs) var(--pad-sm);
 }
 
+.deckName {
+  font-size: var(--font-size-lg);
+  margin: 0 !important;
+}
+
+.playStyleTag {
+  padding: 5px var(--pad-xs);
+  border-radius: var(--border-radius-base);
+  background-color: var(--darker-gray);
+  font-weight: bold;
+  p {
+    letter-spacing: 1px;
+    font-size: var(--font-size-sm);
+    margin: 0 !important;
+    color: var(--white) !important;
+    text-transform: uppercase;
+  }
+}
+
 .uploadContainer {
   label {
     display: flex;
@@ -127,6 +146,7 @@
 
 .actionRow {
   justify-content: space-between;
+  margin-bottom: var(--pad-sm);
 
   a:hover {
     cursor: pointer;
@@ -187,7 +207,6 @@
 .deckCardSummary {
   border-left: 2px var(--off-white) solid;
   color: var(--black);
-  margin-left: var(--pad-xs);
 
   ul {
     list-style: none;
@@ -200,7 +219,6 @@
 }
 
 .deckOverview {
-  margin-top: var(--pad-sm);
   margin-bottom: var(--pad-sm);
   background-color: var(--white);
   border-radius: var(--border-radius-base);
@@ -212,8 +230,12 @@
     margin: var(--pad-xs) 0;
   }
 
+  .deckCol1 {
+    max-width: 350px;
+  }
+
   p {
-    color: var(--black);
+    color: var(--blackest);
   }
 
   input,
@@ -318,11 +340,46 @@
   gap: 1rem;
 }
 
+.deckGrid {
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+.flexEnd {
+  display: flex;
+  justify-content: space-between;
+}
 .deck {
   background: var(--white);
-  border-radius: var(--border-radius-lg);
-  padding: 0.25rem;
+  border-radius: 13px;
+  padding: var(--pad-xs);
+  text-align: center;
   color: var(--black);
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.2), 0px -5px 5px rgba(0, 0, 0, 0.2);
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.7;
+    transition: var(--ease-in);
+  }
+
+  .emphasis {
+    font-size: var(--font-size-lg);
+    margin-bottom: 0 !important;
+  }
+
+  .description {
+    max-height: 30px;
+  }
+
+  .deckCardSummary {
+    border: none;
+
+    ul {
+      padding-left: 0 !important;
+    }
+  }
 }
 
 .editableCard {
@@ -381,8 +438,8 @@
 
 .card {
   background: var(--blackest);
-  border-radius: var(--border-radius-lg);
-  padding: 0.25rem 0.25rem 0 0.25rem;
+  border-radius: 13px;
+  padding: 0.25rem 0.25rem 0.15rem 0.25rem;
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.2), 0px -5px 5px rgba(0, 0, 0, 0.2);
 
   .quantity {

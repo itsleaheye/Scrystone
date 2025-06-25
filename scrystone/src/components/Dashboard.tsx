@@ -5,7 +5,7 @@ import { ArrowUpTrayIcon, WalletIcon } from "@heroicons/react/16/solid";
 import { TbCardsFilled } from "react-icons/tb";
 import { GiCash } from "react-icons/gi";
 import { DeckDetailView } from "./Decks/DeckDetailView.tsx";
-import { DecksView } from "./Decks/DecksView.tsx";
+import { DeckListView } from "./Decks/DeckListView.tsx";
 import { CardListView } from "./Cards/CardListView.tsx";
 
 export default function MTGCardUploader() {
@@ -86,7 +86,7 @@ export default function MTGCardUploader() {
               }
             })()}
           {currentView === "deckCollection" && (
-            <DecksView setCurrentView={setCurrentView} />
+            <DeckListView setCurrentView={setCurrentView} />
           )}
         </div>
       )}
