@@ -2,86 +2,114 @@ import React from "react";
 import type { CollectionCard, DeckCard } from "../types/MagicTheGathering";
 import Papa from "papaparse";
 
+export function getMana(manaCostStr: string): {
+  cost?: number;
+  colour?: string;
+} {
+  // manaCostStr comes from scryfall as '2{B}' or '{2}{W}{W}'
+  const numberMatch = manaCostStr.match(/{(\d+)}/);
+  const letterMatch = manaCostStr.match(/{([WUBRG])}/);
+
+  return {
+    cost: numberMatch ? parseInt(numberMatch[1], 10) : undefined,
+    colour: letterMatch ? letterMatch[1] : undefined,
+  };
+}
+
 export function getCardsFromStorage(): CollectionCard[] {
   const rawCards = localStorage.getItem("mtg_cards");
 
   return rawCards ? (JSON.parse(rawCards) as CollectionCard[]) : [];
 }
 
-export function normalizeCardName(cardname: string) {
-  // Remove parenthetical suffixes like (Showcase)
-  let normalized = cardname.replace(/\s*\([^)]+\)\s*$/, "").trim();
+export function getCollectionSummary(cards?: CollectionCard[]): {
+  size: number;
+  value: number;
+} {
+  return (cards ?? []).reduce(
+    (acc, card) => {
+      const quantity = card.quantityOwned ?? 0;
+      const price = parseFloat(card.price?.toString() ?? "0");
 
-  // Remove anything after ' - '
-  normalized = normalized.split(" - ")[0].trim();
+      acc.size += quantity;
+      // If is a valid number
+      if (!isNaN(price)) {
+        acc.value += quantity * price;
+      }
 
-  // Remove prefixes like "Checklist Card - ", "Token - ", etc.
-  normalized = normalized.replace(
-    /^(Checklist Card|Token|Token Card|Emblem|Plane) - /i,
-    ""
+      return acc;
+    },
+    { size: 0, value: 0 }
   );
+}
 
-  // Remove quotation marks (") and trim
-  normalized = normalized.replace(/"/g, "").trim();
-
-  return normalized;
+export function normalizeName(name: string): string {
+  return name
+    .replace(/\s*\([^)]+\)/g, "") // Remove all '()' groups
+    .split(" - ")[0] // Use only the part before ' - s'
+    .split("//")[0] // Use only the part before '//'
+    .replace(/^(Checklist Card|Token|Token Card|Emblem|Plane)\s*-\s*/i, "") // Remove prefix
+    .replace(/"/g, "") // Remove quotation marks
+    .trim(); // Remove trailing white spaces
 }
 
 interface ScryfallDetails {
-  previewUrl?: string;
-  price: number;
   manaCost?: number;
   manaType?: string;
+  previewUrl?: string;
+  price: number;
   type: string;
 }
 
 const getScryfallCardDetails = async (
   cardName: string
 ): Promise<ScryfallDetails | undefined> => {
+  const query = encodeURIComponent(normalizeName(cardName));
+  const urls = [
+    `https://api.scryfall.com/cards/named?fuzzy=${query}`, //fuzzy search
+    `https://api.scryfall.com/cards/search?q=${query}`, // general search
+    `https://api.scryfall.com/cards/search?q=!${query}`, // exact search
+  ];
+
   try {
-    // This will remove anything in brackets at the end of the card name ("Card Name (Set)")
-    // const normalizedCardName = cardName.replace(/\s*\(.*\)\s*$/, "").trim();
-    const normalizedCardName = normalizeCardName(cardName);
-    const query = encodeURIComponent(normalizedCardName);
+    let data: any;
+    // Run through each query url and check for a match of scyfall card data
+    for (const url of urls) {
+      const response = await fetch(url);
+      if (!response.ok) continue;
 
-    // Exact match
-    let response = await fetch(
-      `https://api.scryfall.com/cards/named?exact=${query}`
-    );
-    if (!response.ok) {
-      response = await fetch(
-        `https://api.scryfall.com/cards/search?q=${query}`
-      );
+      data = await response.json();
 
-      if (!response.ok) return;
+      // If response returns an array, take the first card data and stop if valid
+      data = Array.isArray(data.data) ? data.data[0] : data;
+      if (data) break;
     }
 
-    let data = await response.json();
-    data = Array.isArray(data.data) ? data.data[0] : data;
+    // If no matching cards were ever found, log it
+    if (!data) {
+      console.warn(`Card details not found: ${cardName}`);
+      return;
+    }
 
-    const parseMana = (
-      manaCostStr: string
-    ): { cost?: number; colour?: string } => {
-      const numberMatch = manaCostStr.match(/{(\d+)}/);
-      const letterMatch = manaCostStr.match(/{([WUBRG])}/);
+    // Normalizes our returned data to a single card object
+    const card = Array.isArray(data.data) ? data.data[0] : data;
 
-      return {
-        cost: numberMatch ? parseInt(numberMatch[1], 10) : undefined,
-        colour: letterMatch ? letterMatch[1] : undefined,
-      };
-    };
-    const { cost, colour } = parseMana(data.mana_cost);
+    // Parse mana string
+    const { cost, colour } = card.mana_cost
+      ? getMana(card.mana_cost)
+      : { cost: undefined, colour: undefined };
 
     return {
       previewUrl:
-        data.image_uris?.normal || data.card_faces?.[0]?.image_uris?.normal,
-      price: data.prices.usd,
+        card.image_uris?.normal || card.card_faces?.[0]?.image_uris?.normal,
+      price: parseFloat(card.prices?.usd) || 0,
       manaCost: cost,
       manaType: colour,
-      type: data.type_line.split("—")[0].trim().split(" ")[0],
+      type: card.type_line?.split("—")[0]?.trim().split(" ")[0],
     };
   } catch (error) {
-    console.error(`Error fetching card preview for "${cardName}":`, error);
+    console.error(`Error fetching card details for "${cardName}":`, error);
+
     return;
   }
 };

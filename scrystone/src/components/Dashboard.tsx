@@ -1,5 +1,9 @@
 import React from "react";
-import { getCardsFromStorage, useCardParser } from "../hooks/useCardParser";
+import {
+  getCardsFromStorage,
+  getCollectionSummary,
+  useCardParser,
+} from "../hooks/useCardParser";
 import "./styles.css";
 import { ArrowUpTrayIcon, WalletIcon } from "@heroicons/react/16/solid";
 import { TbCardsFilled } from "react-icons/tb";
@@ -10,7 +14,8 @@ import { CardListView } from "./Cards/CardListView.tsx";
 
 export default function MTGCardUploader() {
   const cards = getCardsFromStorage();
-  const { loading, error, collection, onCollectionUpload } = useCardParser();
+  const collectionSummary = getCollectionSummary(cards);
+  const { loading, error, onCollectionUpload } = useCardParser();
 
   const [currentView, setCurrentView] = React.useState("dashboard");
 
@@ -25,11 +30,13 @@ export default function MTGCardUploader() {
           <div className="flexRow borderBottom">
             {iconItem(
               <GiCash />,
-              `Value: $${Math.round(collection.value)}`,
+              `Value: $${Math.round(collectionSummary.value)}`,
               () => setCurrentView("dashboard")
             )}
-            {iconItem(<TbCardsFilled />, `Cards: ${collection.size}`, () =>
-              setCurrentView("dashboard")
+            {iconItem(
+              <TbCardsFilled />,
+              `Cards: ${collectionSummary.size}`,
+              () => setCurrentView("dashboard")
             )}
             {iconItem(<WalletIcon />, `My Decks`, () =>
               setCurrentView("deckCollection")
