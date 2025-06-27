@@ -5,7 +5,6 @@ import {
   getDecksFromStorage,
 } from "../../hooks/useDeckParser";
 import type { Deck } from "../../types/MagicTheGathering";
-import { DeckMana } from "./DeckView";
 import { CardSearchBar } from "../CardSearchBar";
 import { GiCash } from "react-icons/gi";
 import { RiCheckboxCircleFill, RiErrorWarningFill } from "react-icons/ri";
@@ -17,6 +16,7 @@ import { IconItem } from "../shared/IconItem";
 import { useDeckFormState } from "../../hooks/useDeckFormState";
 import "../styles.css";
 import { DeckField } from "./DeckField";
+import { ManaRow } from "./ManaRow";
 
 export const DeckDetailView = ({
   deckId,
@@ -77,7 +77,8 @@ export const DeckDetailView = ({
     setEditable(false);
   };
 
-  console.log("Deck,", activeDeck);
+  console.log("activeDeck", activeDeck);
+  console.log("summary", summary);
 
   return (
     <>
@@ -97,17 +98,9 @@ export const DeckDetailView = ({
       <div className="deckOverview flexRow">
         <div className="flexRow">
           <div className="deckCol1">
-            {activeDeck?.colours ? (
-              <DeckMana colours={activeDeck.colours} />
-            ) : (
-              <div className="flexRow manaRow">
-                <span className="manaPlaceholder" />
-                <span className="manaPlaceholder" />
-                <span className="manaPlaceholder" />
-                <span className="manaPlaceholder" />
-                <span className="manaPlaceholder" />
-              </div>
-            )}
+            {
+              activeDeck?.colours && <ManaRow colours={activeDeck.colours} /> // To do: Fix this so it updates on card add and not just save
+            }
 
             <div className="flexRow">
               <DeckField

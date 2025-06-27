@@ -93,8 +93,25 @@
 .manaPlaceholder {
   width: 2rem;
   height: 2rem;
+  display: block;
   border-radius: 100%;
   background-color: var(--off-white);
+}
+.black {
+  background-color: var(--black);
+}
+.green {
+  background-color: var(--dark-green);
+}
+.white {
+  background-color: var(--white);
+  border: 2px solid var(--off-white);
+}
+.manaRow {
+  margin-bottom: var(--pad-xs);
+  display: flex;
+  flex-direction: row;
+  gap: var(--pad-xxs);
 }
 
 .searchBar {
@@ -226,10 +243,6 @@
   padding: var(--pad-sm);
   justify-content: space-between;
 
-  .manaRow {
-    margin: var(--pad-xs) 0;
-  }
-
   .deckCol1 {
     max-width: 500px;
     margin-right: var(--pad-xs);
@@ -248,6 +261,7 @@
     padding: var(--pad-xxs) var(--pad-xs);
     color: var(--black);
     margin-bottom: var(--pad-xs);
+    background-color: var(--white);
   }
 
   textarea {

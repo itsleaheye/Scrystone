@@ -2,6 +2,7 @@ import { useDeckParser } from "../../hooks/useDeckParser";
 import type { Card, Deck } from "../../types/MagicTheGathering";
 import "../styles.css";
 import { getCardsFromStorage } from "../utils/storage";
+import { ManaRow } from "./ManaRow";
 
 interface Props {
   deck: Deck;
@@ -26,9 +27,9 @@ export function DeckView({ deck, setCurrentView }: Props) {
           <p className="truncate w-40">{deck.description}</p>
         )}
       </div>
-      {/* {deck.colours && deck.colours.length > 0 && (
-        <DeckMana colours={deck.colours} />
-      )} */}
+      {deck.colours && deck.colours.length > 0 && (
+        <ManaRow colours={deck.colours} />
+      )}
       <div className="deckCardSummary">
         <ul>
           {summary.map(({ type, quantityNeeded, quantityOwned }) => (
@@ -82,17 +83,5 @@ export function CardTypeDetailRow({
 
   return (
     <div className="flexRow">{`${cardTypeLabel} ${ownedDeckCardsofType}/${allCardsofType.length}`}</div>
-  );
-}
-
-export function DeckMana({ colours }: { colours: string[] }) {
-  return (
-    <>
-      {colours.map((colour, index) => (
-        <span key={index} className={`manaSymbol ${colour.toLowerCase()}`}>
-          {colour}
-        </span>
-      ))}
-    </>
   );
 }

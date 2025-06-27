@@ -49,11 +49,40 @@ export function useCardParser() {
     );
 
     const scryfallCard = await getScryfallCard(cardName);
+    let type = scryfallCard?.type;
+    if (type == "Legendary") {
+      type = "Creature";
+    }
+    if (type == "Sorcery") {
+      type = "Enchantment";
+    }
+    if (type == "Artifact") {
+      type = "Instant";
+    }
+    // To do: fix this so special lands pick up
+    if (
+      ([
+        "Swamp",
+        "Plains",
+        "Mountain",
+        "Forest",
+        "Island",
+        "Reef",
+        "Cave",
+        "Grotto",
+        "Orchard",
+      ].includes(type ?? "") &&
+        type == "Instant") ||
+      type == "Basic"
+    ) {
+      type = "Land";
+    }
+
     const newCard: DeckCard = {
       imageUrl: scryfallCard?.previewUrl,
       name: cardName,
       price: scryfallCard?.price,
-      type: scryfallCard?.type,
+      type, //To do fix.
       quantityNeeded: 1,
       quantityOwned: ownedMatch?.quantityOwned ?? 0,
       manaCost: scryfallCard?.manaCost,
