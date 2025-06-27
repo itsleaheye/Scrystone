@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  getCardsFromStorage,
-  getCollectionSummary,
-  useCardParser,
-} from "../hooks/useCardParser";
+import { useCardParser } from "../hooks/useCardParser";
 import "./styles.css";
 import { ArrowUpTrayIcon, WalletIcon } from "@heroicons/react/16/solid";
 import { TbCardsFilled } from "react-icons/tb";
@@ -11,13 +7,16 @@ import { GiCash } from "react-icons/gi";
 import { DeckDetailView } from "./Decks/DeckDetailView.tsx";
 import { DeckListView } from "./Decks/DeckListView.tsx";
 import { CardListView } from "./Cards/CardListView.tsx";
+import { getCardsFromStorage } from "./utils/storage.ts";
+import { getCollectionSummary } from "./utils/summaries.ts";
+import { IconItem } from "./shared/IconItem.tsx";
 
-export default function MTGCardUploader() {
+export default function Dashboard() {
   const cards = getCardsFromStorage();
   const collectionSummary = getCollectionSummary(cards);
   const { loading, error, onCollectionUpload } = useCardParser();
 
-  const [currentView, setCurrentView] = React.useState("dashboard");
+  const [currentView, setCurrentView] = React.useState("dashboard"); // Didn't feel like setting up a router or EntryPoint
 
   return (
     <div className="container">
@@ -28,19 +27,21 @@ export default function MTGCardUploader() {
         </div>
         <div className="summaryContainer">
           <div className="flexRow borderBottom">
-            {iconItem(
-              <GiCash />,
-              `Value: $${Math.round(collectionSummary.value)}`,
-              () => setCurrentView("dashboard")
-            )}
-            {iconItem(
-              <TbCardsFilled />,
-              `Cards: ${collectionSummary.size}`,
-              () => setCurrentView("dashboard")
-            )}
-            {iconItem(<WalletIcon />, `My Decks`, () =>
-              setCurrentView("deckCollection")
-            )}
+            <IconItem
+              icon={<GiCash />}
+              text={`Value: $${Math.round(collectionSummary.value)}`}
+              onClick={() => setCurrentView("dashboard")}
+            />
+            <IconItem
+              icon={<TbCardsFilled />}
+              text={`Cards: ${collectionSummary.size}`}
+              onClick={() => setCurrentView("dashboard")}
+            />
+            <IconItem
+              icon={<WalletIcon />}
+              text={`My Decks`}
+              onClick={() => setCurrentView("deckCollection")}
+            />
           </div>
 
           <div className="uploadContainer">
@@ -101,15 +102,14 @@ export default function MTGCardUploader() {
   );
 }
 
-export function iconItem(
-  icon: React.ReactNode,
-  text: string,
-  onClick?: () => void
-): React.JSX.Element {
-  return (
-    <div className="flexCol iconItem" onClick={onClick}>
-      {icon}
-      <p>{text}</p>
-    </div>
-  );
+type View = "dashboard" | "deckCollection" | `deckCreateEditView=${string}`;
+
+function renderDeckDetailView(
+  currentView: View,
+  setCurrentView: React.Dispatch<React.SetStateAction<string>>
+) {
+  const match = currentView.match(/^deckCreateEditView=(.+)$/);
+  const deckId = match ? Number(match[1]) : undefined;
+
+  return <DeckDetailView setCurrentView={setCurrentView} deckId={deckId} />;
 }

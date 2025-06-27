@@ -257,30 +257,6 @@
     font-weight: 500;
     resize: none;
   }
-
-  .iconItem {
-    display: flex;
-    flex-direction: column;
-    color: var(--black);
-    text-align: center;
-
-    &:hover {
-      cursor: initial;
-      color: var(--black);
-
-      svg {
-        fill: var(--black);
-      }
-    }
-
-    p {
-      margin-bottom: -10px;
-    }
-
-    svg {
-      margin: 0 auto;
-    }
-  }
 }
 
 .iconItem {
@@ -317,7 +293,7 @@
 
 .borderBottom {
   border-bottom: 2px solid var(--dark-gray);
-  padding-bottom: var(--pad-xxs);
+  padding-bottom: var(--pad-sm);
   margin-bottom: var(--pad-xs);
 }
 

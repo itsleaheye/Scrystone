@@ -1,7 +1,7 @@
-import { getCardsFromStorage } from "../../hooks/useCardParser";
 import { useDeckParser } from "../../hooks/useDeckParser";
 import type { Card, Deck } from "../../types/MagicTheGathering";
 import "../styles.css";
+import { getCardsFromStorage } from "../utils/storage";
 
 interface Props {
   deck: Deck;

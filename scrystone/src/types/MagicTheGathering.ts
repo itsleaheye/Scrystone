@@ -1,7 +1,7 @@
 export interface Card {
   imageUrl?: string;
   manaCost?: number;
-  manaType?: string;
+  manaTypes?: string[];
   name: string;
   number?: string;
   price?: number;

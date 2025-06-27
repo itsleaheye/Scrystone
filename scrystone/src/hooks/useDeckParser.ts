@@ -6,7 +6,8 @@ import type {
   CardTypeSummary,
   Card,
 } from "../types/MagicTheGathering";
-import { getCardsFromStorage } from "./useCardParser";
+import { getCardsFromStorage } from "../components/utils/storage";
+import { getDeckManaSummary } from "../components/utils/decks";
 
 const CARD_TYPES = ["Creature", "Enchantment", "Instant", "Land"];
 
@@ -73,18 +74,18 @@ export function useDeckParser() {
 
     const deckCards: DeckCard[] = cards.map((card) => ({
       ...card,
-      quantityNeeded: card.quantityNeeded, // to do
+      quantityNeeded: card.quantityNeeded,
       quantityOwned: card.quantityOwned,
     }));
 
-    const colours = ["B"]; // To do, fetch based on deckCards mana types
+    const colours = getDeckManaSummary(deckCards);
 
     const deck: Deck = {
       id: id ?? generateUniqueDeckId(),
       name: name ?? "Unnamed Deck",
       description,
       format: format == "Commander" ? "Commander" : "Standard",
-      colours,
+      colours: colours,
       cards: deckCards,
       size: cards.length,
       price: deckCost(cards) ?? 0,

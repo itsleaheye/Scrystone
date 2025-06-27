@@ -1,16 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   useDeckParser,
   getDeckCost,
   getDecksFromStorage,
 } from "../../hooks/useDeckParser";
-import type {
-  Card,
-  CardTypeSummary,
-  CollectionCard,
-  Deck,
-  DeckCard,
-} from "../../types/MagicTheGathering";
+import type { Deck } from "../../types/MagicTheGathering";
 import { DeckMana } from "./DeckView";
 import { CardSearchBar } from "../CardSearchBar";
 import { GiCash } from "react-icons/gi";
@@ -19,6 +13,10 @@ import { useCardParser } from "../../hooks/useCardParser";
 import { primaryButton, tertiaryButton } from "../PrimaryActions";
 import { FaArrowLeft, FaEdit, FaSave } from "react-icons/fa";
 import { CardListView } from "../Cards/CardListView";
+import { IconItem } from "../shared/IconItem";
+import { useDeckFormState } from "../../hooks/useDeckFormState";
+import "../styles.css";
+import { DeckField } from "./DeckField";
 
 export const DeckDetailView = ({
   deckId,
@@ -28,108 +26,62 @@ export const DeckDetailView = ({
   setCurrentView: (view: string) => void;
 }): React.JSX.Element => {
   const { cards, onDeckCardAdd, setCards } = useCardParser();
-
   const { getDeckTypeSummaryWithDefaults, onDeckSave } = useDeckParser();
   const [activeDeck, setActiveDeck] = useState<Deck | undefined>();
+
+  const [editable, setEditable] = useState<boolean>(deckId === undefined);
 
   useEffect(() => {
     if (deckId !== undefined) {
       const foundDeck = getDecksFromStorage(deckId)[0];
       setActiveDeck(foundDeck);
+
       if (foundDeck) {
         setCards(foundDeck.cards);
-        setNameInput(foundDeck.name);
-        setDescriptionInput(foundDeck.description);
-        setFormatInput(foundDeck.format);
       }
     }
   }, [deckId]);
 
-  const [summary, setSummary] = useState<CardTypeSummary[]>([]);
-  const [editable, setEditable] = useState<boolean>(deckId === undefined);
-  const [nameInput, setNameInput] = useState(activeDeck ? activeDeck.name : "");
-  const [descriptionInput, setDescriptionInput] = useState(
-    activeDeck ? activeDeck.description : ""
+  const { name, setName, description, setDescription, format, setFormat } =
+    useDeckFormState(activeDeck);
+
+  // For sake of performance, memoize the deck sizes
+  const requiredDeckSize = useMemo(
+    () => (format === "Commander" ? 100 : 60),
+    [format]
   );
-  const [formatInput, setFormatInput] = useState(
-    activeDeck ? activeDeck.format : "Commander"
+  const currentDeckSize = useMemo(
+    () => cards.reduce((sum, card) => sum + (card.quantityNeeded || 0), 0),
+    [cards]
+  );
+  const isDeckReady = currentDeckSize >= requiredDeckSize;
+
+  // For sake of performance, memoize the summary
+  const summary = useMemo(
+    () =>
+      getDeckTypeSummaryWithDefaults(
+        editable ? cards : activeDeck?.cards || []
+      ),
+    [cards, editable, activeDeck]
   );
 
-  useEffect(() => {
-    const result = getDeckTypeSummaryWithDefaults(
-      editable ? cards : activeDeck?.cards || []
+  const handleSave = () => {
+    const savedDeck = onDeckSave(
+      cards,
+      name,
+      format,
+      activeDeck?.id,
+      description
     );
-    setSummary(result);
-  }, [cards, editable, activeDeck]);
-
-  const fields = {
-    name: (
-      <p className="bold deckName">
-        {activeDeck ? activeDeck.name : "Unnamed Deck"}
-      </p>
-    ),
-    playStyle: (
-      <div className="playStyleTag">
-        <p>{activeDeck?.format}</p>
-      </div>
-    ),
-    description: <p>{activeDeck?.description}</p>,
+    setActiveDeck(savedDeck);
+    setEditable(false);
   };
 
-  if (editable) {
-    fields.name = (
-      <input
-        type="text"
-        value={nameInput}
-        placeholder="Deck name..."
-        onChange={(e) => setNameInput(e.target.value)}
-      />
-    );
-    fields.playStyle = (
-      <select
-        value={formatInput}
-        onChange={(e) =>
-          setFormatInput(
-            e.target.value == "Commander" ? "Commander" : "Standard"
-          )
-        }
-      >
-        <option value="Commander">Commander</option>
-        <option value="Standard">Standard</option>
-      </select>
-    );
-    fields.description = (
-      <textarea
-        placeholder="Deck description..."
-        value={descriptionInput}
-        onChange={(e) => setDescriptionInput(e.target.value)}
-        rows={3}
-      />
-    );
-  }
-
-  const statusIcon = (cards: DeckCard[]) => {
-    const requiredSize = formatInput === "Commander" ? 100 : 60;
-
-    const currentSize = cards.reduce(
-      (sum, card) => sum + (card.quantityNeeded || 0),
-      0
-    );
-    const isReady = currentSize >= requiredSize;
-
-    return (
-      <div className="iconItem">
-        {isReady ? <RiCheckboxCircleFill /> : <RiErrorWarningFill />}
-        <p>{isReady ? "Deck is ready" : "Deck not ready"}</p>
-        <p className="subtext">
-          {currentSize}/{requiredSize} Cards
-        </p>
-      </div>
-    );
-  };
+  console.log("Deck,", activeDeck);
 
   return (
     <>
+      {/* Primary actions row */}
       <div className="actionRow flexRow">
         {tertiaryButton(
           editable ? "Cancel and go back" : "Go back",
@@ -137,23 +89,11 @@ export const DeckDetailView = ({
           () => setCurrentView("deckCollection")
         )}
         {editable
-          ? primaryButton("Save", <FaSave />, () => {
-              console.log("HIT SAVE", cards);
-              const savedDeck = onDeckSave(
-                cards,
-                nameInput,
-                formatInput,
-                activeDeck?.id,
-                descriptionInput
-              );
-
-              setActiveDeck(savedDeck);
-              setEditable(false);
-            })
-          : primaryButton("Edit", <FaEdit />, () => {
-              setEditable(true);
-            })}
+          ? primaryButton("Save", <FaSave />, handleSave)
+          : primaryButton("Edit", <FaEdit />, () => setEditable(true))}
       </div>
+
+      {/* Deck overview */}
       <div className="deckOverview flexRow">
         <div className="flexRow">
           <div className="deckCol1">
@@ -168,22 +108,50 @@ export const DeckDetailView = ({
                 <span className="manaPlaceholder" />
               </div>
             )}
+
             <div className="flexRow">
-              {fields.name}
-              {fields.playStyle}
+              <DeckField
+                customRender={<p className="bold deckName">{name}</p>}
+                editable={editable}
+                onChange={setName}
+                placeholder="Deck name..."
+                value={name}
+              />
+              <DeckField
+                customRender={
+                  <div className="playStyleTag">
+                    <p>{format}</p>
+                  </div>
+                }
+                editable={editable}
+                onChange={(value) =>
+                  setFormat(value === "Commander" ? "Commander" : "Standard")
+                }
+                placeholder=""
+                type="select"
+                value={format}
+              />
             </div>
-            {fields.description}
+            <DeckField
+              editable={editable}
+              onChange={setDescription}
+              placeholder="Deck description..."
+              type="textarea"
+              value={description}
+            />
           </div>
+
+          {/* Overview col 2  */}
           <div className="deckCardSummary">
             <ul>
               {summary.map(({ type, quantityNeeded, quantityOwned }) => (
                 <li
                   key={type}
-                  className={`${
-                    quantityNeeded !== quantityOwned && quantityNeeded != 0
+                  className={
+                    quantityNeeded !== quantityOwned && quantityNeeded !== 0
                       ? "bold"
                       : undefined
-                  }`}
+                  }
                 >
                   {type} {quantityOwned}/{quantityNeeded}
                 </li>
@@ -191,24 +159,45 @@ export const DeckDetailView = ({
             </ul>
           </div>
         </div>
+
+        {/* Overview col 3 */}
         <div className="deckBreakdown flexRow">
-          <div className="iconItem">
-            <GiCash />
-            <p>Deck Cost</p>
-            <p className="subtext">${getDeckCost(cards)}</p>
-          </div>
-          {statusIcon(cards)}
+          <IconItem
+            icon={<GiCash />}
+            text={
+              <>
+                <p>Deck Cost</p>
+                <p className="subtext">${getDeckCost(cards)}</p>
+              </>
+            }
+          />
+          <IconItem
+            icon={
+              isDeckReady ? <RiCheckboxCircleFill /> : <RiErrorWarningFill />
+            }
+            text={
+              <>
+                <p>{isDeckReady ? "Deck is ready" : "Deck not ready"}</p>
+                <p className="subtext">
+                  {currentDeckSize}/{requiredDeckSize} Cards
+                </p>
+              </>
+            }
+          />
         </div>
       </div>
+
+      {/* Only show search bar in an edit state */}
       {editable && (
         <CardSearchBar onDeckCardAdd={onDeckCardAdd} deckCards={cards} />
       )}
 
+      {/* Card gallery view */}
       <CardListView
         deckCards={cards}
         editable={editable}
-        setCards={setCards}
         isDeckView={true}
+        setCards={setCards}
       />
     </>
   );

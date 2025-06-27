@@ -1,0 +1,45 @@
+.iconItem {
+  padding: 0 var(--pad-xs);
+  font-weight: 600;
+  color: var(--black);
+  text-align: center;
+
+  &:hover {
+    cursor: initial;
+    svg {
+      fill: var(--black);
+    }
+  }
+
+  p {
+    margin-bottom: 0;
+  }
+
+  .subtext {
+    margin-top: var(--pad-xxs);
+  }
+
+  svg {
+    width: 3rem;
+    height: 3rem;
+  }
+}
+
+.iconItemHover {
+  color: var(--white);
+
+  svg {
+    margin: var(--pad-xs);
+  }
+
+  &:hover {
+    cursor: pointer;
+    color: var(--green);
+    transition: var(--ease-in);
+
+    svg {
+      fill: var(--green);
+      transition: var(--ease-in);
+    }
+  }
+}

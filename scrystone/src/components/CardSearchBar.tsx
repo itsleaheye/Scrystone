@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { DeckCard } from "../types/MagicTheGathering";
-import { normalizeCardName } from "../hooks/useCardParser";
+import { normalizeCardName } from "./utils/normalize";
 
 interface CardSearchBarProps {
   onDeckCardAdd: (cardName: string) => Promise<void>;

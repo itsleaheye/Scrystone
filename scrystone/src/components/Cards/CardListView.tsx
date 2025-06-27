@@ -1,9 +1,8 @@
 import type { CollectionCard, DeckCard } from "../../types/MagicTheGathering";
-import { FaMinus, FaPlus } from "react-icons/fa6";
-import {
-  getCardsFromStorage,
-  normalizeCardName,
-} from "../../hooks/useCardParser";
+import { getCardsFromStorage } from "../utils/storage";
+import { normalizeCardName } from "../utils/normalize";
+import { CardView } from "./CardView";
+import { mergeCardQuanties } from "../utils/cards";
 
 interface CardListViewProps {
   collectionCards?: CollectionCard[];
@@ -26,39 +25,31 @@ export function CardListView({
   if (!hasCards) return <></>;
 
   const ownedCards = getCardsFromStorage();
-  const cardsWithQuantities = (deckCards ?? collectionCards ?? []).map(
-    (card) => {
-      const ownedMatch = ownedCards.find(
-        (owned) =>
-          normalizeCardName(owned.name) === normalizeCardName(card.name)
-      );
-      const quantityOwned = ownedMatch?.quantityOwned ?? 0;
-
-      return isDeckView
-        ? { ...card, quantityOwned }
-        : { ...card, quantityNeeded: 0, quantityOwned };
-    }
+  const sourceCards = deckCards ?? collectionCards ?? [];
+  const cardsWithQuantities = mergeCardQuanties(
+    sourceCards,
+    ownedCards,
+    isDeckView
   );
 
   function onChangeQuantity(cardName: string, amount: number) {
     if (!setCards) return;
 
-    setCards((prevCards) => {
-      const updated = prevCards
-        .map((card) => {
-          if (
-            card.name.trim().toLowerCase() === cardName.trim().toLowerCase()
-          ) {
-            const newQuantityNeeded = (card.quantityNeeded ?? 0) + amount;
-            if (newQuantityNeeded <= 0) return null;
-            return { ...card, quantityNeeded: newQuantityNeeded };
-          }
-          return card;
-        })
-        .filter((card): card is DeckCard => card !== null);
-
-      return updated;
-    });
+    setCards((prevCards) =>
+      prevCards
+        .map((card) =>
+          normalizeCardName(card.name) === normalizeCardName(cardName)
+            ? {
+                ...card,
+                quantityNeeded: Math.max(
+                  0,
+                  (card.quantityNeeded ?? 0) + amount
+                ),
+              }
+            : card
+        )
+        .filter((card): card is DeckCard => (card.quantityNeeded ?? 1) > 0)
+    );
   }
 
   return (
@@ -71,97 +62,16 @@ export function CardListView({
       <div className="grid">
         {cardsWithQuantities.map((card, index) => {
           return (
-            <div
+            <CardView
               key={index}
-              className={`${editable ? "editableCard card" : "card"}`}
-            >
-              {card.imageUrl && (
-                <img
-                  src={card.imageUrl}
-                  alt={card.name}
-                  className={`cardArt ${
-                    isDeckView &&
-                    card.quantityOwned <
-                      ("quantityNeeded" in card ? card.quantityNeeded : 0)
-                      ? "opacity-50"
-                      : undefined
-                  }`}
-                />
-              )}
-              <CardFooter
-                cardName={card.name}
-                quantityOwned={card.quantityOwned}
-                quantityNeeded={
-                  "quantityNeeded" in card ? card.quantityNeeded : 0
-                }
-                editable={editable}
-                isDeckView={isDeckView}
-                onChangeQuantity={onChangeQuantity}
-              />
-            </div>
+              card={card}
+              editable={editable}
+              onChangeQuantity={onChangeQuantity}
+              isDeckView={isDeckView}
+            />
           );
         })}
       </div>
     </>
   );
-}
-
-interface CardFooterProps {
-  cardName: string;
-  quantityOwned: number;
-  quantityNeeded: number;
-  editable: boolean;
-  isDeckView: boolean;
-  onChangeQuantity: (cardName: string, amount: number) => void;
-}
-
-function CardFooter({
-  cardName,
-  quantityOwned,
-  quantityNeeded,
-  editable,
-  isDeckView,
-  onChangeQuantity,
-}: CardFooterProps) {
-  const quantityChip = (
-    <div className="quantity rounded-tr-[100%] rounded-bl-[10%]">
-      <p>
-        {isDeckView
-          ? `${quantityOwned}/${quantityNeeded}`
-          : `x${quantityOwned}`}
-      </p>
-    </div>
-  );
-
-  if (isDeckView) {
-    const cardChipButton = (icon: React.ReactNode, amount: number) => (
-      <div
-        className={`cardChip ${
-          amount === -1
-            ? "cardChipLeft rounded-tr-[100%] rounded-bl-[20%]"
-            : "cardChipRight rounded-tl-[100%] rounded-br-[20%]"
-        }`}
-      >
-        <div onClick={() => onChangeQuantity(cardName, amount)}>
-          <p>{icon}</p>
-        </div>
-      </div>
-    );
-
-    if (editable) {
-      return (
-        <div className="cardFooterGroup">
-          <div className="cardFooter">
-            {cardChipButton(<FaMinus />, -1)}
-            {cardChipButton(<FaPlus />, 1)}
-          </div>
-          <div className="cardQuantity">{quantityChip}</div>
-        </div>
-      );
-    } else {
-      return <div className="cardQuantity">{quantityChip}</div>;
-    }
-  } else if (quantityOwned > 1) {
-    return <>{quantityChip}</>;
-  }
 }
