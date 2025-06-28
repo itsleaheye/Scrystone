@@ -8,15 +8,13 @@ import { DeckDetailView } from "./Decks/DeckDetailView.tsx";
 import { DeckListView } from "./Decks/DeckListView.tsx";
 import { CardListView } from "./Cards/CardListView.tsx";
 import { getCardsFromStorage } from "./utils/storage.ts";
-import { getCollectionSummary } from "./utils/summaries.ts";
 import { IconItem } from "./shared/IconItem.tsx";
 
 export default function Dashboard() {
   const cards = getCardsFromStorage();
-  const collectionSummary = getCollectionSummary(cards);
-  const { loading, error, onCollectionUpload } = useCardParser();
+  const { loading, error, onCollectionUpload, collection } = useCardParser();
 
-  const [currentView, setCurrentView] = React.useState("dashboard"); // Didn't feel like setting up a router or EntryPoint
+  const [currentView, setCurrentView] = React.useState("dashboard"); // Didn't feel like setting up a router or EntryPoint. Shame Leah
 
   return (
     <div className="container">
@@ -29,12 +27,12 @@ export default function Dashboard() {
           <div className="flexRow borderBottom">
             <IconItem
               icon={<GiCash />}
-              text={`Value: $${Math.round(collectionSummary.value)}`}
+              text={`Value: $${Math.round(collection.value)}`}
               onClick={() => setCurrentView("dashboard")}
             />
             <IconItem
               icon={<TbCardsFilled />}
-              text={`Cards: ${collectionSummary.size}`}
+              text={`Cards: ${collection.size}`}
               onClick={() => setCurrentView("dashboard")}
             />
             <IconItem
@@ -56,7 +54,7 @@ export default function Dashboard() {
               <ArrowUpTrayIcon className="uploadIcon" />
               Sync Cards
             </label>
-            <p className="subtext">Last synced on MM DD, YYYY</p>
+            <p className="subtext">Last synced on {collection.updatedAt}</p>
           </div>
         </div>
       </div>

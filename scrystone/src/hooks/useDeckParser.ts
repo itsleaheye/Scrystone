@@ -4,10 +4,9 @@ import type {
   Deck,
   DeckCard,
   CardTypeSummary,
-  Card,
 } from "../types/MagicTheGathering";
 import { getCardsFromStorage } from "../components/utils/storage";
-import { getDeckManaSummary } from "../components/utils/decks";
+import { getDeckCost, getDeckManaSummary } from "../components/utils/decks";
 
 const CARD_TYPES = ["Creature", "Enchantment", "Instant", "Land"];
 
@@ -19,28 +18,6 @@ const generateUniqueDeckId = (): number => {
   return Number(`${Date.now()}${Math.floor(Math.random() * 1000)}`);
 };
 
-export const getDeckCost = (cards: Card[] | DeckCard[]) => {
-  const sumOfCards = cards.reduce(
-    (sum, card) =>
-      sum +
-      (typeof card.price === "number" ? card.price : Number(card.price) || 0),
-    0
-  );
-
-  return sumOfCards.toFixed(2);
-};
-
-export function getDecksFromStorage(deckId?: number): Deck[] {
-  const rawDecks = localStorage.getItem("mtg_decks");
-  const allDecks = rawDecks ? (JSON.parse(rawDecks) as Deck[]) : [];
-
-  if (deckId === undefined) {
-    return allDecks;
-  } else {
-    return allDecks.filter((d) => d.id == deckId);
-  }
-}
-
 export function useDeckParser() {
   const [decks, setDecks] = React.useState<Deck[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
@@ -49,15 +26,6 @@ export function useDeckParser() {
   const handleError = (message: string) => {
     setLoading(false);
     setError(message);
-  };
-
-  const deckCost = (cards: Card[]) => {
-    cards.reduce(
-      (sum, card) =>
-        sum +
-        (typeof card.price === "number" ? card.price : Number(card.price) || 0),
-      0
-    );
   };
 
   const onDeckSave = (
@@ -79,6 +47,7 @@ export function useDeckParser() {
     }));
 
     const colours = getDeckManaSummary(deckCards);
+    const deckPrice = getDeckCost(cards);
 
     const deck: Deck = {
       id: id ?? generateUniqueDeckId(),
@@ -88,7 +57,7 @@ export function useDeckParser() {
       colours: colours,
       cards: deckCards,
       size: cards.length,
-      price: deckCost(cards) ?? 0,
+      price: deckPrice,
     };
 
     const updatedDecks = (() => {
@@ -187,7 +156,6 @@ export function useDeckParser() {
     loading,
     error,
     onDeckSave,
-    deckCost,
     getDeckTypeSummary,
     getDeckTypeSummaryWithDefaults,
   };

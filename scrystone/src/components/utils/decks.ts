@@ -1,4 +1,4 @@
-import type { DeckCard } from "../../types/MagicTheGathering";
+import type { Card, DeckCard } from "../../types/MagicTheGathering";
 
 export function getDeckManaSummary(cards: DeckCard[]) {
   const allSymbols: string[] = [];
@@ -16,3 +16,14 @@ export function getDeckManaSummary(cards: DeckCard[]) {
 
   return Array.from(new Set(allSymbols)).sort();
 }
+
+export const getDeckCost = (cards: Card[] | DeckCard[]) => {
+  return (
+    cards.reduce(
+      (sum, card) =>
+        sum +
+        (typeof card.price === "number" ? card.price : Number(card.price) || 0),
+      0
+    ) ?? 0
+  );
+};

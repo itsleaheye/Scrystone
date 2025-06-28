@@ -2,7 +2,7 @@ import type { CollectionCard, DeckCard } from "../../types/MagicTheGathering";
 import { getCardsFromStorage } from "../utils/storage";
 import { normalizeCardName } from "../utils/normalize";
 import { CardView } from "./CardView";
-import { mergeCardQuanties } from "../utils/cards";
+import { mergeCardQuantities } from "../utils/cards";
 
 interface CardListViewProps {
   collectionCards?: CollectionCard[];
@@ -26,7 +26,7 @@ export function CardListView({
 
   const ownedCards = getCardsFromStorage();
   const sourceCards = deckCards ?? collectionCards ?? [];
-  const cardsWithQuantities = mergeCardQuanties(
+  const cardsWithQuantities = mergeCardQuantities(
     sourceCards,
     ownedCards,
     isDeckView

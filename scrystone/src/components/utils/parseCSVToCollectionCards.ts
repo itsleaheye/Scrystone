@@ -1,4 +1,5 @@
 import type { CollectionCard } from "../../types/MagicTheGathering";
+import { normalizeCardName } from "./normalize";
 import { getScryfallCard } from "./scryfall";
 
 export async function parseCSVToCollectionCards(
@@ -39,12 +40,14 @@ export async function parseCSVToCollectionCards(
   // Combine cards with duplicate names
   return (cards.filter(Boolean) as CollectionCard[]).reduce((acc, card) => {
     const existingCard = acc.find(
-      (c) => c.name.toLowerCase() === card.name.toLowerCase()
+      (c) => normalizeCardName(c.name) === normalizeCardName(card.name)
     );
 
     // Combine quantities
     if (existingCard) {
-      existingCard.quantityOwned += Number(card.quantityOwned) || 1;
+      console.log("Existing Card", existingCard);
+      existingCard.quantityOwned =
+        Number(card.quantityOwned) + Number(existingCard.quantityOwned);
     } else {
       acc.push({ ...card });
     }

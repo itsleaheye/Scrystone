@@ -6,7 +6,7 @@ export function getCollectionSummary(cards?: CollectionCard[]): {
 } {
   return (cards ?? []).reduce(
     (acc, card) => {
-      const quantity = card.quantityOwned ?? 0;
+      const quantity = Number(card.quantityOwned) ?? 0;
       const price = parseFloat(card.price?.toString() ?? "0");
 
       acc.size += quantity;

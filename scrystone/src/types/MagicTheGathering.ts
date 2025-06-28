@@ -8,7 +8,7 @@ export interface Card {
   rarity?: string;
   set?: string;
   type?: string;
-  isFoil?: boolean;
+  isFoil?: boolean; // To do: Might remove this
 }
 
 export interface CollectionCard extends Card {

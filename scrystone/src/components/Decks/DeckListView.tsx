@@ -2,7 +2,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { primaryButton, tertiaryButton } from "../PrimaryActions";
 import { FaPlus } from "react-icons/fa6";
 import { DeckView } from "./DeckView";
-import { getDecksFromStorage } from "../../hooks/useDeckParser";
+import { getDecksFromStorage } from "../utils/storage";
 
 interface Props {
   setCurrentView: (view: string) => void;

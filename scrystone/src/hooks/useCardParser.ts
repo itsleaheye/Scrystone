@@ -5,6 +5,8 @@ import { getScryfallCard } from "../components/utils/scryfall";
 import { normalizeCardName } from "../components/utils/normalize";
 import { parseCSVToCollectionCards } from "../components/utils/parseCSVToCollectionCards";
 import { getCardsFromStorage } from "../components/utils/storage";
+import { getCollectionSummary } from "../components/utils/summaries";
+import { format } from "date-fns";
 
 export function useCardParser() {
   const [cards, setCards] = React.useState<DeckCard[]>([]); // Track temporary cards to display that haven't been comitted to storage
@@ -30,8 +32,8 @@ export function useCardParser() {
             const parsedCards = await parseCSVToCollectionCards(
               results.data as any[]
             );
-            localStorage.setItem("mtg_cards", JSON.stringify(parsedCards));
 
+            localStorage.setItem("mtg_cards", JSON.stringify(parsedCards));
             setLoading(false);
           } catch (err) {
             handleError("Error uploading cards. Try again later.");
@@ -93,6 +95,7 @@ export function useCardParser() {
   }, []);
 
   const storedCards = getCardsFromStorage();
+  const collectionSummary = getCollectionSummary(storedCards);
 
   return {
     cards,
@@ -100,11 +103,9 @@ export function useCardParser() {
     loading,
     error,
     collection: {
-      size: storedCards.length,
-      value: storedCards.reduce(
-        (sum, card) => sum + (card.price ?? 0) * card.quantityOwned,
-        0
-      ),
+      size: collectionSummary.size,
+      value: collectionSummary.value,
+      updatedAt: format(new Date(), "MMMM dd yyyy,  hh:mm a"),
     },
     onCollectionUpload,
     onDeckCardAdd,

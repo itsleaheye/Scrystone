@@ -1,5 +1,6 @@
 import type { CollectionCard, DeckCard } from "../../types/MagicTheGathering";
 import { CardFooter } from "./CardFooter";
+import "./Card.css";
 
 interface CardViewProps {
   card:

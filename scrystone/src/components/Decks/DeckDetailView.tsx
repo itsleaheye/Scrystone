@@ -1,9 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  useDeckParser,
-  getDeckCost,
-  getDecksFromStorage,
-} from "../../hooks/useDeckParser";
+import { useDeckParser } from "../../hooks/useDeckParser";
 import type { Deck } from "../../types/MagicTheGathering";
 import { CardSearchBar } from "../CardSearchBar";
 import { GiCash } from "react-icons/gi";
@@ -17,6 +13,8 @@ import { useDeckFormState } from "../../hooks/useDeckFormState";
 import "../styles.css";
 import { DeckField } from "./DeckField";
 import { ManaRow } from "./ManaRow";
+import { getDeckCost } from "../utils/decks";
+import { getDecksFromStorage } from "../utils/storage";
 
 export const DeckDetailView = ({
   deckId,
@@ -76,9 +74,6 @@ export const DeckDetailView = ({
     setActiveDeck(savedDeck);
     setEditable(false);
   };
-
-  console.log("activeDeck", activeDeck);
-  console.log("summary", summary);
 
   return (
     <>
@@ -160,7 +155,7 @@ export const DeckDetailView = ({
             text={
               <>
                 <p>Deck Cost</p>
-                <p className="subtext">${getDeckCost(cards)}</p>
+                <p className="subtext">${getDeckCost(cards).toFixed(2)}</p>
               </>
             }
           />

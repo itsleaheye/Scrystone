@@ -12,7 +12,6 @@ export function normalizeMana(manaCostStr: string): {
   cost?: number;
   colours?: string[];
 } {
-  console.log("manaCostStr", manaCostStr);
   // manaCostStr comes from scryfall as '{2}{B}' or '{2}{W}{W}'
   const manaTokens = manaCostStr
     .match(/{([^}]+)}/g)
