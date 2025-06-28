@@ -3,6 +3,8 @@ import { getCardsFromStorage } from "../utils/storage";
 import { normalizeCardName } from "../utils/normalize";
 import { CardView } from "./CardView";
 import { mergeCardQuantities } from "../utils/cards";
+import { useState } from "react";
+import React from "react";
 
 interface CardListViewProps {
   collectionCards?: CollectionCard[];
@@ -32,6 +34,26 @@ export function CardListView({
     isDeckView
   );
 
+  const [sortBy, setSortBy] = useState<string>("Commander");
+  const sortedCards = React.useMemo(() => {
+    if (isDeckView) {
+      return cardsWithQuantities;
+    }
+
+    return [...cardsWithQuantities].sort((a, b) => {
+      switch (sortBy) {
+        case "Type":
+          return (a.type ?? "").localeCompare(b.type ?? "");
+        case "Price":
+          return (b.price?.toString() ?? "").localeCompare(
+            a.price?.toString() ?? ""
+          );
+        default:
+          return (a.name ?? "").localeCompare(b.name ?? "");
+      }
+    });
+  }, [cardsWithQuantities, sortBy, isDeckView]);
+
   function onChangeQuantity(cardName: string, amount: number) {
     if (!setCards) return;
 
@@ -57,10 +79,18 @@ export function CardListView({
       {!deckCards && (
         <div className="flexRow centred">
           <p>Filters and sorting tbd...</p>
+          <div className="flexCol">
+            <p>Sort by</p>
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+              <option value="Name">Name</option>
+              <option value="Price">Price</option>
+              <option value="Type">Type</option>
+            </select>
+          </div>
         </div>
       )}
       <div className="grid">
-        {cardsWithQuantities.map((card, index) => {
+        {sortedCards.map((card, index) => {
           return (
             <CardView
               key={index}
