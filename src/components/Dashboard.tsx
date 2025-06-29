@@ -86,8 +86,6 @@ export default function Dashboard() {
   );
 }
 
-// type View = "dashboard" | "deckCollection" | `deckCreateEditView=${string}`;
-
 function renderDeckDetailView(
   currentView: string,
   setCurrentView: React.Dispatch<React.SetStateAction<string>>
