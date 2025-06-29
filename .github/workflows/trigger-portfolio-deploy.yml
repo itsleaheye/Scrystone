@@ -12,6 +12,6 @@ jobs:
       - name: Trigger Portfolio Deploy Workflow
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          token: ${{ secrets.SCRYSTONE_DEPLOY_ACCESS_TOKEN }}
           repository: itsleaheye/Portfolio
           event-type: trigger-portfolio-build
