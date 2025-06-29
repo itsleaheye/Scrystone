@@ -76,21 +76,7 @@ export default function Dashboard() {
             <CardListView collectionCards={cards} />
           )}
           {currentView.startsWith("deckCreateEditView") &&
-            (() => {
-              const match = currentView.match(/^deckCreateEditView=(.+)$/);
-              const deckId = match ? match[1] : undefined;
-
-              if (match) {
-                return (
-                  <DeckDetailView
-                    setCurrentView={setCurrentView}
-                    deckId={Number(deckId)}
-                  />
-                );
-              } else {
-                return <DeckDetailView setCurrentView={setCurrentView} />;
-              }
-            })()}
+            renderDeckDetailView(currentView, setCurrentView)}
           {currentView === "deckCollection" && (
             <DeckListView setCurrentView={setCurrentView} />
           )}
@@ -100,10 +86,10 @@ export default function Dashboard() {
   );
 }
 
-type View = "dashboard" | "deckCollection" | `deckCreateEditView=${string}`;
+// type View = "dashboard" | "deckCollection" | `deckCreateEditView=${string}`;
 
 function renderDeckDetailView(
-  currentView: View,
+  currentView: string,
   setCurrentView: React.Dispatch<React.SetStateAction<string>>
 ) {
   const match = currentView.match(/^deckCreateEditView=(.+)$/);

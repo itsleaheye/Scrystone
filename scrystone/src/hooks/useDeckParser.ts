@@ -21,12 +21,6 @@ const generateUniqueDeckId = (): number => {
 export function useDeckParser() {
   const [decks, setDecks] = React.useState<Deck[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
-  const [error, setError] = React.useState<string | null>(null);
-
-  const handleError = (message: string) => {
-    setLoading(false);
-    setError(message);
-  };
 
   const onDeckSave = (
     cards: DeckCard[],
@@ -35,6 +29,8 @@ export function useDeckParser() {
     id?: number,
     description?: string
   ) => {
+    setLoading(true);
+
     const existingRawDecks = localStorage.getItem("mtg_decks");
     const existingDecks: Deck[] = existingRawDecks
       ? JSON.parse(existingRawDecks)
@@ -75,6 +71,7 @@ export function useDeckParser() {
 
     localStorage.setItem("mtg_decks", JSON.stringify(updatedDecks));
     setDecks(updatedDecks);
+    setLoading(false);
 
     return deck;
   };
@@ -154,7 +151,6 @@ export function useDeckParser() {
     decks,
     setDecks,
     loading,
-    error,
     onDeckSave,
     getDeckTypeSummary,
     getDeckTypeSummaryWithDefaults,
