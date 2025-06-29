@@ -1,5 +1,5 @@
 import React from "react";
-import { useCardParser } from "../hooks/useCardParser";
+import { useCardParser } from "../hooks/useCardParser.ts";
 import "./styles.css";
 import { ArrowUpTrayIcon, WalletIcon } from "@heroicons/react/16/solid";
 import { TbCardsFilled } from "react-icons/tb";
