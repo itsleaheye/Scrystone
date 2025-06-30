@@ -1,8 +1,8 @@
 .iconItem {
-  padding: 0 var(--pad-xs);
   font-weight: 600;
   color: var(--black);
   text-align: center;
+  padding: 0 var(--pad-xxs);
 
   &:hover {
     cursor: initial;
@@ -13,13 +13,11 @@
 
   p {
     margin-bottom: 0;
-  }
-
-  .subtext {
-    margin-top: var(--pad-xxs);
+    font-size: var(--font-size-base) !important;
   }
 
   svg {
+    margin: var(--pad-xxs);
     width: 3rem;
     height: 3rem;
   }
@@ -42,4 +40,8 @@
       transition: var(--ease-in);
     }
   }
+}
+
+.active {
+  color: var(--green);
 }

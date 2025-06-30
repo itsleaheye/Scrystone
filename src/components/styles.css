@@ -1,7 +1,7 @@
 .pageTitle {
   text-align: center;
   max-width: 100%;
-  margin: 8rem auto 5rem auto;
+  margin: 4rem auto 4rem auto;
   background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
   box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.5),
     0px -10px 10px rgba(0, 0, 0, 0.5);
@@ -26,7 +26,6 @@
   background-size: cover;
   background-position: center;
   padding: 2rem 0;
-  height: 600px;
 }
 
 .summaryContainer {
@@ -89,6 +88,19 @@
 .searchContainer {
   margin: var(--pad-xs) auto var(--pad-xs) auto;
   max-width: 400px;
+
+  .subtext {
+    margin-top: var(--pad-xs);
+    font-size: var(--font-size-base);
+    align-items: center;
+    display: flex;
+
+    svg {
+      height: 1.5rem;
+      width: 1.5rem;
+      margin-right: var(--pad-xxs);
+    }
+  }
 }
 
 .manaPlaceholder {
@@ -117,18 +129,15 @@
 
 .searchBar {
   width: 100%;
-  display: block;
-  line-height: 24px;
-  font-size: var(--font-size-base);
-  margin-top: -6px;
   border-radius: var(--border-radius-base);
   background-color: var(--dark-gray);
   border: none;
   padding: var(--pad-xxs) var(--pad-xs);
   color: var(--white);
+  margin-top: var(--pad-xxs);
 
   &::placeholder {
-    color: var(--black);
+    color: var(--white);
   }
 }
 
@@ -189,6 +198,7 @@
   font-weight: 600;
   justify-content: center;
   display: flex;
+  align-items: center;
 
   svg {
     margin-right: var(--pad-xxs);
@@ -232,7 +242,6 @@
   }
 
   li {
-    padding: var(--pad-xxs) 0;
     text-decoration: none;
   }
 }
@@ -241,7 +250,6 @@
   margin-bottom: var(--pad-sm);
   background-color: var(--white);
   border-radius: var(--border-radius-base);
-  height: 150px;
   padding: var(--pad-sm);
   justify-content: space-between;
 
@@ -268,31 +276,11 @@
 
   textarea {
     font-family: "Quattrocento Sans", sans-serif;
-    width: 358px;
-    height: 25px;
+    width: 373px;
+    height: 45px;
     font-weight: 500;
     resize: none;
-  }
-}
-
-.iconItem {
-  padding: 0 var(--pad-xs);
-  font-weight: 600;
-
-  svg {
-    width: 3rem;
-    height: 3rem;
-  }
-
-  &:hover {
-    cursor: pointer;
-    color: var(--green);
-    transition: var(--ease-in);
-
-    svg {
-      fill: var(--green);
-      transition: var(--ease-in);
-    }
+    margin-bottom: 0;
   }
 }
 

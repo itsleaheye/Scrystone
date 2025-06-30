@@ -11,6 +11,7 @@ import { CardListView } from "../Cards/CardListView";
 import { IconItem } from "../shared/IconItem";
 import { useDeckFormState } from "../../hooks/useDeckFormState";
 import "../styles.css";
+import "./Deck.css";
 import { DeckField } from "./DeckField";
 import { ManaRow } from "./ManaRow";
 import { getDeckCost } from "../utils/decks";
@@ -141,7 +142,7 @@ export const DeckDetailView = ({
                       : undefined
                   }
                 >
-                  {type} {quantityOwned}/{quantityNeeded}
+                  {type}s {quantityOwned}/{quantityNeeded}
                 </li>
               ))}
             </ul>

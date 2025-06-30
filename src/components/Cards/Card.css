@@ -26,24 +26,30 @@
   width: 3.25rem;
   height: 3.25rem;
   background-color: var(--blackest);
-  margin-top: -55px;
-  position: absolute;
+  margin-top: -50px;
 
   &:hover {
     opacity: 1 !important;
     cursor: pointer;
     color: var(--blue);
+
+    svg {
+      fill: var(--blue);
+    }
   }
 
   svg {
-    padding-top: 5px;
+    fill: var(--white);
+    height: 2.5rem;
+    width: 2.5rem;
+    padding-top: 20px;
     padding-left: 20px;
   }
 }
 
 .cardChipLeft {
   svg {
-    padding-left: 15px;
+    padding-left: 8px;
   }
 }
 
@@ -55,7 +61,7 @@
 .card {
   background: var(--blackest);
   border-radius: 13px;
-  padding: 0.25rem 0.25rem 0.15rem 0.25rem;
+  padding: 0.25rem;
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.2), 0px -5px 5px rgba(0, 0, 0, 0.2);
 
   .quantity {
@@ -63,20 +69,18 @@
     height: 3.25rem;
     position: absolute;
     background-color: var(--blackest);
-    margin-top: -55px;
+    margin-top: -50px;
 
     p {
       color: var(--off-white);
-      font-size: var(--font-size-base);
       font-weight: bolder;
-      margin-top: 24px;
+      margin-top: 20px;
       margin-left: 12px;
     }
   }
 
   .cardArt,
   .cardPlaceholder {
-    width: 100%;
     border-radius: var(--border-radius-lg);
   }
 

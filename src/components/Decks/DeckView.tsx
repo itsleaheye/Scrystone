@@ -73,11 +73,9 @@ export function CardTypeDetailRow({
 
   const cardTypeLabels: Record<string, string> = {
     creature: "Creatures",
-    planeswalker: "Planeswalkers",
     enchantment: "Enchantments",
     artifact: "Artifacts",
     land: "Lands",
-    instant: "Instants",
   };
   const cardTypeLabel = cardTypeLabels[type as string] || type;
 

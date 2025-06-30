@@ -30,15 +30,14 @@ export function CardFooter({
   if (isDeckView) {
     const cardChipButton = (icon: React.ReactNode, amount: number) => (
       <div
+        onClick={() => onChangeQuantity(cardName, amount)}
         className={`cardChip ${
           amount === -1
             ? "cardChipLeft rounded-tr-[100%] rounded-bl-[20%]"
             : "cardChipRight rounded-tl-[100%] rounded-br-[20%]"
         }`}
       >
-        <div onClick={() => onChangeQuantity(cardName, amount)}>
-          <p>{icon}</p>
-        </div>
+        <p>{icon}</p>
       </div>
     );
 

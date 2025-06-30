@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { DeckCard } from "../types/MagicTheGathering";
 import { normalizeCardName } from "./utils/normalize";
+import { TbListSearch } from "react-icons/tb";
 
 interface CardSearchBarProps {
   onDeckCardAdd: (cardName: string) => Promise<void>;
@@ -64,7 +65,10 @@ export function CardSearchBar({
           ))}
         </ul>
       ) : query.length > 0 ? (
-        <p className="italic text-center">No matching cards found</p>
+        <p className="italic text-center subtext">
+          <TbListSearch />
+          No matching cards found
+        </p>
       ) : (
         <></>
       )}

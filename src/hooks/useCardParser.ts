@@ -58,9 +58,6 @@ export function useCardParser() {
     if (type == "Sorcery") {
       type = "Enchantment";
     }
-    if (type == "Artifact") {
-      type = "Instant";
-    }
     // To do: fix this so special lands pick up
     if (
       ([

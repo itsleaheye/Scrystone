@@ -8,7 +8,7 @@ import type {
 import { getCardsFromStorage } from "../components/utils/storage";
 import { getDeckCost, getDeckManaSummary } from "../components/utils/decks";
 
-const CARD_TYPES = ["Creature", "Enchantment", "Instant", "Land"];
+const CARD_TYPES = ["Creature", "Enchantment", "Artifact", "Land"];
 
 const normalizeName = (name: string) => {
   return name.trim().toLowerCase().replace(/\s+/g, " ");

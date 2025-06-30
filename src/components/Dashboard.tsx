@@ -28,14 +28,16 @@ export default function Dashboard() {
             <IconItem
               icon={<GiCash />}
               text={`Value: $${Math.round(collection.value)}`}
-              onClick={() => setCurrentView("dashboard")}
+              onClick={() => alert("Price breakdown will be coming in V2")}
             />
             <IconItem
+              isActive={currentView === "dashboard"}
               icon={<TbCardsFilled />}
               text={`Cards: ${collection.size}`}
               onClick={() => setCurrentView("dashboard")}
             />
             <IconItem
+              isActive={currentView.startsWith("deck")}
               icon={<WalletIcon />}
               text={`My Decks`}
               onClick={() => setCurrentView("deckCollection")}
