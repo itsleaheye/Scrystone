@@ -18,8 +18,8 @@ A 'Magic the Gathering' web app built with React, Tailwind CSS, and the Scryfall
 
 ### 🛠 Tech Stack
 
-- **Languages:** React, CSS
-- **Libraries:** Vite, Tailwind, ReactIcons, DateFNS
+- **Languages:** Typescript, CSS, JS
+- **Libraries:** React, Vite, Tailwind, ReactIcons, DateFNS
 - **Storage:** Browser Local Storage
 - **IDE** - Visual Studio Code
 
