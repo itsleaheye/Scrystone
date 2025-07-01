@@ -1,22 +1,10 @@
 import React from "react";
-import type {
-  CollectionCard,
-  Deck,
-  DeckCard,
-  CardTypeSummary,
-} from "../types/MagicTheGathering";
-import { getCardsFromStorage } from "../components/utils/storage";
-import { getDeckCost, getDeckManaSummary } from "../components/utils/decks";
-
-const CARD_TYPES = ["Creature", "Enchantment", "Artifact", "Land"];
-
-const normalizeName = (name: string) => {
-  return name.trim().toLowerCase().replace(/\s+/g, " ");
-};
-
-const generateUniqueDeckId = (): number => {
-  return Number(`${Date.now()}${Math.floor(Math.random() * 1000)}`);
-};
+import type { Deck, DeckCard } from "../types/MagicTheGathering";
+import {
+  generateUniqueDeckId,
+  getDeckCost,
+  getDeckManaSummary,
+} from "../components/utils/decks";
 
 export function useDeckParser() {
   const [decks, setDecks] = React.useState<Deck[]>([]);
@@ -76,83 +64,10 @@ export function useDeckParser() {
     return deck;
   };
 
-  const getDeckTypeSummary = (cards: DeckCard[]) => {
-    const ownedCards: CollectionCard[] = getCardsFromStorage();
-    const ownedByName = new Map(
-      ownedCards.map((card) => [normalizeName(card.name), card])
-    );
-
-    const deckCountByName = new Map<
-      string,
-      { type: string; quantityNeeded: number }
-    >();
-
-    cards.forEach((card) => {
-      if (!card.name || !card.type) return;
-
-      const cardName = normalizeName(card.name);
-
-      deckCountByName.set(cardName, {
-        type: card.type,
-        quantityNeeded: card?.quantityNeeded ?? 0,
-      });
-    });
-
-    const quantityNeededByType = new Map<string, number>();
-    const quantityOwnedByType = new Map<string, number>();
-
-    deckCountByName.forEach(({ type, quantityNeeded }, cardName) => {
-      const quantityOwned = ownedByName.get(cardName)?.quantityOwned ?? 0;
-
-      quantityNeededByType.set(
-        type,
-        (quantityNeededByType.get(type) ?? 0) + quantityNeeded
-      );
-
-      quantityOwnedByType.set(
-        type,
-        (quantityOwnedByType.get(type) ?? 0) +
-          Math.min(quantityOwned, quantityNeeded)
-      );
-    });
-
-    return Array.from(quantityNeededByType.entries()).map(
-      ([type, quantityNeeded]) => ({
-        type,
-        quantityNeeded,
-        quantityOwned: quantityOwnedByType.get(type) ?? 0,
-      })
-    );
-  };
-
-  const getDeckTypeSummaryWithDefaults = (
-    cards: DeckCard[]
-  ): CardTypeSummary[] => {
-    const deckTypeSummary = getDeckTypeSummary(cards);
-
-    const summaries = new Map(deckTypeSummary.map((item) => [item.type, item]));
-
-    const mergedSummary = CARD_TYPES.map((type) => {
-      if (summaries.has(type)) {
-        return summaries.get(type)!;
-      } else {
-        return {
-          type,
-          quantityNeeded: 0,
-          quantityOwned: 0,
-        };
-      }
-    });
-
-    return mergedSummary;
-  };
-
   return {
     decks,
     setDecks,
     loading,
     onDeckSave,
-    getDeckTypeSummary,
-    getDeckTypeSummaryWithDefaults,
   };
 }

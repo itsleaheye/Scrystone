@@ -2,14 +2,17 @@ import React from "react";
 import type { DeckCard } from "../types/MagicTheGathering";
 import Papa from "papaparse";
 import { getScryfallCard } from "../components/utils/scryfall";
-import { normalizeCardName } from "../components/utils/normalize";
+import {
+  normalizeCardName,
+  normalizeCardType,
+} from "../components/utils/normalize";
 import { parseCSVToCollectionCards } from "../components/utils/parseCSVToCollectionCards";
 import { getCardsFromStorage } from "../components/utils/storage";
 import { getCollectionSummary } from "../components/utils/summaries";
 import { format } from "date-fns";
 
 export function useCardParser() {
-  const [cards, setCards] = React.useState<DeckCard[]>([]); // Track temporary cards to display that haven't been comitted to storage
+  const [cards, setCards] = React.useState<DeckCard[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -24,22 +27,21 @@ export function useCardParser() {
       if (!file) return handleError("Please select a .csv file to upload");
 
       setLoading(true);
-      Papa.parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        complete: async (results) => {
-          try {
-            const parsedCards = await parseCSVToCollectionCards(
-              results.data as any[]
-            );
+      try {
+        Papa.parse(file, {
+          header: true,
+          skipEmptyLines: true,
+          complete: async (results) => {
+            const rawCards = results.data as any[];
+            const parsedCards = await parseCSVToCollectionCards(rawCards);
 
             localStorage.setItem("mtg_cards", JSON.stringify(parsedCards));
             setLoading(false);
-          } catch (err) {
-            handleError("Error uploading cards. Try again later.");
-          }
-        },
-      });
+          },
+        });
+      } catch {
+        handleError("Error uploading cards. Try again later.");
+      }
     },
     []
   );
@@ -51,37 +53,13 @@ export function useCardParser() {
     );
 
     const scryfallCard = await getScryfallCard(cardName);
-    let type = scryfallCard?.type;
-    if (type == "Legendary") {
-      type = "Creature";
-    }
-    if (type == "Sorcery") {
-      type = "Enchantment";
-    }
-    // To do: fix this so special lands pick up
-    if (
-      ([
-        "Swamp",
-        "Plains",
-        "Mountain",
-        "Forest",
-        "Island",
-        "Reef",
-        "Cave",
-        "Grotto",
-        "Orchard",
-      ].includes(type ?? "") &&
-        type == "Instant") ||
-      type == "Basic"
-    ) {
-      type = "Land";
-    }
+    const type = normalizeCardType(scryfallCard?.type);
 
     const newCard: DeckCard = {
       imageUrl: scryfallCard?.previewUrl,
       name: cardName,
       price: scryfallCard?.price,
-      type, //To do fix.
+      type,
       quantityNeeded: 1,
       quantityOwned: ownedMatch?.quantityOwned ?? 0,
       manaCost: scryfallCard?.manaCost,

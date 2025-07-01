@@ -403,7 +403,11 @@
       color: var(--white);
       margin-bottom: var(--pad-xs);
       background-color: var(--darker-gray);
-      width: 150px;
+      width: 175px;
+    }
+
+    .selectDeckInput {
+      width: 250px;
     }
   }
 }

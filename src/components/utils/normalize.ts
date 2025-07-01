@@ -8,11 +8,15 @@ export function normalizeCardName(name: string): string {
     .trim(); // Remove trailing white spaces
 }
 
+export function normalizeDeckName(name: string): string {
+  return name.trim().toLowerCase().replace(/\s+/g, " ");
+}
+
 export function normalizeMana(manaCostStr: string): {
   cost?: number;
   colours?: string[];
 } {
-  // manaCostStr comes from scryfall as '{2}{B}' or '{2}{W}{W}'
+  // manaCostStr comes from Scryfall as '{2}{B}' or '{2}{W}{W}'
   const manaTokens = manaCostStr
     .match(/{([^}]+)}/g)
     ?.map((t) => t.slice(1, -1));
@@ -25,4 +29,30 @@ export function normalizeMana(manaCostStr: string): {
     cost: cost ? parseInt(cost, 10) : undefined,
     colours: colours.length ? colours : undefined,
   };
+}
+
+export function normalizeCardType(type?: string) {
+  if (!type) return undefined;
+
+  if (type === "Legendary") return "Creature";
+  if (type === "Sorcery") return "Enchantment";
+  if (
+    ([
+      "Swamp",
+      "Plains",
+      "Mountain",
+      "Forest",
+      "Island",
+      "Reef",
+      "Cave",
+      "Grotto",
+      "Orchard",
+    ].includes(type ?? "") &&
+      type == "Instant") ||
+    type == "Basic"
+  ) {
+    type = "Land";
+  }
+
+  return type;
 }

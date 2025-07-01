@@ -9,6 +9,7 @@ import React from "react";
 import { EmptyView } from "../shared/EmptyView";
 import { BsFillGridFill } from "react-icons/bs";
 import { FaList } from "react-icons/fa";
+import { useCardFiltersAndSort } from "../../hooks/useCardFiltersAndSort";
 
 interface CardListViewProps {
   collectionCards?: CollectionCard[];
@@ -49,28 +50,6 @@ export function CardListView({
     isDeckView
   );
 
-  const [sortBy, setSortBy] = useState<string>("Commander");
-  const sortedCards = React.useMemo(() => {
-    if (isDeckView) {
-      return cardsWithQuantities;
-    }
-
-    return [...cardsWithQuantities].sort((a, b) => {
-      switch (sortBy) {
-        case "Type":
-          return (a.type ?? "").localeCompare(b.type ?? "");
-        case "Price":
-          return (b.price?.toString() ?? "").localeCompare(
-            a.price?.toString() ?? ""
-          );
-        case "Name":
-          return (a.name ?? "").localeCompare(b.name ?? ""); // To do fix: I broke this function
-        default:
-          return (a.name ?? "").localeCompare(b.name ?? "");
-      }
-    });
-  }, [cardsWithQuantities, sortBy, isDeckView]);
-
   function onChangeQuantity(cardName: string, amount: number) {
     if (!setCards) return;
 
@@ -91,12 +70,23 @@ export function CardListView({
     );
   }
 
-  // Other filters, to do: hook them up
-  const [viewStyle, setViewStyle] = useState<string>("Grid"); // Handles view "Grid" or "List"
+  const decks = getDecksFromStorage();
+  const [viewStyle, setViewStyle] = useState<string>("Grid");
   const [filterColour, setFilterColour] = useState<string>("All"); // To do: Support multi select
   const [filterType, setFilterType] = useState<string>("All"); // To do: Support multi select
-  const myDecks = getDecksFromStorage();
   const [filterDeck, setFilterDeck] = useState<string>("All");
+  const [sortBy, setSortBy] = useState<string>("Name");
+
+  const filteredAndSortedCards = useCardFiltersAndSort({
+    cards: cardsWithQuantities,
+    decks,
+    filterDeck,
+    sortBy,
+    filterType,
+    filterColour,
+  });
+
+  console.log("filtered and sorted", filteredAndSortedCards);
 
   return (
     <>
@@ -123,12 +113,13 @@ export function CardListView({
           <div className="flexCol">
             <p>In Deck</p>
             <select
+              className="selectDeckInput"
               value={filterDeck}
               onChange={(e) => setFilterDeck(e.target.value)}
             >
               <option value="All">All Decks</option>
-              {myDecks.length > 0 &&
-                myDecks.map((deck, index) => {
+              {decks.length > 0 &&
+                decks.map((deck, index) => {
                   const deckName = deck.name;
                   return (
                     <option key={index} value={deckName}>
@@ -145,11 +136,11 @@ export function CardListView({
               onChange={(e) => setFilterColour(e.target.value)}
             >
               <option value="All">All Colours</option>
-              <option value="Black">Black</option>
-              <option value="Blue">Blue</option>
-              <option value="Green">Green</option>
-              <option value="Red">Red</option>
-              <option value="White">White</option>
+              <option value="B">Black</option>
+              <option value="U">Blue</option>
+              <option value="G">Green</option>
+              <option value="R">Red</option>
+              <option value="W">White</option>
             </select>
           </div>
           <div className="flexCol">
@@ -178,7 +169,7 @@ export function CardListView({
       )}
 
       <div className="grid">
-        {sortedCards.map((card, index) => {
+        {filteredAndSortedCards.map((card, index) => {
           return (
             <CardView
               key={index}

@@ -1,7 +1,7 @@
-import { useDeckParser } from "../../hooks/useDeckParser";
 import type { Card, Deck } from "../../types/MagicTheGathering";
 import { CardTypeSummary } from "../shared/CardTypeSummary";
 import "../styles.css";
+import { getDeckTypeSummaryWithDefaults } from "../utils/decks";
 import { getCardsFromStorage } from "../utils/storage";
 import { ManaRow } from "./ManaRow";
 
@@ -11,7 +11,6 @@ interface Props {
 }
 
 export function DeckView({ deck, setCurrentView }: Props) {
-  const { getDeckTypeSummaryWithDefaults } = useDeckParser();
   const summary = getDeckTypeSummaryWithDefaults(deck.cards);
 
   const handleClick = () => {

@@ -1,5 +1,5 @@
 import type { CollectionCard } from "../../types/MagicTheGathering";
-import { normalizeCardName } from "./normalize";
+import { normalizeCardName, normalizeCardType } from "./normalize";
 import { getScryfallCard } from "./scryfall";
 
 export async function parseCSVToCollectionCards(
@@ -20,6 +20,8 @@ export async function parseCSVToCollectionCards(
       const scryfallDetails = await getScryfallCard(name);
       await delay(200);
 
+      const type = normalizeCardType(scryfallDetails?.type);
+
       return {
         name,
         manaCost: scryfallDetails?.manaCost,
@@ -30,7 +32,7 @@ export async function parseCSVToCollectionCards(
           : undefined, // To do: Grab the real time exchange rate
         rarity: rawCard["Rarity"],
         set: rawCard["Set"],
-        type: scryfallDetails?.type,
+        type,
         isFoil: rawCard.isFoil, // To do: Maybe remove this? Or render foil art?
         imageUrl: scryfallDetails?.previewUrl,
         quantityOwned: rawCard["Quantity"] || 1,

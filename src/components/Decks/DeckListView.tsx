@@ -3,7 +3,6 @@ import { primaryButton, tertiaryButton } from "../PrimaryActions";
 import { FaPlus } from "react-icons/fa6";
 import { DeckView } from "./DeckView";
 import { getDecksFromStorage } from "../utils/storage";
-import { WalletIcon } from "@heroicons/react/16/solid";
 import { EmptyView } from "../shared/EmptyView";
 
 interface Props {

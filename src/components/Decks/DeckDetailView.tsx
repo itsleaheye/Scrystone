@@ -14,7 +14,7 @@ import "../styles.css";
 import "./Deck.css";
 import { DeckField } from "./DeckField";
 import { ManaRow } from "./ManaRow";
-import { getDeckCost } from "../utils/decks";
+import { getDeckCost, getDeckTypeSummaryWithDefaults } from "../utils/decks";
 import { getDecksFromStorage } from "../utils/storage";
 import { CardTypeSummary } from "../shared/CardTypeSummary";
 
@@ -26,7 +26,7 @@ export const DeckDetailView = ({
   setCurrentView: (view: string) => void;
 }): React.JSX.Element => {
   const { cards, onDeckCardAdd, setCards } = useCardParser();
-  const { getDeckTypeSummaryWithDefaults, onDeckSave } = useDeckParser();
+  const { onDeckSave } = useDeckParser();
 
   const [activeDeck, setActiveDeck] = useState<Deck | undefined>();
   const [editable, setEditable] = useState<boolean>(deckId === undefined);
