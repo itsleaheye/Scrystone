@@ -5,6 +5,7 @@ import { CardView } from "./CardView";
 import { mergeCardQuantities } from "../utils/cards";
 import { useState } from "react";
 import React from "react";
+import { EmptyView } from "../shared/EmptyView";
 
 interface CardListViewProps {
   collectionCards?: CollectionCard[];
@@ -24,7 +25,18 @@ export function CardListView({
   const hasCards =
     (collectionCards && collectionCards.length > 0) ||
     (deckCards && deckCards.length > 0);
-  if (!hasCards) return <></>;
+  if (!hasCards) {
+    return (
+      <EmptyView
+        description={
+          isDeckView
+            ? "Search for a card name in the above search bar to add it to your deck"
+            : "Upload your collection to start previewing cards"
+        }
+        title="No cards yet"
+      />
+    );
+  }
 
   const ownedCards = getCardsFromStorage();
   const sourceCards = deckCards ?? collectionCards ?? [];
@@ -74,6 +86,8 @@ export function CardListView({
     );
   }
 
+  console.log("sortedCards", sortedCards);
+
   return (
     <>
       {!deckCards && (
@@ -89,6 +103,7 @@ export function CardListView({
           </div>
         </div>
       )}
+
       <div className="grid">
         {sortedCards.map((card, index) => {
           return (

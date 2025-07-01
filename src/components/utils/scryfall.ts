@@ -27,7 +27,7 @@ export async function getScryfallCard(
 
       data = await response.json();
 
-      // If response returns an array, take the first card data and stop if valid
+      // If response returns an array, take the 1st card and stop if valid
       data = Array.isArray(data.data) ? data.data[0] : data;
       if (data) break;
     }

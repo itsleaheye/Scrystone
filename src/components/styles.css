@@ -3,8 +3,8 @@
   max-width: 100%;
   margin: 4rem auto 4rem auto;
   background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-  box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.5),
-    0px -10px 10px rgba(0, 0, 0, 0.5);
+  /* box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.5),
+    0px -10px 10px rgba(0, 0, 0, 0.5); */
   padding: var(--pad-xxs);
   color: var(--white);
 
@@ -36,7 +36,7 @@
   background-color: var(--black);
   border-radius: var(--border-radius-base);
   max-width: 400px;
-  margin: 0 auto 2rem auto;
+  margin: 0 var(--pad-xxs) 2rem var(--pad-xxs);
   padding: var(--pad-sm) var(--pad-sm) var(--pad-xs) var(--pad-sm);
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.2), 0px -5px 5px rgba(0, 0, 0, 0.2);
 }
@@ -125,6 +125,7 @@
   display: flex;
   flex-direction: row;
   gap: var(--pad-xxs);
+  justify-content: center;
 }
 
 .searchBar {
@@ -199,10 +200,7 @@
   justify-content: center;
   display: flex;
   align-items: center;
-
-  svg {
-    margin-right: var(--pad-xxs);
-  }
+  gap: var(--pad-xxs);
 }
 
 .bold {
@@ -233,29 +231,38 @@
   background-color: var(--black);
 }
 
-.deckCardSummary {
-  border-left: 2px var(--off-white) solid;
-  color: var(--black);
-
-  ul {
-    list-style: none;
-  }
-
-  li {
-    text-decoration: none;
-  }
+.welcomeSubtext {
+  max-width: 550px;
+  margin: 0 auto;
 }
 
+.loading {
+  margin: var(--pad-xs) auto;
+  font-style: italic;
+}
 .deckOverview {
+  display: flex;
+  flex-direction: column;
   margin-bottom: var(--pad-sm);
   background-color: var(--white);
   border-radius: var(--border-radius-base);
-  padding: var(--pad-sm);
-  justify-content: space-between;
+  padding: var(--pad-xs);
+  align-items: center;
+  overflow: hidden;
+
+  .flexSwap {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
 
   .deckCol1 {
-    max-width: 500px;
-    margin-right: var(--pad-xs);
+    max-width: 100%;
+
+    .deckFields {
+      display: flex;
+      flex-direction: column;
+    }
   }
 
   p {
@@ -276,11 +283,17 @@
 
   textarea {
     font-family: "Quattrocento Sans", sans-serif;
-    width: 373px;
-    height: 45px;
     font-weight: 500;
     resize: none;
     margin-bottom: 0;
+    width: 100%;
+  }
+
+  .deckBreakdown {
+    justify-content: space-around;
+    width: 100%;
+    border-top: 2px solid var(--blue);
+    padding-top: var(--pad-xxs);
   }
 }
 
@@ -353,12 +366,39 @@
   .description {
     max-height: 30px;
   }
+}
 
-  .deckCardSummary {
-    border: none;
+/* Media Responsiveness */
+@media only screen and (min-width: 500px) {
+  .summaryContainer {
+    margin: 0 auto 2rem auto;
+  }
 
-    ul {
-      padding-left: 0 !important;
+  .deckOverview {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: var(--pad-sm);
+
+    .flexSwap {
+      width: 100%;
+      flex-direction: row;
+    }
+
+    .deckCol1 .deckFields {
+      flex-direction: row;
+      gap: var(--pad-xs);
+    }
+
+    textarea {
+      width: 373px;
+      height: 45px;
+    }
+
+    .deckBreakdown {
+      justify-content: end;
+      width: 100%;
+      border-top: none;
+      padding-top: none;
     }
   }
 }

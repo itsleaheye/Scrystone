@@ -16,6 +16,7 @@ import { DeckField } from "./DeckField";
 import { ManaRow } from "./ManaRow";
 import { getDeckCost } from "../utils/decks";
 import { getDecksFromStorage } from "../utils/storage";
+import { CardTypeSummary } from "../shared/CardTypeSummary";
 
 export const DeckDetailView = ({
   deckId,
@@ -26,8 +27,8 @@ export const DeckDetailView = ({
 }): React.JSX.Element => {
   const { cards, onDeckCardAdd, setCards } = useCardParser();
   const { getDeckTypeSummaryWithDefaults, onDeckSave } = useDeckParser();
-  const [activeDeck, setActiveDeck] = useState<Deck | undefined>();
 
+  const [activeDeck, setActiveDeck] = useState<Deck | undefined>();
   const [editable, setEditable] = useState<boolean>(deckId === undefined);
 
   useEffect(() => {
@@ -80,10 +81,8 @@ export const DeckDetailView = ({
     <>
       {/* Primary actions row */}
       <div className="actionRow flexRow">
-        {tertiaryButton(
-          editable ? "Cancel and go back" : "Go back",
-          <FaArrowLeft />,
-          () => setCurrentView("deckCollection")
+        {tertiaryButton(editable ? "Cancel" : "Go back", <FaArrowLeft />, () =>
+          setCurrentView("deckCollection")
         )}
         {editable
           ? primaryButton("Save", <FaSave />, handleSave)
@@ -91,14 +90,14 @@ export const DeckDetailView = ({
       </div>
 
       {/* Deck overview */}
-      <div className="deckOverview flexRow">
-        <div className="flexRow">
+      <div className="deckOverview">
+        <div className="flexSwap">
           <div className="deckCol1">
             {
               activeDeck?.colours && <ManaRow colours={activeDeck.colours} /> // To do: Fix this so it updates on card add and not just save
             }
 
-            <div className="flexRow">
+            <div className="deckFields">
               <DeckField
                 customRender={<p className="bold deckName">{name}</p>}
                 editable={editable}
@@ -131,22 +130,7 @@ export const DeckDetailView = ({
           </div>
 
           {/* Overview col 2  */}
-          <div className="deckCardSummary">
-            <ul>
-              {summary.map(({ type, quantityNeeded, quantityOwned }) => (
-                <li
-                  key={type}
-                  className={
-                    quantityNeeded !== quantityOwned && quantityNeeded !== 0
-                      ? "bold"
-                      : undefined
-                  }
-                >
-                  {type}s {quantityOwned}/{quantityNeeded}
-                </li>
-              ))}
-            </ul>
-          </div>
+          <CardTypeSummary summary={summary} hasBorder={true} />
         </div>
 
         {/* Overview col 3 */}

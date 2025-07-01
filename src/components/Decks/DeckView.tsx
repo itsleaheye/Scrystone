@@ -1,5 +1,6 @@
 import { useDeckParser } from "../../hooks/useDeckParser";
 import type { Card, Deck } from "../../types/MagicTheGathering";
+import { CardTypeSummary } from "../shared/CardTypeSummary";
 import "../styles.css";
 import { getCardsFromStorage } from "../utils/storage";
 import { ManaRow } from "./ManaRow";
@@ -30,22 +31,7 @@ export function DeckView({ deck, setCurrentView }: Props) {
       {deck.colours && deck.colours.length > 0 && (
         <ManaRow colours={deck.colours} />
       )}
-      <div className="deckCardSummary">
-        <ul>
-          {summary.map(({ type, quantityNeeded, quantityOwned }) => (
-            <li
-              key={type}
-              className={`${
-                quantityNeeded !== quantityOwned && quantityNeeded != 0
-                  ? "bold"
-                  : undefined
-              }`}
-            >
-              {type} {quantityOwned}/{quantityNeeded}
-            </li>
-          ))}
-        </ul>
-      </div>
+      <CardTypeSummary summary={summary} />
       <div className="playStyleTag">
         <p>{deck.format}</p>
       </div>

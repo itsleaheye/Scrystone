@@ -18,6 +18,7 @@ export async function parseCSVToCollectionCards(
         return null;
 
       const scryfallDetails = await getScryfallCard(name);
+      await delay(200);
 
       return {
         name,
@@ -45,7 +46,6 @@ export async function parseCSVToCollectionCards(
 
     // Combine quantities
     if (existingCard) {
-      console.log("Existing Card", existingCard);
       existingCard.quantityOwned =
         Number(card.quantityOwned) + Number(existingCard.quantityOwned);
     } else {
@@ -54,4 +54,9 @@ export async function parseCSVToCollectionCards(
 
     return acc;
   }, [] as CollectionCard[]);
+}
+
+// Hitting Scryfall rate limitations
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

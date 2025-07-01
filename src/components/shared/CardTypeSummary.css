@@ -1,0 +1,28 @@
+.deckCardSummary {
+  color: var(--black);
+
+  ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  li {
+    text-decoration: none;
+  }
+}
+
+.hasBorder {
+  align-items: center;
+  display: flex;
+  border: none;
+  text-align: center;
+  margin: 0 auto;
+}
+
+@media only screen and (min-width: 500px) {
+  .hasBorder {
+    border-left: 2px var(--off-white) solid;
+    padding-left: var(--pad-sm);
+    text-align: left;
+  }
+}

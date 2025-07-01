@@ -3,6 +3,8 @@ import { primaryButton, tertiaryButton } from "../PrimaryActions";
 import { FaPlus } from "react-icons/fa6";
 import { DeckView } from "./DeckView";
 import { getDecksFromStorage } from "../utils/storage";
+import { WalletIcon } from "@heroicons/react/16/solid";
+import { EmptyView } from "../shared/EmptyView";
 
 interface Props {
   setCurrentView: (view: string) => void;
@@ -22,11 +24,18 @@ export function DeckListView({ setCurrentView }: Props) {
         )}
       </div>
 
-      <div className="grid">
-        {decks.map((deck, index) => (
-          <DeckView key={index} deck={deck} setCurrentView={setCurrentView} />
-        ))}
-      </div>
+      {decks.length > 0 ? (
+        <div className="grid">
+          {decks.map((deck, index) => (
+            <DeckView key={index} deck={deck} setCurrentView={setCurrentView} />
+          ))}
+        </div>
+      ) : (
+        <EmptyView
+          description="Click on '+ New Deck' to start building..."
+          title="No decks found"
+        />
+      )}
     </>
   );
 }

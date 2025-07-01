@@ -9,10 +9,12 @@ import { DeckListView } from "./Decks/DeckListView.tsx";
 import { CardListView } from "./Cards/CardListView.tsx";
 import { getCardsFromStorage } from "./utils/storage.ts";
 import { IconItem } from "./shared/IconItem.tsx";
+import { Welcome } from "./Welcome.tsx";
 
 export default function Dashboard() {
   const cards = getCardsFromStorage();
   const { loading, error, onCollectionUpload, collection } = useCardParser();
+  const hasCollection = collection.size > 0;
 
   const [currentView, setCurrentView] = React.useState("dashboard"); // Didn't feel like setting up a router or EntryPoint. Shame Leah
 
@@ -54,9 +56,15 @@ export default function Dashboard() {
             />
             <label htmlFor="fileInput">
               <ArrowUpTrayIcon className="uploadIcon" />
-              Sync Cards
+              {/* FTUX consideration */}
+              {hasCollection ? "Sync Cards" : "Upload Your Collection"}
             </label>
-            <p className="subtext">Last synced on {collection.updatedAt}</p>
+            <p className="subtext">
+              {hasCollection
+                ? `Last synced on ${collection.updatedAt}`
+                : "Don’t have a .csv from TCGPlayer? Learn how."}
+              {/* To do: 'See how to export it' should link to a popup or article */}
+            </p>
           </div>
         </div>
       </div>
@@ -67,12 +75,14 @@ export default function Dashboard() {
         </div>
       )}
 
-      {loading ? (
-        <div>
+      {loading && (
+        <div className="loading">
           {/* To be replaced by spinning planewalker logo */}
           <p className="text-center">Loading cards...</p>
         </div>
-      ) : (
+      )}
+
+      {hasCollection ? (
         <div className="dataContainer">
           {currentView === "dashboard" && (
             <CardListView collectionCards={cards} />
@@ -83,6 +93,8 @@ export default function Dashboard() {
             <DeckListView setCurrentView={setCurrentView} />
           )}
         </div>
+      ) : (
+        <Welcome />
       )}
     </div>
   );
