@@ -398,11 +398,12 @@
     select {
       font-size: var(--font-size-base);
       border-radius: var(--border-radius-base);
-      border: 2px solid var(--dark-gray);
+      border: 2px solid var(--blue);
       padding: var(--pad-xxxs) var(--pad-xs);
-      color: var(--black);
+      color: var(--white);
       margin-bottom: var(--pad-xs);
-      background-color: var(--white);
+      background-color: var(--darker-gray);
+      width: 150px;
     }
   }
 }

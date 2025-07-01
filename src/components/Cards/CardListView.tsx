@@ -142,7 +142,7 @@ export function CardListView({
             <p>Colour</p>
             <select
               value={filterColour}
-              onChange={(e) => setSortBy(e.target.value)}
+              onChange={(e) => setFilterColour(e.target.value)}
             >
               <option value="All">All Colours</option>
               <option value="Black">Black</option>
@@ -168,10 +168,7 @@ export function CardListView({
           </div>
           <div className="flexCol">
             <p>Sort By</p>
-            <select
-              value={filterType}
-              onChange={(e) => setSortBy(e.target.value)}
-            >
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
               <option value="Name">Name</option>
               <option value="Price">Price</option>
               <option value="Type">Type</option>
