@@ -4,6 +4,7 @@
   ul {
     list-style: none;
     padding-left: 0;
+    width: 100%;
   }
 
   li {
@@ -16,13 +17,16 @@
   display: flex;
   border: none;
   text-align: center;
-  margin: 0 auto;
+  margin: var(--pad-xxs) auto 0 auto;
+  width: 100%;
+  border-top: 2px solid var(--off-white);
 }
 
-@media only screen and (min-width: 500px) {
+@media only screen and (min-width: 650px) {
   .hasBorder {
+    border-top: none;
     border-left: 2px var(--off-white) solid;
-    padding-left: var(--pad-sm);
+    padding-left: var(--pad-xs);
     text-align: left;
   }
 }

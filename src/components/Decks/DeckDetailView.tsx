@@ -92,7 +92,7 @@ export const DeckDetailView = ({
       {/* Deck overview */}
       <div className="deckOverview">
         <div className="flexSwap">
-          <div className="deckCol1">
+          <div className={`deckCol1 ${!editable ? "staticDeckCol1" : ""}`}>
             {
               activeDeck?.colours && <ManaRow colours={activeDeck.colours} /> // To do: Fix this so it updates on card add and not just save
             }
@@ -107,7 +107,7 @@ export const DeckDetailView = ({
               />
               <DeckField
                 customRender={
-                  <div className="playStyleTag">
+                  <div className="formatTag">
                     <p>{format}</p>
                   </div>
                 }
@@ -134,7 +134,7 @@ export const DeckDetailView = ({
         </div>
 
         {/* Overview col 3 */}
-        <div className="deckBreakdown flexRow">
+        <div className="deckBreakdown flexSwapInverse">
           <IconItem
             icon={<GiCash />}
             text={

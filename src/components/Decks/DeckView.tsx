@@ -31,7 +31,7 @@ export function DeckView({ deck, setCurrentView }: Props) {
         <ManaRow colours={deck.colours} />
       )}
       <CardTypeSummary summary={summary} />
-      <div className="playStyleTag">
+      <div className="formatTag">
         <p>{deck.format}</p>
       </div>
     </div>
