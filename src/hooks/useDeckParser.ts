@@ -35,7 +35,7 @@ export function useDeckParser() {
 
     const deck: Deck = {
       id: id ?? generateUniqueDeckId(),
-      name: name ?? "Unnamed Deck",
+      name: name.length > 1 ? name : "Unnamed Deck",
       description,
       format: format == "Commander" ? "Commander" : "Standard",
       colours: colours,

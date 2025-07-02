@@ -80,7 +80,7 @@ export function useCardParser() {
     collection: {
       size: collectionSummary.size,
       value: collectionSummary.value,
-      updatedAt: format(new Date(), "MMMM dd yyyy,  hh:mm a"),
+      updatedAt: format(new Date(), "MMMM dd yyyy,  hh:mm a"), // To do: Fix this so its stored in local Storage and not recalculated on each render of useCardParser
     },
     onCollectionUpload,
     onDeckCardAdd,

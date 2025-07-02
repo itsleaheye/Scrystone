@@ -35,6 +35,20 @@ A 'Magic the Gathering' web app built with React, Tailwind CSS, and the Scryfall
 4. Start the development server `npm run dev`
 5. Open your browser and go to `http://localhost:5173`
 
+#### To Dos
+
+- List view deck builder management functionality
+- Mobile list view modal on tap
+- Multi-select for some filters
+- Allow deck deletion
+- Only combine quantities of cards if the name and set is the same. Otherwise render set specific art if Scryfall has it
+- Foil indicator
+- Render the art preview that matches the card (i.e. borderless card renders borderless art)
+- Mana summary on deck view needs to update in real time
+- On card individual hover or click in gallery view, flip animation and show value, quantity, and if its in a deck
+- Do not render card at all if no art found
+- Create updated at time in localstorage so the last sync time is accurate
+
 #### ❔FAQ
 
 **How do I upload my card collection?**

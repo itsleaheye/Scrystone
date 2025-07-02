@@ -12,6 +12,7 @@ import { FaList } from "react-icons/fa";
 import { useCardFiltersAndSort } from "../../hooks/useCardFiltersAndSort";
 import { CardListView } from "./CardListView";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { TbArrowsSort, TbSortAscendingLetters } from "react-icons/tb";
 
 interface CardPreviewProps {
   collectionCards?: CollectionCard[];
@@ -93,84 +94,105 @@ export function CardPreview({
   return (
     <>
       {!deckCards && (
-        <div className="centred filtersRow">
-          <div className="flexRow viewStylesContainer">
-            {isMobile && <p className="bold">Select View Style</p>}
-            <div className="viewButtons">
-              <div
-                className={`cursor-pointer p-2 ${
-                  viewStyle !== "List" ? "opacity-50" : "opacity-100"
-                }`}
-                onClick={() => setViewStyle("List")}
-              >
-                <FaList />
-              </div>
-              <div
-                className={`cursor-pointer p-2 ${
-                  viewStyle !== "Grid" ? "opacity-50" : "opacity-100"
-                }`}
-                onClick={() => setViewStyle("Grid")}
-              >
-                <BsFillGridFill />
+        <>
+          <div className="centred filtersRow">
+            <div className="flexRow viewStylesContainer">
+              {isMobile && <p className="bold">Select View Style</p>}
+              <div className="viewButtons">
+                <div
+                  className={`cursor-pointer p-2 ${
+                    viewStyle !== "List" ? "opacity-50" : "opacity-100"
+                  }`}
+                  onClick={() => setViewStyle("List")}
+                >
+                  <FaList />
+                </div>
+                <div
+                  className={`cursor-pointer p-2 ${
+                    viewStyle !== "Grid" ? "opacity-50" : "opacity-100"
+                  }`}
+                  onClick={() => setViewStyle("Grid")}
+                >
+                  <BsFillGridFill />
+                </div>
               </div>
             </div>
+            <div className="flexCol">
+              <p>In Deck</p>
+              <select
+                className="selectDeckInput"
+                value={filterDeck}
+                onChange={(e) => setFilterDeck(e.target.value)}
+              >
+                <option value="All">All Decks</option>
+                {decks.length > 0 &&
+                  decks.map((deck, index) => {
+                    const deckName = deck.name;
+                    return (
+                      <option key={index} value={deckName}>
+                        {deckName}
+                      </option>
+                    );
+                  })}
+              </select>
+            </div>
+            <div className="flexCol">
+              <p>Colour</p>
+              <select
+                value={filterColour}
+                onChange={(e) => setFilterColour(e.target.value)}
+              >
+                <option value="All">All Colours</option>
+                <option value="B">Black</option>
+                <option value="U">Blue</option>
+                <option value="G">Green</option>
+                <option value="R">Red</option>
+                <option value="W">White</option>
+              </select>
+            </div>
+            <div className="flexCol">
+              <p>Type</p>
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}
+              >
+                <option value="All">All Types</option>
+                <option value="Artifact">Artifacts</option>
+                <option value="Creature">Creatures</option>
+                <option value="Enchantment">Enchantments</option>
+                <option value="Land">Land</option>
+                <option value="Sorcery">Sorcery</option>
+              </select>
+            </div>
+            <div className="flexCol">
+              <p className="filterIconAndText">
+                {sortBy === "Name" ? (
+                  <TbSortAscendingLetters />
+                ) : (
+                  <TbArrowsSort />
+                )}
+                Sort By
+              </p>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <option value="Name">Name</option>
+                <option value="Price">Price</option>
+                <option value="Type">Type</option>
+              </select>
+            </div>
           </div>
-          <div className="flexCol">
-            <p>In Deck</p>
-            <select
-              className="selectDeckInput"
-              value={filterDeck}
-              onChange={(e) => setFilterDeck(e.target.value)}
-            >
-              <option value="All">All Decks</option>
-              {decks.length > 0 &&
-                decks.map((deck, index) => {
-                  const deckName = deck.name;
-                  return (
-                    <option key={index} value={deckName}>
-                      {deckName}
-                    </option>
-                  );
-                })}
-            </select>
+          <div className="cardFoundTotal">
+            <p>
+              {filteredAndSortedCards.length} unique cards{" "}
+              {(filterColour !== "All" ||
+                filterDeck !== "All" ||
+                filterType !== "All") &&
+                "found"}
+            </p>
           </div>
-          <div className="flexCol">
-            <p>Colour</p>
-            <select
-              value={filterColour}
-              onChange={(e) => setFilterColour(e.target.value)}
-            >
-              <option value="All">All Colours</option>
-              <option value="B">Black</option>
-              <option value="U">Blue</option>
-              <option value="G">Green</option>
-              <option value="R">Red</option>
-              <option value="W">White</option>
-            </select>
-          </div>
-          <div className="flexCol">
-            <p>Type</p>
-            <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-            >
-              <option value="All">All Types</option>
-              <option value="Artifact">Artifacts</option>
-              <option value="Creature">Creatures</option>
-              <option value="Enchantment">Enchantments</option>
-              <option value="Land">Land</option>
-              <option value="Sorcery">Sorcery</option>
-            </select>
-          </div>
-          <div className="flexCol">
-            <p>Sort By</p>
-            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-              <option value="Name">Name</option>
-              <option value="Price">Price</option>
-              <option value="Type">Type</option>
-            </select>
-          </div>
-        </div>
+        </>
       )}
 
       {viewStyle == "Grid" ? (

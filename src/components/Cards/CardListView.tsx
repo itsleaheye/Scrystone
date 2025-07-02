@@ -52,6 +52,7 @@ export function CardListView({
           );
         })}
       </div>
+      {/* To do: If mobile, open pop up overlay with card details instead */}
       {!isMobile && (
         <div className="cardListPreview">
           {cardFocused ? (
