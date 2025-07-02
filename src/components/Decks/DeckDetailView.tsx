@@ -5,8 +5,12 @@ import { CardSearchBar } from "../CardSearchBar";
 import { GiCash } from "react-icons/gi";
 import { RiCheckboxCircleFill, RiErrorWarningFill } from "react-icons/ri";
 import { useCardParser } from "../../hooks/useCardParser";
-import { primaryButton, tertiaryButton } from "../PrimaryActions";
-import { FaArrowLeft, FaEdit, FaSave } from "react-icons/fa";
+import {
+  destroyButton,
+  primaryButton,
+  tertiaryButton,
+} from "../PrimaryActions";
+import { FaArrowLeft, FaEdit, FaSave, FaTrash } from "react-icons/fa";
 import { IconItem } from "../shared/IconItem";
 import { useDeckFormState } from "../../hooks/useDeckFormState";
 import "../styles.css";
@@ -17,6 +21,7 @@ import { getDeckCost, getDeckTypeSummaryWithDefaults } from "../utils/decks";
 import { getDecksFromStorage } from "../utils/storage";
 import { CardTypeSummary } from "../shared/CardTypeSummary";
 import { CardPreview } from "../Cards/CardPreview";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 
 export const DeckDetailView = ({
   deckId,
@@ -26,7 +31,8 @@ export const DeckDetailView = ({
   setCurrentView: (view: string) => void;
 }): React.JSX.Element => {
   const { cards, onDeckCardAdd, setCards } = useCardParser();
-  const { onDeckSave } = useDeckParser();
+  const { onDeckSave, onDeckDelete } = useDeckParser();
+  const isMobile = useMediaQuery("(max-width: 650px)");
 
   const [activeDeck, setActiveDeck] = useState<Deck | undefined>();
   const [editable, setEditable] = useState<boolean>(deckId === undefined);
@@ -81,12 +87,24 @@ export const DeckDetailView = ({
     <>
       {/* Primary actions row */}
       <div className="actionRow flexRow">
-        {tertiaryButton(editable ? "Cancel" : "Go back", <FaArrowLeft />, () =>
-          setCurrentView("deckCollection")
-        )}
-        {editable
-          ? primaryButton("Save", <FaSave />, handleSave)
-          : primaryButton("Edit", <FaEdit />, () => setEditable(true))}
+        <div>
+          {tertiaryButton(
+            editable ? "Cancel" : "Go back",
+            <FaArrowLeft />,
+            () => setCurrentView("deckCollection")
+          )}
+        </div>
+        <div className="flexRow">
+          {activeDeck &&
+            destroyButton("Delete", <FaTrash />, isMobile, () => {
+              // To do add confirmation
+              onDeckDelete(activeDeck.id);
+              setCurrentView("deckCollection");
+            })}
+          {editable
+            ? primaryButton("Save", <FaSave />, handleSave)
+            : primaryButton("Edit", <FaEdit />, () => setEditable(true))}
+        </div>
       </div>
 
       {/* Deck overview */}

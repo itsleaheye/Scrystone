@@ -64,10 +64,26 @@ export function useDeckParser() {
     return deck;
   };
 
+  const onDeckDelete = (id: number) => {
+    setLoading(true);
+
+    const existingRawDecks = localStorage.getItem("mtg_decks");
+    const existingDecks: Deck[] = existingRawDecks
+      ? JSON.parse(existingRawDecks)
+      : [];
+
+    const updatedDecks = existingDecks.filter((deck) => deck.id !== id);
+
+    localStorage.setItem("mtg_decks", JSON.stringify(updatedDecks));
+    setDecks(updatedDecks);
+    setLoading(false);
+  };
+
   return {
     decks,
     setDecks,
     loading,
+    onDeckDelete,
     onDeckSave,
   };
 }

@@ -48,6 +48,8 @@ A 'Magic the Gathering' web app built with React, Tailwind CSS, and the Scryfall
 - On card individual hover or click in gallery view, flip animation and show value, quantity, and if its in a deck
 - Do not render card at all if no art found
 - Create updated at time in localstorage so the last sync time is accurate
+- Animated emblem on loading and loading/error banners or states
+- Render mana symbols instead of just colours
 
 #### ❔FAQ
 

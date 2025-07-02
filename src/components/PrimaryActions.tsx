@@ -25,3 +25,17 @@ export const primaryButton = (
     </button>
   );
 };
+
+export const destroyButton = (
+  label: string,
+  icon: React.ReactNode,
+  isMobile: boolean,
+  onClick: () => void
+): React.JSX.Element => {
+  return (
+    <button className="destroyButton" onClick={onClick}>
+      {icon}
+      {!isMobile && label}
+    </button>
+  );
+};
