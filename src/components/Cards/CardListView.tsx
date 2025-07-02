@@ -9,6 +9,7 @@ import { CardView } from "./CardView";
 import { useState } from "react";
 import React from "react";
 import { EmptyView } from "../shared/EmptyView";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 
 interface CardListViewProps {
   filteredAndSortedCards: (CollectionCard & {
@@ -26,6 +27,7 @@ export function CardListView({
   isDeckView,
   onChangeQuantity,
 }: CardListViewProps) {
+  const isMobile = useMediaQuery("(max-width: 650px)");
   const [cardFocused, setCardFocused] = useState<
     | DeckCard
     | (
@@ -33,8 +35,6 @@ export function CardListView({
         | undefined
       )
   >(undefined);
-
-  console.log("card focused", cardFocused);
 
   return (
     <div className="cardListContainer">
@@ -52,21 +52,23 @@ export function CardListView({
           );
         })}
       </div>
-      <div className="cardListPreview">
-        {cardFocused ? (
-          <CardView
-            card={cardFocused}
-            editable={false}
-            isDeckView={false}
-            onChangeQuantity={onChangeQuantity}
-          />
-        ) : (
-          <EmptyView
-            title="Preview a card"
-            description="Click on a card from the left to preview it"
-          />
-        )}
-      </div>
+      {!isMobile && (
+        <div className="cardListPreview">
+          {cardFocused ? (
+            <CardView
+              card={cardFocused}
+              editable={false}
+              isDeckView={false}
+              onChangeQuantity={onChangeQuantity}
+            />
+          ) : (
+            <EmptyView
+              title="Preview a card"
+              description="Click on a card from the left to preview it"
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 }

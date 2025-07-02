@@ -11,6 +11,7 @@ import { BsFillGridFill } from "react-icons/bs";
 import { FaList } from "react-icons/fa";
 import { useCardFiltersAndSort } from "../../hooks/useCardFiltersAndSort";
 import { CardListView } from "./CardListView";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 
 interface CardPreviewProps {
   collectionCards?: CollectionCard[];
@@ -87,28 +88,31 @@ export function CardPreview({
     filterColour,
   });
 
-  console.log("filtered and sorted", filteredAndSortedCards);
+  const isMobile = useMediaQuery("(max-width: 650px)");
 
   return (
     <>
       {!deckCards && (
-        <div className="flexRow centred filtersRow">
+        <div className="centred filtersRow">
           <div className="flexRow viewStylesContainer">
-            <div
-              className={`cursor-pointer p-2 ${
-                viewStyle !== "List" ? "opacity-50" : "opacity-100"
-              }`}
-              onClick={() => setViewStyle("List")}
-            >
-              <FaList />
-            </div>
-            <div
-              className={`cursor-pointer p-2 ${
-                viewStyle !== "Grid" ? "opacity-50" : "opacity-100"
-              }`}
-              onClick={() => setViewStyle("Grid")}
-            >
-              <BsFillGridFill />
+            {isMobile && <p className="bold">Select View Style</p>}
+            <div className="viewButtons">
+              <div
+                className={`cursor-pointer p-2 ${
+                  viewStyle !== "List" ? "opacity-50" : "opacity-100"
+                }`}
+                onClick={() => setViewStyle("List")}
+              >
+                <FaList />
+              </div>
+              <div
+                className={`cursor-pointer p-2 ${
+                  viewStyle !== "Grid" ? "opacity-50" : "opacity-100"
+                }`}
+                onClick={() => setViewStyle("Grid")}
+              >
+                <BsFillGridFill />
+              </div>
             </div>
           </div>
           <div className="flexCol">

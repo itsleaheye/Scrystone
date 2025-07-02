@@ -110,13 +110,12 @@
   .primaryDetails {
     align-items: center;
     display: flex;
-    width: 300px;
-    max-width: 300px;
+    width: 150px;
     text-align: left;
   }
 
   .setDetails {
-    width: 250px;
+    width: 100px;
     text-align: right;
   }
 
@@ -138,8 +137,13 @@
   }
 }
 
-.cardListPreview .card {
-  max-width: 275px;
+.cardListPreview {
+  .card {
+    max-width: 275px;
+  }
+  .emptyInfo {
+    max-width: 250px;
+  }
 }
 
 .cardListContainer {
@@ -147,4 +151,32 @@
   flex-direction: row;
   gap: var(--pad-sm);
   justify-content: center;
+}
+
+@media only screen and (min-width: 600px) {
+  .cardListRow {
+    max-width: 600px;
+
+    .setDetails {
+      width: 100px;
+    }
+
+    .primaryDetails {
+      width: 200px;
+    }
+  }
+}
+
+@media only screen and (min-width: 900px) {
+  .cardListRow {
+    max-width: 700px;
+
+    .setDetails {
+      width: 250px;
+    }
+
+    .primaryDetails {
+      width: 400px;
+    }
+  }
 }

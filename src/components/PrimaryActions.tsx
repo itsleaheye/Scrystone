@@ -1,4 +1,3 @@
-import { useMediaQuery } from "../hooks/useMediaQuery";
 import "./styles.css";
 
 export const tertiaryButton = (
@@ -19,12 +18,10 @@ export const primaryButton = (
   icon: React.ReactNode,
   onClick: () => void
 ): React.JSX.Element => {
-  const isMobile = useMediaQuery("(max-width: 500px)");
-
   return (
     <button className="primaryButton" onClick={onClick}>
       {icon}
-      {!isMobile && label}
+      {label}
     </button>
   );
 };
