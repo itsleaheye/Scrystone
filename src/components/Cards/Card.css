@@ -95,3 +95,56 @@
     }
   }
 }
+
+.overflowElipse {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardListRow {
+  justify-content: space-between;
+  max-width: 650px;
+  margin: var(--pad-xxxs) 0;
+
+  .primaryDetails {
+    align-items: center;
+    display: flex;
+    width: 300px;
+    max-width: 300px;
+    text-align: left;
+  }
+
+  .setDetails {
+    width: 250px;
+    text-align: right;
+  }
+
+  .priceDetails {
+    width: 50px;
+    text-align: right;
+  }
+
+  svg {
+    height: 1rem;
+    width: 1rem;
+    margin-right: var(--pad-xs);
+  }
+
+  &:hover {
+    cursor: pointer;
+    color: var(--blue);
+    transition: var(--ease-in);
+  }
+}
+
+.cardListPreview .card {
+  max-width: 275px;
+}
+
+.cardListContainer {
+  display: flex;
+  flex-direction: row;
+  gap: var(--pad-sm);
+  justify-content: center;
+}

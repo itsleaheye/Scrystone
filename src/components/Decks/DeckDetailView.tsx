@@ -7,7 +7,6 @@ import { RiCheckboxCircleFill, RiErrorWarningFill } from "react-icons/ri";
 import { useCardParser } from "../../hooks/useCardParser";
 import { primaryButton, tertiaryButton } from "../PrimaryActions";
 import { FaArrowLeft, FaEdit, FaSave } from "react-icons/fa";
-import { CardListView } from "../Cards/CardListView";
 import { IconItem } from "../shared/IconItem";
 import { useDeckFormState } from "../../hooks/useDeckFormState";
 import "../styles.css";
@@ -17,6 +16,7 @@ import { ManaRow } from "./ManaRow";
 import { getDeckCost, getDeckTypeSummaryWithDefaults } from "../utils/decks";
 import { getDecksFromStorage } from "../utils/storage";
 import { CardTypeSummary } from "../shared/CardTypeSummary";
+import { CardPreview } from "../Cards/CardPreview";
 
 export const DeckDetailView = ({
   deckId,
@@ -165,8 +165,8 @@ export const DeckDetailView = ({
         <CardSearchBar onDeckCardAdd={onDeckCardAdd} deckCards={cards} />
       )}
 
-      {/* Card gallery view */}
-      <CardListView
+      {/* Card view (list or gallery view)*/}
+      <CardPreview
         deckCards={cards}
         editable={editable}
         isDeckView={true}

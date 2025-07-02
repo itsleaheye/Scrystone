@@ -6,10 +6,10 @@ import { TbCardsFilled } from "react-icons/tb";
 import { GiCash } from "react-icons/gi";
 import { DeckDetailView } from "./Decks/DeckDetailView.tsx";
 import { DeckListView } from "./Decks/DeckListView.tsx";
-import { CardListView } from "./Cards/CardListView.tsx";
 import { getCardsFromStorage } from "./utils/storage.ts";
 import { IconItem } from "./shared/IconItem.tsx";
 import { Welcome } from "./Welcome.tsx";
+import { CardPreview } from "./Cards/CardPreview.tsx";
 
 export default function Dashboard() {
   const cards = getCardsFromStorage();
@@ -85,7 +85,7 @@ export default function Dashboard() {
       {hasCollection ? (
         <div className="dataContainer">
           {currentView === "dashboard" && (
-            <CardListView collectionCards={cards} />
+            <CardPreview collectionCards={cards} />
           )}
           {currentView.startsWith("deckCreateEditView") &&
             renderDeckDetailView(currentView, setCurrentView)}
