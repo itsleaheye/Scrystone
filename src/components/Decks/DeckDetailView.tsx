@@ -5,11 +5,7 @@ import { CardSearchBar } from "../CardSearchBar";
 import { GiCash } from "react-icons/gi";
 import { RiCheckboxCircleFill, RiErrorWarningFill } from "react-icons/ri";
 import { useCardParser } from "../../hooks/useCardParser";
-import {
-  destroyButton,
-  primaryButton,
-  tertiaryButton,
-} from "../PrimaryActions";
+import { ActionButton } from "../PrimaryActions";
 import { FaArrowLeft, FaEdit, FaSave, FaTrash } from "react-icons/fa";
 import { IconItem } from "../shared/IconItem";
 import { useDeckFormState } from "../../hooks/useDeckFormState";
@@ -88,22 +84,42 @@ export const DeckDetailView = ({
       {/* Primary actions row */}
       <div className="actionRow flexRow">
         <div>
-          {tertiaryButton(
-            editable ? "Cancel" : "Go back",
-            <FaArrowLeft />,
-            () => setCurrentView("deckCollection")
-          )}
+          <ActionButton
+            icon={<FaArrowLeft />}
+            label={editable ? "Cancel" : "Go back"}
+            onClick={() => setCurrentView("deckCollection")}
+            variation="tertiary"
+          />
         </div>
         <div className="flexRow">
-          {activeDeck &&
-            destroyButton("Delete", <FaTrash />, isMobile, () => {
-              // To do add confirmation
-              onDeckDelete(activeDeck.id);
-              setCurrentView("deckCollection");
-            })}
-          {editable
-            ? primaryButton("Save", <FaSave />, handleSave)
-            : primaryButton("Edit", <FaEdit />, () => setEditable(true))}
+          {activeDeck && (
+            <ActionButton
+              hideLabel={isMobile}
+              icon={<FaTrash />}
+              label={"Delete"}
+              onClick={() => {
+                // To do add confirmation
+                onDeckDelete(activeDeck.id);
+                setCurrentView("deckCollection");
+              }}
+              variation="destroy"
+            />
+          )}
+          {editable ? (
+            <ActionButton
+              icon={<FaSave />}
+              label={"Save"}
+              onClick={handleSave}
+              variation="primary"
+            />
+          ) : (
+            <ActionButton
+              icon={<FaEdit />}
+              label={"Edit"}
+              onClick={() => setEditable(true)}
+              variation="primary"
+            />
+          )}
         </div>
       </div>
 

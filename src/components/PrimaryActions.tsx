@@ -1,41 +1,24 @@
 import "./styles.css";
 
-export const tertiaryButton = (
-  label: string,
-  icon: React.ReactNode,
-  onClick: () => void
-): React.JSX.Element => {
-  return (
-    <a className="tertiaryButton" onClick={onClick}>
-      {icon}
-      {label}
-    </a>
-  );
-};
+interface ActionButtonProps {
+  hideLabel?: boolean;
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+  variation: "destroy" | "primary" | "tertiary";
+}
 
-export const primaryButton = (
-  label: string,
-  icon: React.ReactNode,
-  onClick: () => void
-): React.JSX.Element => {
+export function ActionButton({
+  hideLabel = false,
+  icon,
+  label,
+  onClick,
+  variation,
+}: ActionButtonProps): React.JSX.Element {
   return (
-    <button className="primaryButton" onClick={onClick}>
+    <button className={`${variation}Button`} onClick={onClick}>
       {icon}
-      {label}
+      {!hideLabel && label}
     </button>
   );
-};
-
-export const destroyButton = (
-  label: string,
-  icon: React.ReactNode,
-  isMobile: boolean,
-  onClick: () => void
-): React.JSX.Element => {
-  return (
-    <button className="destroyButton" onClick={onClick}>
-      {icon}
-      {!isMobile && label}
-    </button>
-  );
-};
+}
