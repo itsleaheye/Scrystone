@@ -170,6 +170,19 @@
   height: 40px;
 }
 
+.secondaryButton {
+  border: 2px solid var(--white);
+  background: var(--black);
+  color: var(--white);
+  border-radius: var(--border-radius-base);
+  padding: var(--pad-xxs) var(--pad-xs);
+  height: 40px;
+  gap: var(--pad-xxs);
+  align-items: center;
+  font-weight: 600;
+  display: flex;
+}
+
 .destroyButton {
   border: 2px solid var(--red);
   color: var(--red);
@@ -542,6 +555,8 @@
     }
   }
   .deckOverview {
+    padding: var(--pad-sm);
+
     .deckBreakdown {
       max-width: 100%;
       gap: var(--pad-sm);

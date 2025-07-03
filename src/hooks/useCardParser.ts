@@ -66,8 +66,9 @@ export function useCardParser() {
     const newCard: DeckCard = {
       imageUrl: scryfallCard?.previewUrl,
       name: cardName,
-      price: scryfallCard?.price,
+      price: scryfallCard?.price, //To do, convert to CAD
       type,
+      set: scryfallCard?.set,
       quantityNeeded: 1,
       quantityOwned: ownedMatch?.quantityOwned ?? 0,
       manaCost: scryfallCard?.manaCost,

@@ -5,7 +5,7 @@ interface ActionButtonProps {
   icon: React.ReactNode;
   label: string;
   onClick: () => void;
-  variation: "destroy" | "primary" | "tertiary";
+  variation: "destroy" | "primary" | "tertiary" | "secondary";
 }
 
 export function ActionButton({

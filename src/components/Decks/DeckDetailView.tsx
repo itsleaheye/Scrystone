@@ -18,6 +18,7 @@ import { getDecksFromStorage } from "../utils/storage";
 import { CardTypeSummary } from "../shared/CardTypeSummary";
 import { CardPreview } from "../Cards/CardPreview";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { PiExportBold } from "react-icons/pi";
 
 export const DeckDetailView = ({
   deckId,
@@ -27,7 +28,7 @@ export const DeckDetailView = ({
   setCurrentView: (view: string) => void;
 }): React.JSX.Element => {
   const { cards, onDeckCardAdd, setCards } = useCardParser();
-  const { onDeckSave, onDeckDelete } = useDeckParser();
+  const { onDeckSave, onDeckDelete, onDeckExport } = useDeckParser();
   const isMobile = useMediaQuery("(max-width: 650px)");
 
   const [activeDeck, setActiveDeck] = useState<Deck | undefined>();
@@ -56,7 +57,7 @@ export const DeckDetailView = ({
     () => cards.reduce((sum, card) => sum + (card.quantityNeeded || 0), 0),
     [cards]
   );
-  const isDeckReady = currentDeckSize >= requiredDeckSize;
+  const isDeckReady = currentDeckSize == requiredDeckSize;
 
   // For sake of performance, memoize the summary
   const summary = useMemo(
@@ -103,6 +104,17 @@ export const DeckDetailView = ({
                 setCurrentView("deckCollection");
               }}
               variation="destroy"
+            />
+          )}
+          {activeDeck && !editable && (
+            <ActionButton
+              icon={<PiExportBold />}
+              label={"Export Deck"}
+              onClick={() => {
+                onDeckExport(activeDeck.cards, activeDeck.name);
+                setCurrentView("deckCollection");
+              }}
+              variation="secondary"
             />
           )}
           {editable ? (

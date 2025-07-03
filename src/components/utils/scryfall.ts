@@ -11,6 +11,7 @@ interface ScryfallDetails {
   previewUrl?: string;
   price: number;
   type: string;
+  set: string;
 }
 
 export async function getScryfallCard(
@@ -62,10 +63,6 @@ export async function getScryfallCard(
 }
 
 function formatScryfallDetails(card: any): ScryfallDetails {
-  if (card.name.toLowerCase().includes("kefka")) {
-    console.warn(`Kefka mana: ${card.color_identity}`);
-  }
-  // Parse mana string
   const manaCost =
     normalizeColourIdentity(card.color_identity) ?? card.mana_cost;
   const { cost, colours } = manaCost
@@ -79,5 +76,6 @@ function formatScryfallDetails(card: any): ScryfallDetails {
     manaCost: cost,
     manaTypes: colours,
     type: card.type_line?.split("—")[0]?.trim().split(" ")[0],
+    set: card.set_name,
   };
 }

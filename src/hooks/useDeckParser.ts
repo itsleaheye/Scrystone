@@ -24,6 +24,8 @@ export function useDeckParser() {
       ? JSON.parse(existingRawDecks)
       : [];
 
+    console.log("onSave", cards);
+
     const deckCards: DeckCard[] = cards.map((card) => ({
       ...card,
       quantityNeeded: card.quantityNeeded,
@@ -79,11 +81,45 @@ export function useDeckParser() {
     setLoading(false);
   };
 
+  const onDeckExport = (deckCards: DeckCard[], deckName: string) => {
+    console.log("deckCards", deckCards);
+    const sortedCards = [...deckCards].sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
+    );
+    const fileContent = sortedCards
+      .map((card) => {
+        const quantityOwned = card.quantityOwned ?? 0;
+        const namePrefix = quantityOwned < card.quantityNeeded ? "*" : "";
+
+        return `${namePrefix}${card.name} ${quantityOwned}/${
+          card.quantityNeeded
+        } - ${card.set} - $${
+          card.price ? Number(card.price).toFixed(2) : "n/a"
+        } per`;
+      })
+      .join("\n");
+
+    // Binary Large Object
+    const blob = new Blob([fileContent], {
+      type: "text/plain;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = `${deckName}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return {
     decks,
-    setDecks,
     loading,
     onDeckDelete,
+    onDeckExport,
     onDeckSave,
+    setDecks,
   };
 }
