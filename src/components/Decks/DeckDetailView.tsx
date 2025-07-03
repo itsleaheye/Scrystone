@@ -19,6 +19,7 @@ import { CardTypeSummary } from "../shared/CardTypeSummary";
 import { CardPreview } from "../Cards/CardPreview";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { PiExportBold } from "react-icons/pi";
+import { ViewStyleFilter } from "../shared/ViewStyleFilter";
 
 export const DeckDetailView = ({
   deckId,
@@ -33,6 +34,7 @@ export const DeckDetailView = ({
 
   const [activeDeck, setActiveDeck] = useState<Deck | undefined>();
   const [editable, setEditable] = useState<boolean>(deckId === undefined);
+  const [viewStyle, setViewStyle] = useState<string>("Grid");
 
   useEffect(() => {
     if (deckId !== undefined) {
@@ -210,15 +212,23 @@ export const DeckDetailView = ({
 
       {/* Only show search bar in an edit state */}
       {editable && (
-        <CardSearchBar onDeckCardAdd={onDeckCardAdd} deckCards={cards} />
+        <div className="deckCardActions">
+          <ViewStyleFilter
+            isMobile={isMobile}
+            viewStyle={viewStyle}
+            setViewStyle={setViewStyle}
+          />
+          <CardSearchBar onDeckCardAdd={onDeckCardAdd} deckCards={cards} />
+        </div>
       )}
 
-      {/* Card view (list or gallery view)*/}
       <CardPreview
         deckCards={cards}
         editable={editable}
         isDeckView={true}
         setCards={setCards}
+        viewPreference={viewStyle}
+        activeCardPreview={cards[cards.length - 1]}
       />
     </>
   );

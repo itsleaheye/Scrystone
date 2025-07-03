@@ -24,8 +24,6 @@ export function useDeckParser() {
       ? JSON.parse(existingRawDecks)
       : [];
 
-    console.log("onSave", cards);
-
     const deckCards: DeckCard[] = cards.map((card) => ({
       ...card,
       quantityNeeded: card.quantityNeeded,
@@ -82,7 +80,6 @@ export function useDeckParser() {
   };
 
   const onDeckExport = (deckCards: DeckCard[], deckName: string) => {
-    console.log("deckCards", deckCards);
     const sortedCards = [...deckCards].sort((a, b) =>
       a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
     );

@@ -29,6 +29,7 @@ interface CardListViewProps {
       | undefined
     >
   >;
+  hasCards: boolean;
 }
 
 // To do, support deck editing views from this list
@@ -39,6 +40,7 @@ export function CardListView({
   isDeckView,
   onChangeQuantity,
   setCardFocused,
+  hasCards,
 }: CardListViewProps) {
   const isMobile = useMediaQuery("(max-width: 650px)");
 
@@ -70,8 +72,16 @@ export function CardListView({
             />
           ) : (
             <EmptyView
-              title="Preview a card"
-              description="Click on a card from the left to view it's details"
+              title={
+                hasCards && filteredAndSortedCards.length < 1
+                  ? "No cards found"
+                  : "Preview a card"
+              }
+              description={
+                hasCards && filteredAndSortedCards.length < 1
+                  ? "No cards in this deck match your filters"
+                  : "Click on a card from the left to view it's details"
+              }
             />
           )}
         </div>

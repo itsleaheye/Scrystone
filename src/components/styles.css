@@ -545,6 +545,10 @@
   .manaRow {
     justify-content: start;
   }
+  .deckCardActions {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 @media only screen and (min-width: 900px) {
@@ -576,6 +580,17 @@
       .deckFields {
         justify-content: space-between;
       }
+    }
+  }
+  .deckCardActions {
+    margin: 0 auto var(--pad-sm) auto;
+    flex-direction: row;
+    gap: var(--pad-xs);
+    justify-content: center;
+
+    .searchContainer {
+      margin: 0;
+      width: 350px;
     }
   }
 }

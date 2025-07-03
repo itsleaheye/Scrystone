@@ -4,30 +4,33 @@ import { getDecksFromStorage } from "../utils/storage";
 import { normalizeCardName } from "../utils/normalize";
 import { CardView } from "./CardView";
 import { mergeCardQuantities } from "../utils/cards";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
 import { EmptyView } from "../shared/EmptyView";
-import { BsFillGridFill } from "react-icons/bs";
-import { FaList } from "react-icons/fa";
 import { useCardFiltersAndSort } from "../../hooks/useCardFiltersAndSort";
 import { CardListView } from "./CardListView";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { TbArrowsSort, TbSortAscendingLetters } from "react-icons/tb";
 import Select from "react-select";
+import { ViewStyleFilter } from "../shared/ViewStyleFilter";
 
 interface CardPreviewProps {
+  activeCardPreview?: DeckCard;
   collectionCards?: CollectionCard[];
   deckCards?: DeckCard[];
   editable?: boolean;
   isDeckView?: boolean;
   setCards?: React.Dispatch<React.SetStateAction<DeckCard[]>>;
+  viewPreference?: string;
 }
 export function CardPreview({
+  activeCardPreview,
   collectionCards,
   deckCards,
   editable = false,
   isDeckView = false,
   setCards,
+  viewPreference,
 }: CardPreviewProps) {
   // If there are no cards to render, early return
   const hasCards =
@@ -91,11 +94,17 @@ export function CardPreview({
   ];
 
   const decks = getDecksFromStorage();
-  const [viewStyle, setViewStyle] = useState<string>("Grid");
+  const [viewStyle, setViewStyle] = useState<string>(viewPreference ?? "Grid");
   const [filterColour, setFilterColour] = useState<string[]>([]);
   const [filterType, setFilterType] = useState<string[]>([]);
   const [filterDeck, setFilterDeck] = useState<string>("All");
   const [sortBy, setSortBy] = useState<string>("Name");
+
+  useEffect(() => {
+    if (viewPreference && viewPreference !== viewStyle) {
+      setViewStyle(viewPreference);
+    }
+  }, [viewPreference]);
 
   const filteredAndSortedCards = useCardFiltersAndSort({
     cards: cardsWithQuantities,
@@ -113,58 +122,49 @@ export function CardPreview({
         quantityNeeded?: number;
       })
     | undefined
-  >(undefined);
+  >(activeCardPreview ?? undefined);
+  useEffect(() => {
+    if (activeCardPreview && activeCardPreview !== cardFocused) {
+      setCardFocused(activeCardPreview);
+    }
+  }, [activeCardPreview]);
 
   const isMobile = useMediaQuery("(max-width: 650px)");
 
   return (
     <>
-      {!deckCards && (
+      {!editable && (
         <>
           <div className="centred filtersRow">
-            <div className="flexRow viewStylesContainer">
-              {isMobile && <p className="bold">Select View Style</p>}
-              <div className="viewButtons">
-                <div
-                  className={`cursor-pointer p-2 ${
-                    viewStyle !== "List" ? "opacity-50" : "opacity-100"
-                  }`}
-                  onClick={() => setViewStyle("List")}
+            <ViewStyleFilter
+              isMobile={isMobile}
+              viewStyle={viewStyle}
+              setViewStyle={setViewStyle}
+            />
+            {!isDeckView && (
+              <div className="flexCol">
+                <p>In Deck</p>
+                <select
+                  className="selectDeckInput"
+                  value={filterDeck}
+                  onChange={(e) => {
+                    setFilterDeck(e.target.value);
+                    setCardFocused(undefined);
+                  }}
                 >
-                  <FaList />
-                </div>
-                <div
-                  className={`cursor-pointer p-2 ${
-                    viewStyle !== "Grid" ? "opacity-50" : "opacity-100"
-                  }`}
-                  onClick={() => setViewStyle("Grid")}
-                >
-                  <BsFillGridFill />
-                </div>
+                  <option value="All">All Decks</option>
+                  {decks.length > 0 &&
+                    decks.map((deck, index) => {
+                      const deckName = deck.name;
+                      return (
+                        <option key={index} value={deckName}>
+                          {deckName}
+                        </option>
+                      );
+                    })}
+                </select>
               </div>
-            </div>
-            <div className="flexCol">
-              <p>In Deck</p>
-              <select
-                className="selectDeckInput"
-                value={filterDeck}
-                onChange={(e) => {
-                  setFilterDeck(e.target.value);
-                  setCardFocused(undefined);
-                }}
-              >
-                <option value="All">All Decks</option>
-                {decks.length > 0 &&
-                  decks.map((deck, index) => {
-                    const deckName = deck.name;
-                    return (
-                      <option key={index} value={deckName}>
-                        {deckName}
-                      </option>
-                    );
-                  })}
-              </select>
-            </div>
+            )}
             <div className="flexCol">
               <p>Colour</p>
               <Select
@@ -256,6 +256,7 @@ export function CardPreview({
           isDeckView={isDeckView}
           onChangeQuantity={onChangeQuantity}
           setCardFocused={setCardFocused}
+          hasCards={hasCards}
         />
       )}
     </>
