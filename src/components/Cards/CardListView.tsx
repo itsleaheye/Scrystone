@@ -66,8 +66,8 @@ export function CardListView({
           {cardFocused ? (
             <CardView
               card={cardFocused}
-              editable={false}
-              isDeckView={false}
+              editable={editable}
+              isDeckView={isDeckView}
               onChangeQuantity={onChangeQuantity}
             />
           ) : (
@@ -118,18 +118,24 @@ function CardListItem({
 }: CardListItemProps) {
   // To do: placeholders
   console.log("editable", editable);
-  console.log("isDeckView", isDeckView);
   console.log("onChangeQuantity", onChangeQuantity);
+
+  const showWarning = (card.quantityOwned ?? 0) < (card.quantityNeeded ?? 1);
 
   return (
     <div
       className="flexRow cardListRow"
       onClick={() => setCardFocused && setCardFocused(card)}
     >
-      <div className="primaryDetails">
+      <div
+        className={showWarning ? "redText primaryDetails" : "primaryDetails"}
+      >
         {getTypeIcon(card.type)}
-        <p className="bold  overflowElipse">
-          {card.name} x{card.quantityOwned}
+        <p className="bold overflowElipse">
+          {card.name}{" "}
+          {isDeckView
+            ? `${card.quantityOwned}/${card.quantityNeeded}`
+            : `x${card.quantityOwned}`}
         </p>
       </div>
       <p className="overflowElipse setDetails">({card.set})</p>

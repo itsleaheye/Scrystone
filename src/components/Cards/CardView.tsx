@@ -1,6 +1,7 @@
 import type { CollectionCard, DeckCard } from "../../types/MagicTheGathering";
 import { CardFooter } from "./CardFooter";
 import "./Card.css";
+import { CardHeader } from "./CardHeader";
 
 interface CardViewProps {
   card:
@@ -28,6 +29,12 @@ export function CardView({
               : ""
           }`}
           src={card.imageUrl}
+        />
+      )}
+      {editable && (
+        <CardHeader
+          quantityNeeded={card.quantityNeeded ?? 0}
+          quantityOwned={card.quantityOwned}
         />
       )}
       <CardFooter

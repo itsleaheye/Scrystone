@@ -237,6 +237,12 @@
 .green {
   background: var(--dark-green);
 }
+.blue {
+  background-color: var(--dark-blue);
+}
+.red {
+  background-color: var(--red);
+}
 .white {
   background: var(--white);
   border: 2px solid var(--off-white);
