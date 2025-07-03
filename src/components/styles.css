@@ -472,8 +472,14 @@
 }
 
 .loading {
-  margin: var(--pad-xs) auto;
+  margin: var(--pad-xs) auto -2px auto;
   font-style: italic;
+}
+
+.overflowElipse {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* === Media Queries (Responsive) === */
@@ -565,7 +571,11 @@
       flex-direction: row;
     }
     .staticDeckCol1 {
-      min-width: 300px;
+      min-width: 375px;
+
+      .deckFields {
+        justify-content: space-between;
+      }
     }
   }
 }

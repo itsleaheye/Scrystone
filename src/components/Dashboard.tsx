@@ -13,8 +13,14 @@ import { CardPreview } from "./Cards/CardPreview.tsx";
 
 export default function Dashboard() {
   const cards = getCardsFromStorage();
-  const { loading, error, onCollectionUpload, collection, progress } =
-    useCardParser();
+  const {
+    loading,
+    error,
+    onCollectionUpload,
+    collection,
+    currentProgress,
+    totalProgress,
+  } = useCardParser();
   const hasCollection = collection.size > 0;
 
   const [currentView, setCurrentView] = React.useState("dashboard"); // Didn't feel like setting up a router or EntryPoint. Shame Leah
@@ -79,12 +85,21 @@ export default function Dashboard() {
       {loading && (
         <div className="loading">
           {/* To be replaced by spinning planewalker logo */}
-          <p className="text-center">Loading cards {progress}%</p>
+          <p className="text-center">
+            Loading {currentProgress}/{totalProgress} cards
+          </p>
         </div>
       )}
 
       {hasCollection ? (
-        <div className="dataContainer">
+        <div
+          className="dataContainer"
+          style={{
+            opacity: loading ? 0.5 : 1,
+            pointerEvents: loading ? "none" : "auto",
+            transition: "opacity 0.5s ease",
+          }}
+        >
           {currentView === "dashboard" && (
             <CardPreview collectionCards={cards} />
           )}

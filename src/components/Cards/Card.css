@@ -96,12 +96,6 @@
   }
 }
 
-.overflowElipse {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .cardListRow {
   justify-content: space-between;
   max-width: 650px;

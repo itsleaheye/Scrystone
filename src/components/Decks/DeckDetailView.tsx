@@ -145,7 +145,9 @@ export const DeckDetailView = ({
 
             <div className="deckFields">
               <DeckField
-                customRender={<p className="bold deckName">{name}</p>}
+                customRender={
+                  <p className="bold deckName overflowElipse">{name}</p>
+                }
                 editable={editable}
                 onChange={setName}
                 placeholder="Deck name..."
