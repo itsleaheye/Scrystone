@@ -142,7 +142,10 @@
     max-width: 275px;
   }
   .emptyInfo {
-    max-width: 250px;
+    max-width: 275px;
+    display: flex;
+    height: 380px;
+    align-items: center;
   }
 }
 

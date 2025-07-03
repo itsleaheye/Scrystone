@@ -31,6 +31,10 @@ export function normalizeMana(manaCostStr: string): {
   };
 }
 
+export function normalizeColourIdentity(colorIdentity: string[]): string {
+  return colorIdentity.map((color) => `{${color}}`).join("");
+}
+
 export function normalizeCardType(type?: string) {
   if (!type) return undefined;
 

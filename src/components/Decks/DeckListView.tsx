@@ -1,5 +1,5 @@
 import { FaArrowLeft } from "react-icons/fa";
-import { primaryButton, tertiaryButton } from "../PrimaryActions";
+import { ActionButton } from "../PrimaryActions";
 import { FaPlus } from "react-icons/fa6";
 import { DeckView } from "./DeckView";
 import { getDecksFromStorage } from "../utils/storage";
@@ -15,12 +15,18 @@ export function DeckListView({ setCurrentView }: Props) {
   return (
     <>
       <div className="actionRow flexRow">
-        {tertiaryButton("Go back", <FaArrowLeft />, () =>
-          setCurrentView("dashboard")
-        )}
-        {primaryButton("New Deck", <FaPlus />, () =>
-          setCurrentView("deckCreateEditView")
-        )}
+        <ActionButton
+          icon={<FaArrowLeft />}
+          label="Go back"
+          onClick={() => setCurrentView("dashboard")}
+          variation="tertiary"
+        />
+        <ActionButton
+          icon={<FaPlus />}
+          label="New Deck"
+          onClick={() => setCurrentView("deckCreateEditView")}
+          variation="primary"
+        />
       </div>
 
       {decks.length > 0 ? (

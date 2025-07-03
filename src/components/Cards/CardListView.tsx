@@ -6,35 +6,41 @@ import { LuPickaxe } from "react-icons/lu";
 import { HiQuestionMarkCircle } from "react-icons/hi";
 import "../styles.css";
 import { CardView } from "./CardView";
-import { useState } from "react";
 import React from "react";
 import { EmptyView } from "../shared/EmptyView";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 
 interface CardListViewProps {
+  cardFocused:
+    | DeckCard
+    | (CollectionCard & { quantityOwned: number; quantityNeeded?: number })
+    | undefined;
+  editable: boolean;
   filteredAndSortedCards: (CollectionCard & {
     quantityOwned: number;
     quantityNeeded?: number;
   })[];
-  editable: boolean;
   isDeckView: boolean;
   onChangeQuantity: (cardName: string, amount: number) => void;
+  setCardFocused: React.Dispatch<
+    React.SetStateAction<
+      | DeckCard
+      | (CollectionCard & { quantityOwned: number; quantityNeeded?: number })
+      | undefined
+    >
+  >;
 }
+
 // To do, support deck editing views from this list
 export function CardListView({
-  filteredAndSortedCards,
+  cardFocused,
   editable,
+  filteredAndSortedCards,
   isDeckView,
   onChangeQuantity,
+  setCardFocused,
 }: CardListViewProps) {
   const isMobile = useMediaQuery("(max-width: 650px)");
-  const [cardFocused, setCardFocused] = useState<
-    | DeckCard
-    | (
-        | (CollectionCard & { quantityOwned: number; quantityNeeded?: number })
-        | undefined
-      )
-  >(undefined);
 
   return (
     <div className="cardListContainer">
@@ -65,7 +71,7 @@ export function CardListView({
           ) : (
             <EmptyView
               title="Preview a card"
-              description="Click on a card from the left to preview it"
+              description="Click on a card from the left to view it's details"
             />
           )}
         </div>

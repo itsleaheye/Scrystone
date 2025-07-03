@@ -1,4 +1,9 @@
-import { normalizeCardName, normalizeMana } from "./normalize";
+import {
+  normalizeCardName,
+  normalizeColourIdentity,
+  normalizeMana,
+} from "./normalize";
+import { getCachedCard, setCachedCard } from "./storage";
 
 interface ScryfallDetails {
   manaCost?: number;
@@ -11,7 +16,15 @@ interface ScryfallDetails {
 export async function getScryfallCard(
   cardName: string
 ): Promise<ScryfallDetails | undefined> {
-  const query = encodeURIComponent(normalizeCardName(cardName));
+  const normalizedName = normalizeCardName(cardName);
+  const query = encodeURIComponent(normalizedName);
+
+  // Check if we have a cached version of this card first
+  const cached = getCachedCard(normalizedName);
+  if (cached) {
+    return formatScryfallDetails(cached);
+  }
+
   const urls = [
     `https://api.scryfall.com/cards/named?fuzzy=${query}`, //fuzzy search
     `https://api.scryfall.com/cards/search?q=${query}`, // general search
@@ -38,25 +51,33 @@ export async function getScryfallCard(
       return;
     }
 
-    // Normalizes our returned data to a single card object
-    const card = Array.isArray(data.data) ? data.data[0] : data;
+    setCachedCard(normalizedName, data);
 
-    // Parse mana string
-    const { cost, colours } = card.mana_cost
-      ? normalizeMana(card.mana_cost)
-      : { cost: undefined, colours: undefined };
-
-    return {
-      previewUrl:
-        card.image_uris?.normal || card.card_faces?.[0]?.image_uris?.normal,
-      price: parseFloat(card.prices?.usd) || 0,
-      manaCost: cost,
-      manaTypes: colours,
-      type: card.type_line?.split("—")[0]?.trim().split(" ")[0],
-    };
+    return formatScryfallDetails(data);
   } catch (error) {
     console.error(`Error fetching card details for "${cardName}":`, error);
 
     return;
   }
+}
+
+function formatScryfallDetails(card: any): ScryfallDetails {
+  if (card.name.toLowerCase().includes("kefka")) {
+    console.warn(`Kefka mana: ${card.color_identity}`);
+  }
+  // Parse mana string
+  const manaCost =
+    normalizeColourIdentity(card.color_identity) ?? card.mana_cost;
+  const { cost, colours } = manaCost
+    ? normalizeMana(manaCost as string)
+    : { cost: undefined, colours: undefined };
+
+  return {
+    previewUrl:
+      card.image_uris?.normal || card.card_faces?.[0]?.image_uris?.normal,
+    price: parseFloat(card.prices?.usd) || 0,
+    manaCost: cost,
+    manaTypes: colours,
+    type: card.type_line?.split("—")[0]?.trim().split(" ")[0],
+  };
 }

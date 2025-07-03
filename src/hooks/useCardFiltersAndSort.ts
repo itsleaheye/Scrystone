@@ -7,9 +7,9 @@ interface UseCardFiltersAndSort {
     quantityNeeded?: number;
   })[];
   decks: Deck[];
-  filterColour: string;
+  filterColour: string[];
   filterDeck: string;
-  filterType: string;
+  filterType: string[];
   sortBy: string;
 }
 
@@ -25,11 +25,15 @@ export function useCardFiltersAndSort({
     let filtered = [...cards];
 
     // Filter handling
-    if (filterType !== "All") {
-      filtered = filtered.filter((c) => c.type?.includes(filterType));
+    if (filterType.length > 0) {
+      filtered = filtered.filter((c) =>
+        filterType.some((type) => c.type?.includes(type))
+      );
     }
-    if (filterColour !== "All") {
-      filtered = filtered.filter((c) => c.manaTypes?.includes(filterColour));
+    if (filterColour.length > 0) {
+      filtered = filtered.filter((c) =>
+        c.manaTypes?.some((colour) => filterColour.includes(colour))
+      );
     }
     if (filterDeck !== "All") {
       const matchingDeck = decks.find((d) => d.name === filterDeck);

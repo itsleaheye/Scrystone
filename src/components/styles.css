@@ -80,7 +80,7 @@
     margin: 0 auto var(--pad-xxs) auto;
     cursor: pointer;
     transition: var(--ease-in);
-    max-width: 150px;
+    max-width: 175px;
 
     &:hover {
       opacity: 0.5;
@@ -184,6 +184,9 @@
 }
 
 .tertiaryButton {
+  background-color: var(--black);
+  border: none;
+  color: var(--white);
   display: flex;
   align-items: center;
 
@@ -322,14 +325,63 @@
       font-weight: bold;
     }
     select {
-      font-size: var(--font-size-base);
+      background: var(--darker-gray);
       border-radius: var(--border-radius-base);
       border: 2px solid var(--blue);
-      padding: var(--pad-xxxs) var(--pad-xs);
       color: var(--white);
+      font-size: var(--font-size-base);
       margin-bottom: var(--pad-xxs);
-      background: var(--darker-gray);
+      padding: var(--pad-xxxs) var(--pad-xxs);
       width: 100%;
+      height: 40px;
+    }
+    .selectMulti__control {
+      background: var(--darker-gray);
+      border-radius: var(--border-radius-base);
+      border: 2px solid var(--blue);
+      color: var(--white);
+    }
+    .selectMulti {
+      width: 100%;
+      margin-bottom: var(--pad-xxs);
+    }
+    .selectMulti__menu {
+      background: var(--darker-gray);
+    }
+    .selectMulti__option {
+      color: var(--white);
+      background: var(--darker-gray);
+    }
+    .selectMulti__option--is-focused {
+      cursor: pointer;
+      background-color: var(--dark-gray);
+      transition: var(--ease-in);
+    }
+    .selectMulti__indicator-separator {
+      display: none;
+    }
+    .selectMulti__control--is-focused {
+      border-color: var(--blue);
+      box-shadow: none;
+    }
+    .selectMulti__value-container {
+      padding: 2px 0 2px 2px;
+      border-right: none;
+
+      .selectMulti__placeholder {
+        color: var(--white);
+        padding-left: var(--pad-xxs);
+      }
+
+      .selectMulti__multi-value {
+        background-color: var(--dark-gray);
+
+        .selectMulti__multi-value__label {
+          color: var(--white);
+          font-size: var(--font-size-base);
+          padding: 0 6px;
+        }
+      }
     }
   }
 }
@@ -482,6 +534,9 @@
   }
   .filtersRow {
     gap: var(--pad-xs);
+    max-width: 1600px;
+    margin: 0 auto var(--pad-xs) auto;
+
     .flexCol select {
       width: 175px;
     }

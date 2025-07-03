@@ -3,42 +3,53 @@ import { normalizeCardName, normalizeCardType } from "./normalize";
 import { getScryfallCard } from "./scryfall";
 
 export async function parseCSVToCollectionCards(
-  rawCards: any[]
+  rawCards: any[],
+  onProgress?: (processed: number, total: number) => void
 ): Promise<CollectionCard[]> {
   //  Combine CSV card data with Scryfall card data
-  const cards = await Promise.all(
-    rawCards.map(async (rawCard) => {
-      const name = rawCard.Name?.trim();
+  const cards: CollectionCard[] = [];
+  const total = rawCards.length;
 
-      if (
-        !name ||
-        name.toLowerCase().includes("token") ||
-        name.toLowerCase().includes("checklist")
-      )
-        return null;
+  // Allows us to track parsing progress
+  for (let i = 0; i < rawCards.length; i++) {
+    const rawCard = rawCards[i];
+    const name = normalizeCardName(rawCard.Name);
 
-      const scryfallDetails = await getScryfallCard(name);
-      await delay(200);
+    if (
+      !name ||
+      name.toLowerCase().includes("token") ||
+      name.toLowerCase().includes("checklist")
+    ) {
+      onProgress?.(i + 1, total);
+      continue;
+    }
 
-      const type = normalizeCardType(scryfallDetails?.type);
+    const scryfallDetails = await getScryfallCard(name);
+    if (!scryfallDetails) {
+      console.warn(`No Scryfall data found for: ${name}`);
+      onProgress?.(i + 1, total);
+      continue;
+    }
+    await delay(100); // Scryfall was throwing a CORS policy: No 'Access-Control-Allow-Origin' exception and rate limit
 
-      return {
-        name,
-        manaCost: scryfallDetails?.manaCost,
-        manaTypes: scryfallDetails?.manaTypes,
-        number: rawCard["Card Number"],
-        price: scryfallDetails?.price
-          ? scryfallDetails.price * 1.37
-          : undefined, // To do: Grab the real time exchange rate
-        rarity: rawCard["Rarity"],
-        set: rawCard["Set"],
-        type,
-        isFoil: rawCard.isFoil, // To do: Maybe remove this? Or render foil art?
-        imageUrl: scryfallDetails?.previewUrl,
-        quantityOwned: rawCard["Quantity"] || 1,
-      } as CollectionCard;
-    })
-  );
+    const type = normalizeCardType(scryfallDetails?.type);
+
+    cards.push({
+      name,
+      manaCost: scryfallDetails?.manaCost,
+      manaTypes: scryfallDetails?.manaTypes,
+      number: rawCard["Card Number"],
+      price: scryfallDetails?.price ? scryfallDetails.price * 1.37 : undefined,
+      rarity: rawCard["Rarity"],
+      set: rawCard["Set"],
+      type,
+      isFoil: rawCard.isFoil,
+      imageUrl: scryfallDetails?.previewUrl,
+      quantityOwned: rawCard["Quantity"] || 1,
+    });
+
+    onProgress?.(i + 1, total);
+  }
 
   // Combine cards with duplicate names
   return (cards.filter(Boolean) as CollectionCard[]).reduce((acc, card) => {

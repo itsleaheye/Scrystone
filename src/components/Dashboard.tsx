@@ -13,7 +13,8 @@ import { CardPreview } from "./Cards/CardPreview.tsx";
 
 export default function Dashboard() {
   const cards = getCardsFromStorage();
-  const { loading, error, onCollectionUpload, collection } = useCardParser();
+  const { loading, error, onCollectionUpload, collection, progress } =
+    useCardParser();
   const hasCollection = collection.size > 0;
 
   const [currentView, setCurrentView] = React.useState("dashboard"); // Didn't feel like setting up a router or EntryPoint. Shame Leah
@@ -57,7 +58,7 @@ export default function Dashboard() {
             <label htmlFor="fileInput">
               <ArrowUpTrayIcon className="uploadIcon" />
               {/* FTUX consideration */}
-              {hasCollection ? "Sync Cards" : "Upload Your Collection"}
+              {hasCollection ? "Sync Cards" : "Upload Your Cards"}
             </label>
             <p className="subtext">
               {hasCollection
@@ -78,7 +79,7 @@ export default function Dashboard() {
       {loading && (
         <div className="loading">
           {/* To be replaced by spinning planewalker logo */}
-          <p className="text-center">Loading cards...</p>
+          <p className="text-center">Loading cards {progress}%</p>
         </div>
       )}
 

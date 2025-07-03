@@ -13,6 +13,7 @@ import { useCardFiltersAndSort } from "../../hooks/useCardFiltersAndSort";
 import { CardListView } from "./CardListView";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { TbArrowsSort, TbSortAscendingLetters } from "react-icons/tb";
+import Select from "react-select";
 
 interface CardPreviewProps {
   collectionCards?: CollectionCard[];
@@ -73,10 +74,26 @@ export function CardPreview({
     );
   }
 
+  type OptionType = { value: string; label: string };
+  const colourFilters: OptionType[] = [
+    { value: "W", label: "White" },
+    { value: "U", label: "Blue" },
+    { value: "B", label: "Black" },
+    { value: "R", label: "Red" },
+    { value: "G", label: "Green" },
+  ];
+  const typeFilters: OptionType[] = [
+    { value: "Artifact", label: "Artifact" },
+    { value: "Creature", label: "Creature" },
+    { value: "Enchantment", label: "Enchantment" },
+    { value: "Land", label: "Land" },
+    { value: "Sorcery", label: "Sorcery" },
+  ];
+
   const decks = getDecksFromStorage();
   const [viewStyle, setViewStyle] = useState<string>("Grid");
-  const [filterColour, setFilterColour] = useState<string>("All"); // To do: Support multi select
-  const [filterType, setFilterType] = useState<string>("All"); // To do: Support multi select
+  const [filterColour, setFilterColour] = useState<string[]>([]);
+  const [filterType, setFilterType] = useState<string[]>([]);
   const [filterDeck, setFilterDeck] = useState<string>("All");
   const [sortBy, setSortBy] = useState<string>("Name");
 
@@ -88,6 +105,15 @@ export function CardPreview({
     filterType,
     filterColour,
   });
+
+  const [cardFocused, setCardFocused] = useState<
+    | DeckCard
+    | (CollectionCard & {
+        quantityOwned: number;
+        quantityNeeded?: number;
+      })
+    | undefined
+  >(undefined);
 
   const isMobile = useMediaQuery("(max-width: 650px)");
 
@@ -122,7 +148,10 @@ export function CardPreview({
               <select
                 className="selectDeckInput"
                 value={filterDeck}
-                onChange={(e) => setFilterDeck(e.target.value)}
+                onChange={(e) => {
+                  setFilterDeck(e.target.value);
+                  setCardFocused(undefined);
+                }}
               >
                 <option value="All">All Decks</option>
                 {decks.length > 0 &&
@@ -138,31 +167,41 @@ export function CardPreview({
             </div>
             <div className="flexCol">
               <p>Colour</p>
-              <select
-                value={filterColour}
-                onChange={(e) => setFilterColour(e.target.value)}
-              >
-                <option value="All">All Colours</option>
-                <option value="B">Black</option>
-                <option value="U">Blue</option>
-                <option value="G">Green</option>
-                <option value="R">Red</option>
-                <option value="W">White</option>
-              </select>
+              <Select
+                className="selectMulti"
+                classNamePrefix="selectMulti"
+                isClearable={false}
+                isMulti
+                isSearchable={false}
+                options={colourFilters}
+                placeholder="All Colours"
+                value={colourFilters.filter((filter) =>
+                  filterColour.includes(filter.value)
+                )}
+                onChange={(selected) => {
+                  setFilterColour(selected.map((s) => s.value));
+                  setCardFocused(undefined);
+                }}
+              />
             </div>
             <div className="flexCol">
               <p>Type</p>
-              <select
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-              >
-                <option value="All">All Types</option>
-                <option value="Artifact">Artifacts</option>
-                <option value="Creature">Creatures</option>
-                <option value="Enchantment">Enchantments</option>
-                <option value="Land">Land</option>
-                <option value="Sorcery">Sorcery</option>
-              </select>
+              <Select
+                className="selectMulti"
+                classNamePrefix="selectMulti"
+                isClearable={false}
+                isMulti
+                isSearchable={false}
+                options={typeFilters}
+                placeholder="All Types"
+                value={typeFilters.filter((filter) =>
+                  filterType.includes(filter.value)
+                )}
+                onChange={(selected) => {
+                  setFilterType(selected.map((s) => s.value));
+                  setCardFocused(undefined);
+                }}
+              />
             </div>
             <div className="flexCol">
               <p className="filterIconAndText">
@@ -186,9 +225,9 @@ export function CardPreview({
           <div className="cardFoundTotal">
             <p>
               {filteredAndSortedCards.length} unique cards{" "}
-              {(filterColour !== "All" ||
+              {(filterColour.length > 0 ||
                 filterDeck !== "All" ||
-                filterType !== "All") &&
+                filterType.length > 0) &&
                 "found"}
             </p>
           </div>
@@ -203,18 +242,20 @@ export function CardPreview({
                 key={index}
                 card={card}
                 editable={editable}
-                onChangeQuantity={onChangeQuantity}
                 isDeckView={isDeckView}
+                onChangeQuantity={onChangeQuantity}
               />
             );
           })}
         </div>
       ) : (
         <CardListView
-          filteredAndSortedCards={filteredAndSortedCards}
+          cardFocused={cardFocused}
           editable={editable}
-          onChangeQuantity={onChangeQuantity}
+          filteredAndSortedCards={filteredAndSortedCards}
           isDeckView={isDeckView}
+          onChangeQuantity={onChangeQuantity}
+          setCardFocused={setCardFocused}
         />
       )}
     </>

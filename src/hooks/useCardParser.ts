@@ -15,6 +15,7 @@ export function useCardParser() {
   const [cards, setCards] = React.useState<DeckCard[]>([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [progress, setProgress] = React.useState<number>(0);
 
   const handleError = (message: string) => {
     setLoading(false);
@@ -27,13 +28,20 @@ export function useCardParser() {
       if (!file) return handleError("Please select a .csv file to upload");
 
       setLoading(true);
+      setProgress(0);
+
       try {
         Papa.parse(file, {
           header: true,
           skipEmptyLines: true,
           complete: async (results) => {
             const rawCards = results.data as any[];
-            const parsedCards = await parseCSVToCollectionCards(rawCards);
+            const parsedCards = await parseCSVToCollectionCards(
+              rawCards,
+              (processed, total) => {
+                setProgress(Math.floor((processed / total) * 100));
+              }
+            );
 
             localStorage.setItem("mtg_cards", JSON.stringify(parsedCards));
             setLoading(false);
@@ -76,6 +84,7 @@ export function useCardParser() {
     cards,
     setCards,
     loading,
+    progress,
     error,
     collection: {
       size: collectionSummary.size,
