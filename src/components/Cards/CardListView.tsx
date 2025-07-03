@@ -52,8 +52,6 @@ export function CardListView({
             <CardListItem
               key={index}
               card={card}
-              editable={editable}
-              onChangeQuantity={onChangeQuantity}
               isDeckView={isDeckView}
               setCardFocused={setCardFocused}
             />
@@ -94,9 +92,7 @@ interface CardListItemProps {
   card:
     | DeckCard
     | (CollectionCard & { quantityOwned: number; quantityNeeded?: number });
-  editable: boolean;
   isDeckView: boolean;
-  onChangeQuantity: (cardName: string, amount: number) => void;
   setCardFocused?: React.Dispatch<
     React.SetStateAction<
       | DeckCard
@@ -109,17 +105,7 @@ interface CardListItemProps {
   >;
 }
 
-function CardListItem({
-  card,
-  editable,
-  isDeckView,
-  onChangeQuantity,
-  setCardFocused,
-}: CardListItemProps) {
-  // To do: placeholders
-  console.log("editable", editable);
-  console.log("onChangeQuantity", onChangeQuantity);
-
+function CardListItem({ card, isDeckView, setCardFocused }: CardListItemProps) {
   const showWarning = (card.quantityOwned ?? 0) < (card.quantityNeeded ?? 1);
 
   return (

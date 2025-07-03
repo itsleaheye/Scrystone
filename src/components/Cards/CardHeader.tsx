@@ -6,7 +6,6 @@ interface CardHeaderProps {
 }
 
 export function CardHeader({ quantityNeeded, quantityOwned }: CardHeaderProps) {
-  console.log("quantityNeeded", quantityNeeded);
   return (
     <div className="cardHeader">
       <div className="cardChipTopLeft rounded-br-[100%] rounded-tl-[10%]">
