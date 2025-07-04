@@ -4,6 +4,18 @@
   .cardChip {
     opacity: 0;
   }
+
+  .mobileAlwaysVisible {
+    opacity: 1 !important;
+
+    .cardChip {
+      opacity: 1 !important;
+    }
+  }
+  .hideBottomCardQuantity {
+    display: none;
+  }
+
   .cardFooterGroup .cardFooter {
     justify-content: space-between;
     display: flex;
@@ -144,6 +156,10 @@
     text-align: left;
   }
 
+  .primaryExtended {
+    width: 250px;
+  }
+
   .setDetails {
     width: 100px;
     text-align: right;
@@ -209,7 +225,7 @@
   padding: var(--pad-sm);
 
   .overlayContent {
-    background-color: var(--darker-gray);
+    background-color: var(--black);
     border-radius: var(--border-radius-base);
     width: 100%;
     padding: var(--pad-xs);
@@ -222,15 +238,16 @@
 
       h3 {
         display: flex;
-        gap: var(--pad-xs);
+        gap: var(--pad-xxs);
         align-items: center;
         padding-left: var(--pad-xxs);
+        max-width: 195px;
       }
 
       .cancelButton {
         display: block;
         color: var(--blue);
-        background-color: var(--darker-gray);
+        background-color: var(--black);
         border: none;
         padding: var(--pad-xxxs);
         display: flex;

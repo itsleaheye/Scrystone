@@ -4,6 +4,7 @@ interface CardFooterProps {
   cardName: string;
   editable: boolean;
   isDeckView: boolean;
+  isMobile?: boolean;
   onChangeQuantity: (cardName: string, amount: number) => void;
   quantityNeeded: number;
   quantityOwned: number;
@@ -13,6 +14,7 @@ export function CardFooter({
   cardName,
   editable,
   isDeckView,
+  isMobile = false,
   onChangeQuantity,
   quantityNeeded,
   quantityOwned,
@@ -43,12 +45,16 @@ export function CardFooter({
 
     if (editable) {
       return (
-        <div className="cardFooterGroup">
+        <div
+          className={`cardFooterGroup ${isMobile ? "mobileAlwaysVisible" : ""}`}
+        >
           <div className="cardFooter">
             {cardChipButton(<FaMinus />, -1)}
             {cardChipButton(<FaPlus />, 1)}
           </div>
-          <div className="cardQuantity">{quantityChip}</div>
+          <div className={isMobile ? "hideBottomCardQuantity" : "cardQuantity"}>
+            {quantityChip}
+          </div>
         </div>
       );
     } else {

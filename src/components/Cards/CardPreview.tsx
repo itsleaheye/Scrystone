@@ -60,8 +60,8 @@ export function CardPreview({
   function onChangeQuantity(cardName: string, amount: number) {
     if (!setCards) return;
 
-    setCards((prevCards) =>
-      prevCards
+    setCards((prevCards) => {
+      const updatedCards = prevCards
         .map((card) =>
           normalizeCardName(card.name) === normalizeCardName(cardName)
             ? {
@@ -73,8 +73,31 @@ export function CardPreview({
               }
             : card
         )
-        .filter((card): card is DeckCard => (card.quantityNeeded ?? 1) > 0)
-    );
+        .filter((card): card is DeckCard => (card.quantityNeeded ?? 1) > 0);
+
+      const changedCard = updatedCards.find(
+        (card) => normalizeCardName(card.name) === normalizeCardName(cardName)
+      );
+      if (!changedCard || (changedCard.quantityNeeded ?? 0) <= 0) {
+        setCardFocused(undefined);
+      } else {
+        // Update cardFocused if it matches the changed card. Keeps the quantities up to date
+        setCardFocused((prevFocused) => {
+          if (!prevFocused) return prevFocused;
+          if (
+            normalizeCardName(prevFocused.name) === normalizeCardName(cardName)
+          ) {
+            return {
+              ...prevFocused,
+              quantityNeeded: changedCard.quantityNeeded,
+            };
+          }
+          return prevFocused;
+        });
+      }
+
+      return updatedCards;
+    });
   }
 
   type OptionType = { value: string; label: string };

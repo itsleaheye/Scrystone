@@ -6,7 +6,7 @@ import { LuPickaxe } from "react-icons/lu";
 import { HiQuestionMarkCircle } from "react-icons/hi";
 import "../styles.css";
 import { CardView } from "./CardView";
-import React from "react";
+import React, { useEffect } from "react";
 import { EmptyView } from "../shared/EmptyView";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { MdCancel } from "react-icons/md";
@@ -33,7 +33,6 @@ interface CardListViewProps {
   hasCards: boolean;
 }
 
-// To do, support deck editing views from this list
 export function CardListView({
   cardFocused,
   editable,
@@ -53,13 +52,13 @@ export function CardListView({
             <CardListItem
               card={card}
               isDeckView={isDeckView}
+              isMobile={isMobile}
               key={index}
               setCardFocused={setCardFocused}
             />
           );
         })}
       </div>
-      {/* To do: If mobile, open pop up overlay with card details instead */}
       {!isMobile && (
         <div className="cardListPreview">
           {cardFocused ? (
@@ -91,7 +90,7 @@ export function CardListView({
             <div className="flexRow">
               <h3>
                 {getTypeIcon(cardFocused.type)}
-                {cardFocused.name}
+                <span className={"overflowElipse"}>{cardFocused.name}</span>
               </h3>
               <button
                 onClick={() => setCardFocused(undefined)}
@@ -106,6 +105,7 @@ export function CardListView({
               editable={editable}
               isDeckView={isDeckView}
               onChangeQuantity={onChangeQuantity}
+              isMobile={isMobile}
             />
           </div>
         </div>
@@ -119,6 +119,7 @@ interface CardListItemProps {
     | DeckCard
     | (CollectionCard & { quantityOwned: number; quantityNeeded?: number });
   isDeckView: boolean;
+  isMobile: boolean;
   setCardFocused?: React.Dispatch<
     React.SetStateAction<
       | DeckCard
@@ -131,7 +132,12 @@ interface CardListItemProps {
   >;
 }
 
-function CardListItem({ card, isDeckView, setCardFocused }: CardListItemProps) {
+function CardListItem({
+  card,
+  isDeckView,
+  isMobile,
+  setCardFocused,
+}: CardListItemProps) {
   const showWarning = (card.quantityOwned ?? 0) < (card.quantityNeeded ?? 1);
 
   return (
@@ -140,7 +146,9 @@ function CardListItem({ card, isDeckView, setCardFocused }: CardListItemProps) {
       onClick={() => setCardFocused && setCardFocused(card)}
     >
       <div
-        className={showWarning ? "redText primaryDetails" : "primaryDetails"}
+        className={`${
+          showWarning ? "redText primaryDetails" : "primaryDetails"
+        } ${isMobile ? "primaryExtended" : ""}`}
       >
         {getTypeIcon(card.type)}
         <p className="bold overflowElipse">
@@ -150,7 +158,7 @@ function CardListItem({ card, isDeckView, setCardFocused }: CardListItemProps) {
             : `x${card.quantityOwned}`}
         </p>
       </div>
-      <p className="overflowElipse setDetails">({card.set})</p>
+      {!isMobile && <p className="overflowElipse setDetails">({card.set})</p>}
       <p className="priceDetails">${card.price?.toFixed(2) ?? "$n/a"}</p>
     </div>
   );

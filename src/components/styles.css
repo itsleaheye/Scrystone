@@ -161,7 +161,6 @@
   justify-content: center;
   align-items: center;
   gap: var(--pad-xxs);
-  min-width: 104px;
   height: 40px;
   border-radius: var(--border-radius-base);
 
@@ -502,6 +501,9 @@
     .flexCol select {
       width: 130px;
     }
+  }
+  .actionButton {
+    min-width: 100px;
   }
   .viewStylesContainer {
     border-right: 2px solid var(--off-white);
