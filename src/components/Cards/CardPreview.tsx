@@ -163,6 +163,8 @@ export function CardPreview({
     }
   }, [activeCardPreview]);
 
+  const showDeckFilter = false;
+
   return (
     <>
       {!editable && (
@@ -173,7 +175,7 @@ export function CardPreview({
               viewStyle={viewStyle}
               setViewStyle={setViewStyle}
             />
-            {!isDeckView && (
+            {showDeckFilter && (
               <div className="flexCol">
                 <p>In Deck</p>
                 <select

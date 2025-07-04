@@ -42,13 +42,13 @@ export default function Dashboard() {
             <IconItem
               isActive={currentView === "dashboard"}
               icon={<TbCardsFilled />}
-              text={`Cards: ${collection.size}`}
+              text={`Cards`}
               onClick={() => setCurrentView("dashboard")}
             />
             <IconItem
               isActive={currentView.startsWith("deck")}
               icon={<WalletIcon />}
-              text={`My Decks`}
+              text={`Decks`}
               onClick={() => setCurrentView("deckCollection")}
             />
           </div>
@@ -63,7 +63,6 @@ export default function Dashboard() {
             />
             <label htmlFor="fileInput">
               <ArrowUpTrayIcon className="uploadIcon" />
-              {/* FTUX consideration */}
               {hasCollection ? "Sync Cards" : "Upload Your Cards"}
             </label>
             <p className="subtext">
