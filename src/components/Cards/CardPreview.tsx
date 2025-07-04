@@ -93,7 +93,9 @@ export function CardPreview({
     { value: "Sorcery", label: "Sorcery" },
   ];
 
+  const isMobile = useMediaQuery("(max-width: 650px)");
   const decks = getDecksFromStorage();
+
   const [viewStyle, setViewStyle] = useState<string>(viewPreference ?? "Grid");
   const [filterColour, setFilterColour] = useState<string[]>([]);
   const [filterType, setFilterType] = useState<string[]>([]);
@@ -101,10 +103,10 @@ export function CardPreview({
   const [sortBy, setSortBy] = useState<string>("Name");
 
   useEffect(() => {
-    if (viewPreference && viewPreference !== viewStyle) {
-      setViewStyle(viewPreference);
+    if (isMobile) {
+      setCardFocused(undefined);
     }
-  }, [viewPreference]);
+  }, [viewStyle]);
 
   const filteredAndSortedCards = useCardFiltersAndSort({
     cards: cardsWithQuantities,
@@ -122,14 +124,12 @@ export function CardPreview({
         quantityNeeded?: number;
       })
     | undefined
-  >(activeCardPreview ?? undefined);
+  >(!isMobile && activeCardPreview ? activeCardPreview : undefined);
   useEffect(() => {
     if (activeCardPreview && activeCardPreview !== cardFocused) {
       setCardFocused(activeCardPreview);
     }
   }, [activeCardPreview]);
-
-  const isMobile = useMediaQuery("(max-width: 650px)");
 
   return (
     <>

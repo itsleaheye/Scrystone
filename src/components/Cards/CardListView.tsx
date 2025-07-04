@@ -9,6 +9,7 @@ import { CardView } from "./CardView";
 import React from "react";
 import { EmptyView } from "../shared/EmptyView";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { MdCancel } from "react-icons/md";
 
 interface CardListViewProps {
   cardFocused:
@@ -50,9 +51,9 @@ export function CardListView({
         {filteredAndSortedCards.map((card, index) => {
           return (
             <CardListItem
-              key={index}
               card={card}
               isDeckView={isDeckView}
+              key={index}
               setCardFocused={setCardFocused}
             />
           );
@@ -82,6 +83,31 @@ export function CardListView({
               }
             />
           )}
+        </div>
+      )}
+      {isMobile && cardFocused && (
+        <div className="overlayContainer">
+          <div className="overlayContent">
+            <div className="flexRow">
+              <h3>
+                {getTypeIcon(cardFocused.type)}
+                {cardFocused.name}
+              </h3>
+              <button
+                onClick={() => setCardFocused(undefined)}
+                className="cancelButton"
+              >
+                <MdCancel />
+              </button>
+            </div>
+
+            <CardView
+              card={cardFocused}
+              editable={editable}
+              isDeckView={isDeckView}
+              onChangeQuantity={onChangeQuantity}
+            />
+          </div>
         </div>
       )}
     </div>

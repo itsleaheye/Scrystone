@@ -200,6 +200,51 @@
   align-items: center;
 }
 
+.overlayContainer {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  justify-content: center;
+  align-items: center;
+  padding: var(--pad-sm);
+
+  .overlayContent {
+    background-color: var(--darker-gray);
+    border-radius: var(--border-radius-base);
+    width: 100%;
+    padding: var(--pad-xs);
+    position: relative;
+
+    .flexRow {
+      justify-content: space-between;
+      color: var(--white);
+      margin-bottom: var(--pad-xxs);
+
+      h3 {
+        display: flex;
+        gap: var(--pad-xs);
+        align-items: center;
+        padding-left: var(--pad-xxs);
+      }
+
+      .cancelButton {
+        display: block;
+        color: var(--blue);
+        background-color: var(--darker-gray);
+        border: none;
+        padding: var(--pad-xxxs);
+        display: flex;
+        align-items: center;
+
+        svg {
+          width: 2.25rem;
+          height: 2.25rem;
+        }
+      }
+    }
+  }
+}
+
 @media only screen and (min-width: 600px) {
   .cardListRow {
     max-width: 600px;

@@ -170,6 +170,15 @@
   }
 }
 
+.smallActionButton {
+  padding: var(--pad-xxs) var(--pad-xs);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--border-radius-base);
+  height: 40px;
+}
+
 .primaryButton {
   border: 2px solid var(--blue);
   color: var(--white);
@@ -196,11 +205,15 @@
   background-color: var(--black);
   border: none;
   color: var(--white);
+  font-weight: 600;
+  padding: var(--pad-xxs) var(--pad-xxxs);
+  justify-content: normal;
+  min-width: 0;
 }
 
 .actionRow {
   justify-content: space-between;
-  margin-bottom: var(--pad-sm);
+  margin-bottom: var(--pad-xs);
 
   a:hover {
     cursor: pointer;
@@ -420,6 +433,7 @@
     color: var(--black);
     margin-bottom: var(--pad-xs);
     background: var(--white);
+    width: 100%;
   }
   select {
     height: 40.78px;

@@ -34,7 +34,7 @@ export const DeckDetailView = ({
 
   const [activeDeck, setActiveDeck] = useState<Deck | undefined>();
   const [editable, setEditable] = useState<boolean>(deckId === undefined);
-  const [viewStyle, setViewStyle] = useState<string>("Grid");
+  const [viewStyle, setViewStyle] = useState<string>("List");
 
   useEffect(() => {
     if (deckId !== undefined) {
@@ -89,8 +89,16 @@ export const DeckDetailView = ({
         <div>
           <ActionButton
             icon={<FaArrowLeft />}
-            label={editable ? "Cancel" : "Go back"}
-            onClick={() => setCurrentView("deckCollection")}
+            label={editable ? "Cancel" : isMobile ? "Back" : "Go back"}
+            onClick={() => {
+              if (
+                editable &&
+                window.confirm("Discard any changes and go back?")
+              ) {
+                setCurrentView("deckCollection");
+              }
+              setCurrentView("deckCollection");
+            }}
             variation="tertiary"
           />
         </div>
@@ -101,20 +109,23 @@ export const DeckDetailView = ({
               icon={<FaTrash />}
               label={"Delete"}
               onClick={() => {
-                // To do add confirmation
-                onDeckDelete(activeDeck.id);
-                setCurrentView("deckCollection");
+                if (
+                  window.confirm("Are you sure you want to delete this deck?")
+                ) {
+                  onDeckDelete(activeDeck.id);
+                  setCurrentView("deckCollection");
+                }
               }}
               variation="destroy"
             />
           )}
           {activeDeck && !editable && (
             <ActionButton
+              hideLabel={isMobile}
               icon={<PiExportBold />}
               label={"Export"}
               onClick={() => {
                 onDeckExport(activeDeck.cards, activeDeck.name);
-                setCurrentView("deckCollection");
               }}
               variation="secondary"
             />
@@ -142,7 +153,9 @@ export const DeckDetailView = ({
         <div className="flexSwap">
           <div className={`deckCol1 ${!editable ? "staticDeckCol1" : ""}`}>
             {
-              activeDeck?.colours && <ManaRow colours={activeDeck.colours} /> // To do: Fix this so it updates on card add and not just save
+              activeDeck?.colours && activeDeck.colours.length > 0 && (
+                <ManaRow colours={activeDeck.colours} />
+              ) // To do: Fix this so it updates on card add and not just save
             }
 
             <div className="deckFields">
@@ -228,7 +241,7 @@ export const DeckDetailView = ({
         isDeckView={true}
         setCards={setCards}
         viewPreference={viewStyle}
-        activeCardPreview={cards[cards.length - 1]}
+        activeCardPreview={!isMobile ? cards[cards.length - 1] : undefined}
       />
     </>
   );
