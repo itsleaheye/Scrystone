@@ -6,13 +6,12 @@ export async function parseCSVToCollectionCards(
   rawCards: any[],
   onProgress?: (processed: number, total: number) => void
 ): Promise<CollectionCard[]> {
-  //  Combine CSV card data with Scryfall card data
   const cards: CollectionCard[] = [];
-  const total = rawCards.length;
 
-  // Allows us to track parsing progress
-  for (let i = 0; i < rawCards.length; i++) {
-    const rawCard = rawCards[i];
+  // Step 1: Group all CSV rows by name
+  const grouped = new Map<string, any[]>();
+
+  for (const rawCard of rawCards) {
     const name = normalizeCardName(rawCard.Name);
 
     if (
@@ -20,9 +19,21 @@ export async function parseCSVToCollectionCards(
       name.toLowerCase().includes("token") ||
       name.toLowerCase().includes("checklist")
     ) {
-      onProgress?.(i + 1, total);
       continue;
     }
+
+    if (!grouped.has(name)) {
+      grouped.set(name, []);
+    }
+    grouped.get(name)!.push(rawCard);
+  }
+
+  // Step 2: Process each unique card
+  const uniqueEntries = Array.from(grouped.entries());
+  const total = uniqueEntries.length;
+
+  for (let i = 0; i < uniqueEntries.length; i++) {
+    const [name, cardGroup] = uniqueEntries[i];
 
     const scryfallDetails = await getScryfallCard(name);
     if (!scryfallDetails) {
@@ -30,46 +41,38 @@ export async function parseCSVToCollectionCards(
       onProgress?.(i + 1, total);
       continue;
     }
-    await delay(100); // Scryfall was throwing a CORS policy: No 'Access-Control-Allow-Origin' exception and rate limit
 
-    const type = normalizeCardType(scryfallDetails?.type);
+    await delay(100); // Optional with proxy, but avoids Scryfall pushback
+
+    const type = normalizeCardType(scryfallDetails.type);
+    const first = cardGroup[0];
+
+    const totalQuantity = cardGroup.reduce(
+      (sum, card) => sum + (Number(card["Quantity"]) || 1),
+      0
+    );
 
     cards.push({
       name,
-      manaCost: scryfallDetails?.manaCost,
-      manaTypes: scryfallDetails?.manaTypes,
-      number: rawCard["Card Number"],
-      price: scryfallDetails?.price ? scryfallDetails.price * 1.37 : undefined,
-      rarity: rawCard["Rarity"],
-      set: rawCard["Set"],
+      manaCost: scryfallDetails.manaCost,
+      manaTypes: scryfallDetails.manaTypes,
+      number: first["Card Number"],
+      price: scryfallDetails.price ? scryfallDetails.price * 1.37 : undefined,
+      rarity: first["Rarity"],
+      set: first["Set"],
       type,
-      isFoil: rawCard.isFoil,
-      imageUrl: scryfallDetails?.previewUrl,
-      quantityOwned: rawCard["Quantity"] || 1,
+      isFoil: first.isFoil,
+      imageUrl: scryfallDetails.previewUrl,
+      quantityOwned: totalQuantity,
     });
 
     onProgress?.(i + 1, total);
   }
 
-  // Combine cards with duplicate names
-  return (cards.filter(Boolean) as CollectionCard[]).reduce((acc, card) => {
-    const existingCard = acc.find(
-      (c) => normalizeCardName(c.name) === normalizeCardName(card.name)
-    );
-
-    // Combine quantities
-    if (existingCard) {
-      existingCard.quantityOwned =
-        Number(card.quantityOwned) + Number(existingCard.quantityOwned);
-    } else {
-      acc.push({ ...card });
-    }
-
-    return acc;
-  }, [] as CollectionCard[]);
+  return cards;
 }
 
-// Hitting Scryfall rate limitations
+// Delay to space out requests (optional with proxy)
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }

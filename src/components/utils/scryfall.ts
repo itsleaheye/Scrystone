@@ -26,35 +26,47 @@ export async function getScryfallCard(
     return formatScryfallDetails(cached);
   }
 
-  const urls = [
-    `https://api.scryfall.com/cards/named?fuzzy=${query}`, //fuzzy search
-    `https://api.scryfall.com/cards/search?q=${query}`, // general search
-    `https://api.scryfall.com/cards/search?q=!${query}`, // exact search
-  ];
-
+  // const urls = [
+  //   `https://api.scryfall.com/cards/named?fuzzy=${query}`, //fuzzy search
+  //   `https://api.scryfall.com/cards/search?q=${query}`, // general search
+  //   `https://api.scryfall.com/cards/search?q=!${query}`, // exact search
+  // ];
   try {
-    let data: any;
-    // Run through each query url and check for a match of scyfall card data
-    for (const url of urls) {
-      const response = await fetch(url);
-      if (!response.ok) continue;
+    const response = await fetch(`/scryfall?name=${query}`); // Using proxy
+    if (!response.ok) {
+      console.warn(`Scryfall proxy failed for: ${cardName}`);
 
-      data = await response.json();
-
-      // If response returns an array, take the 1st card and stop if valid
-      data = Array.isArray(data.data) ? data.data[0] : data;
-      if (data) break;
+      return;
     }
+    const json = await response.json(); //throws error
+
+    // If it's an array (from /search), use the first result
+    const cardData = Array.isArray(json.data) ? json.data[0] : json;
+    console.log("cardData,", cardData);
+
+    // try {
+    //   let data: any;
+    //   // Run through each query url and check for a match of scyfall card data
+    //   for (const url of urls) {
+    //     const response = await fetch(url);
+    //     if (!response.ok) continue;
+
+    //     data = await response.json();
+
+    //     // If response returns an array, take the 1st card and stop if valid
+    //     data = Array.isArray(data.data) ? data.data[0] : data;
+    //     if (data) break;
+    //   }
 
     // If no matching cards were ever found, log it
-    if (!data) {
+    if (!cardData) {
       console.warn(`Card details not found: ${cardName}`);
       return;
     }
 
-    setCachedCard(normalizedName, data);
+    setCachedCard(normalizedName, cardData);
 
-    return formatScryfallDetails(data);
+    return formatScryfallDetails(cardData);
   } catch (error) {
     console.error(`Error fetching card details for "${cardName}":`, error);
 
