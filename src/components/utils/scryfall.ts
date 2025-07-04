@@ -3,7 +3,7 @@ import {
   normalizeColourIdentity,
   normalizeMana,
 } from "./normalize";
-import { getCachedCard, setCachedCard } from "./storage";
+import { getCachedCard, getCardFromBulkData, setCachedCard } from "./storage";
 
 interface ScryfallDetails {
   manaCost?: number;
@@ -24,6 +24,11 @@ export async function getScryfallCard(
   const cached = getCachedCard(normalizedName);
   if (cached) {
     return formatScryfallDetails(cached);
+  }
+
+  const localCard = getCardFromBulkData(cardName);
+  if (localCard) {
+    return formatScryfallDetails(localCard);
   }
 
   const urls = [
@@ -78,4 +83,33 @@ function formatScryfallDetails(card: any): ScryfallDetails {
     type: card.type_line?.split("—")[0]?.trim().split(" ")[0],
     set: card.set_name,
   };
+}
+
+const BULK_DATA = "scryfall_bulk_data";
+
+export async function fetchAndCacheBulkData(): Promise<any[]> {
+  const cached = localStorage.getItem(BULK_DATA);
+  if (cached) {
+    try {
+      return JSON.parse(cached);
+    } catch {
+      localStorage.removeItem(BULK_DATA); // corrupted cache
+    }
+  }
+
+  // Download the bulk data from scryfall
+  const res = await fetch("https://api.scryfall.com/bulk-data");
+  const data = await res.json();
+  const defaultCards = data.data.find(
+    (entry: any) => entry.type === "default_cards"
+  );
+  if (!defaultCards?.download_uri)
+    throw new Error("Failed to get download URI");
+
+  const cardsRes = await fetch(defaultCards.download_uri);
+  const cards = await cardsRes.json();
+
+  localStorage.setItem(BULK_DATA, JSON.stringify(cards));
+
+  return cards;
 }

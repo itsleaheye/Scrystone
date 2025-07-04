@@ -2,6 +2,8 @@ import type { CollectionCard } from "../../types/MagicTheGathering";
 import { normalizeCardName, normalizeCardType } from "./normalize";
 import { getScryfallCard } from "./scryfall";
 
+const REQUEST_DELAY_MS = 100; // Scryfall API rate limit is 100ms
+
 export async function parseCSVToCollectionCards(
   rawCards: any[],
   onProgress?: (processed: number, total: number) => void
@@ -24,34 +26,41 @@ export async function parseCSVToCollectionCards(
       continue;
     }
 
-    const scryfallDetails = await getScryfallCard(name);
-    if (!scryfallDetails) {
-      console.warn(`No Scryfall data found for: ${name}`);
-      onProgress?.(i + 1, total);
-      continue;
+    try {
+      await delay(REQUEST_DELAY_MS); // Scryfall was throwing a CORS policy: No 'Access-Control-Allow-Origin' exception and rate limit
+
+      const scryfallDetails = await getScryfallCard(name);
+      if (!scryfallDetails) {
+        console.warn(`No Scryfall data found for: ${name}`);
+        onProgress?.(i + 1, total);
+        continue;
+      }
+
+      const type = normalizeCardType(scryfallDetails?.type);
+
+      cards.push({
+        name,
+        manaCost: scryfallDetails?.manaCost,
+        manaTypes: scryfallDetails?.manaTypes,
+        number: rawCard["Card Number"],
+        price: scryfallDetails?.price
+          ? scryfallDetails.price * 1.37
+          : undefined,
+        rarity: rawCard["Rarity"],
+        set: rawCard["Set"],
+        type,
+        isFoil: rawCard.isFoil,
+        imageUrl: scryfallDetails?.previewUrl,
+        quantityOwned: rawCard["Quantity"] || 1,
+      });
+    } catch (error) {
+      console.warn(`parseCSVToCollectionCards failed for ${name}:`, error);
     }
-    await delay(100); // Scryfall was throwing a CORS policy: No 'Access-Control-Allow-Origin' exception and rate limit
-
-    const type = normalizeCardType(scryfallDetails?.type);
-
-    cards.push({
-      name,
-      manaCost: scryfallDetails?.manaCost,
-      manaTypes: scryfallDetails?.manaTypes,
-      number: rawCard["Card Number"],
-      price: scryfallDetails?.price ? scryfallDetails.price * 1.37 : undefined,
-      rarity: rawCard["Rarity"],
-      set: rawCard["Set"],
-      type,
-      isFoil: rawCard.isFoil,
-      imageUrl: scryfallDetails?.previewUrl,
-      quantityOwned: rawCard["Quantity"] || 1,
-    });
 
     onProgress?.(i + 1, total);
   }
 
-  // Combine cards with duplicate names
+  // Combine duplicate cards
   return (cards.filter(Boolean) as CollectionCard[]).reduce((acc, card) => {
     const existingCard = acc.find(
       (c) => normalizeCardName(c.name) === normalizeCardName(card.name)

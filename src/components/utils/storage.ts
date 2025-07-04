@@ -42,3 +42,15 @@ function getCache(): ScryfallCardCache {
     return {};
   }
 }
+
+let bulkCards: any[] = [];
+
+export function initializeBulkCards(cards: any[]) {
+  bulkCards = cards;
+}
+
+export function getCardFromBulkData(name: string): any | undefined {
+  const normalized = normalizeCardName(name);
+
+  return bulkCards.find((card) => normalizeCardName(card.name) === normalized);
+}
