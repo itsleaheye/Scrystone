@@ -153,59 +153,49 @@
   }
 }
 
-.primaryButton {
+.actionButton {
   font-family: "Quattrocento Sans", sans-serif;
-  border: 2px solid var(--blue);
-  color: var(--white);
   font-size: var(--font-size-base);
-  background: var(--blue);
   padding: var(--pad-xxs) var(--pad-xs);
-  border-radius: var(--border-radius-base);
-  font-weight: 600;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: var(--pad-xxs);
   min-width: 104px;
   height: 40px;
+  border-radius: var(--border-radius-base);
+
+  &:hover {
+    opacity: 0.5 !important;
+  }
+}
+
+.primaryButton {
+  border: 2px solid var(--blue);
+  color: var(--white);
+  background: var(--blue);
+  border-radius: var(--border-radius-base);
+  font-weight: 600;
 }
 
 .secondaryButton {
   border: 2px solid var(--white);
   background: var(--black);
   color: var(--white);
-  border-radius: var(--border-radius-base);
-  padding: var(--pad-xxs) var(--pad-xs);
-  height: 40px;
-  gap: var(--pad-xxs);
-  align-items: center;
   font-weight: 600;
-  display: flex;
 }
 
 .destroyButton {
   border: 2px solid var(--red);
   color: var(--red);
-  align-items: center;
-  font-weight: 600;
-  display: flex;
-  gap: var(--pad-xxs);
   background: var(--black);
-  border-radius: var(--border-radius-base);
-  padding: var(--pad-xxs) var(--pad-xs);
-  height: 40px;
+  font-weight: 600;
 }
 
 .tertiaryButton {
   background-color: var(--black);
   border: none;
   color: var(--white);
-  display: flex;
-  align-items: center;
-
-  svg {
-    margin-right: var(--pad-xs);
-  }
 }
 
 .actionRow {

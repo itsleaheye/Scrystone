@@ -111,7 +111,7 @@ export const DeckDetailView = ({
           {activeDeck && !editable && (
             <ActionButton
               icon={<PiExportBold />}
-              label={"Export Deck"}
+              label={"Export"}
               onClick={() => {
                 onDeckExport(activeDeck.cards, activeDeck.name);
                 setCurrentView("deckCollection");

@@ -16,7 +16,7 @@ export function ActionButton({
   variation,
 }: ActionButtonProps): React.JSX.Element {
   return (
-    <button className={`${variation}Button`} onClick={onClick}>
+    <button className={`${variation}Button actionButton`} onClick={onClick}>
       {icon}
       {!hideLabel && label}
     </button>
