@@ -8,11 +8,11 @@ import { useEffect, useState } from "react";
 import React from "react";
 import { EmptyView } from "../shared/EmptyView";
 import { useCardFiltersAndSort } from "../../hooks/useCardFiltersAndSort";
-import { CardListView } from "./CardListView";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { TbArrowsSort, TbSortAscendingLetters } from "react-icons/tb";
 import Select from "react-select";
 import { ViewStyleFilter } from "../shared/ViewStyleFilter";
+import { CardList } from "./CardList";
 
 interface CardPreviewProps {
   activeCardPreview?: DeckCard;
@@ -62,17 +62,22 @@ export function CardPreview({
 
     setCards((prevCards) => {
       const updatedCards = prevCards
-        .map((card) =>
-          normalizeCardName(card.name) === normalizeCardName(cardName)
-            ? {
-                ...card,
-                quantityNeeded: Math.max(
-                  0,
-                  (card.quantityNeeded ?? 0) + amount
-                ),
-              }
-            : card
-        )
+        .map((card) => {
+          if (normalizeCardName(card.name) === normalizeCardName(cardName)) {
+            const isLand = card.type?.toLowerCase().includes("land");
+
+            let newQuantity = Math.max(0, (card.quantityNeeded ?? 0) + amount);
+            if (!isLand && newQuantity > 4) {
+              newQuantity = 4;
+            }
+
+            return {
+              ...card,
+              quantityNeeded: newQuantity,
+            };
+          }
+          return card;
+        })
         .filter((card): card is DeckCard => (card.quantityNeeded ?? 1) > 0);
 
       const changedCard = updatedCards.find(
@@ -130,6 +135,10 @@ export function CardPreview({
       setCardFocused(undefined);
     }
   }, [viewStyle]);
+
+  useEffect(() => {
+    if (viewPreference) setViewStyle(viewPreference);
+  }, [viewPreference]);
 
   const filteredAndSortedCards = useCardFiltersAndSort({
     cards: cardsWithQuantities,
@@ -272,7 +281,7 @@ export function CardPreview({
           })}
         </div>
       ) : (
-        <CardListView
+        <CardList
           cardFocused={cardFocused}
           editable={editable}
           filteredAndSortedCards={filteredAndSortedCards}

@@ -117,10 +117,13 @@
   border: none;
   padding: var(--pad-xxs) var(--pad-xs);
   color: var(--white);
-  margin-top: var(--pad-xxs);
 
   &::placeholder {
     color: var(--white);
+  }
+
+  &:focus {
+    outline: none;
   }
 }
 
@@ -316,24 +319,6 @@
   margin-bottom: var(--pad-xxs);
 }
 
-.viewStylesContainer {
-  padding: var(--pad-xs) 0;
-  justify-content: space-between;
-  display: flex;
-
-  .viewButtons {
-    gap: var(--pad-xs);
-  }
-  div {
-    display: flex;
-    justify-content: center;
-  }
-  svg {
-    width: 1.35rem;
-    height: 1.35rem;
-  }
-}
-
 .filtersRow {
   display: flex;
   flex-direction: column;
@@ -355,6 +340,10 @@
       padding: var(--pad-xxxs) var(--pad-xxs);
       width: 100%;
       height: 40px;
+
+      &:focus {
+        outline: none;
+      }
     }
     .selectMulti__control {
       background: var(--darker-gray);
@@ -505,10 +494,6 @@
   .actionButton {
     min-width: 100px;
   }
-  .viewStylesContainer {
-    border-right: 2px solid var(--off-white);
-    padding-right: var(--pad-xs);
-  }
   .summaryContainer {
     margin: 0 auto 2rem auto;
     max-width: 400px;
@@ -559,7 +544,12 @@
   }
   .deckCardActions {
     display: flex;
+    align-items: center;
     flex-direction: column;
+
+    .flexCol {
+      align-items: start;
+    }
   }
 }
 

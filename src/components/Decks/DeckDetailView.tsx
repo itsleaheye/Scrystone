@@ -1,11 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDeckParser } from "../../hooks/useDeckParser";
-import type { Deck } from "../../types/MagicTheGathering";
-import { CardSearchBar } from "../CardSearchBar";
+import type { Deck, DeckFormat } from "../../types/MagicTheGathering";
 import { GiCash } from "react-icons/gi";
 import { RiCheckboxCircleFill, RiErrorWarningFill } from "react-icons/ri";
 import { useCardParser } from "../../hooks/useCardParser";
-import { ActionButton } from "../PrimaryActions";
+import { ActionButton } from "../shared/PrimaryActions";
 import { FaArrowLeft, FaEdit, FaSave, FaTrash } from "react-icons/fa";
 import { IconItem } from "../shared/IconItem";
 import { useDeckFormState } from "../../hooks/useDeckFormState";
@@ -20,6 +19,7 @@ import { CardPreview } from "../Cards/CardPreview";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { PiExportBold } from "react-icons/pi";
 import { ViewStyleFilter } from "../shared/ViewStyleFilter";
+import { CardSearchBar } from "../shared/CardSearchBar";
 
 export const DeckDetailView = ({
   deckId,
@@ -29,7 +29,8 @@ export const DeckDetailView = ({
   setCurrentView: (view: string) => void;
 }): React.JSX.Element => {
   const { cards, onDeckCardAdd, setCards } = useCardParser();
-  const { onDeckSave, onDeckDelete, onDeckExport } = useDeckParser();
+  const { isValidFormat, onDeckSave, onDeckDelete, onDeckExport } =
+    useDeckParser();
   const isMobile = useMediaQuery("(max-width: 650px)");
 
   const [activeDeck, setActiveDeck] = useState<Deck | undefined>();
@@ -51,10 +52,18 @@ export const DeckDetailView = ({
     useDeckFormState(activeDeck);
 
   // For sake of performance, memoize the deck sizes
-  const requiredDeckSize = useMemo(
-    () => (format === "Commander" ? 100 : 60),
-    [format]
-  );
+  const requiredDeckSize = useMemo(() => {
+    switch (format) {
+      case "Commander":
+        return 100;
+      case "Standard":
+        return 60;
+      case "Draft":
+        return 40;
+      default:
+        return 60;
+    }
+  }, [format]);
   const currentDeckSize = useMemo(
     () => cards.reduce((sum, card) => sum + (card.quantityNeeded || 0), 0),
     [cards]
@@ -93,11 +102,15 @@ export const DeckDetailView = ({
             onClick={() => {
               if (
                 editable &&
+                activeDeck &&
                 window.confirm("Discard any changes and go back?")
               ) {
+                setEditable(false);
+                setCurrentView(`deckCreateEditView=${activeDeck.id}`);
+              } else {
+                setEditable(false);
                 setCurrentView("deckCollection");
               }
-              setCurrentView("deckCollection");
             }}
             variation="tertiary"
           />
@@ -125,7 +138,11 @@ export const DeckDetailView = ({
               icon={<PiExportBold />}
               label={"Export"}
               onClick={() => {
-                onDeckExport(activeDeck.cards, activeDeck.name);
+                onDeckExport(
+                  activeDeck.cards,
+                  activeDeck.name,
+                  activeDeck.format
+                );
               }}
               variation="secondary"
             />
@@ -175,9 +192,12 @@ export const DeckDetailView = ({
                   </div>
                 }
                 editable={editable}
-                onChange={(value) =>
-                  setFormat(value === "Commander" ? "Commander" : "Standard")
-                }
+                onChange={(value) => {
+                  const validFormat: DeckFormat = isValidFormat(value)
+                    ? value
+                    : "Commander";
+                  setFormat(validFormat);
+                }}
                 placeholder=""
                 type="select"
                 value={format}

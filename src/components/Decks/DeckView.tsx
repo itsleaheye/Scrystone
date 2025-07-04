@@ -1,7 +1,10 @@
 import type { Card, Deck } from "../../types/MagicTheGathering";
 import { CardTypeSummary } from "../shared/CardTypeSummary";
 import "../styles.css";
-import { getDeckTypeSummaryWithDefaults } from "../utils/decks";
+import {
+  getDeckTypeSummaryWithDefaults,
+  isDeckFullyOwned,
+} from "../utils/decks";
 import { getCardsFromStorage } from "../utils/storage";
 import { ManaRow } from "./ManaRow";
 
@@ -20,7 +23,12 @@ export function DeckView({ deck, setCurrentView }: Props) {
   };
 
   return (
-    <div className="deck cursor-pointer" onClick={handleClick}>
+    <div
+      className={`deck cursor-pointer ${
+        isDeckFullyOwned(deck) ? "opacity-100" : "opacity-60"
+      }`}
+      onClick={handleClick}
+    >
       <div className="deckTop">
         <p className="emphasis">{deck.name}</p>
         {deck.description && (
@@ -59,6 +67,7 @@ export function CardTypeDetailRow({
   const cardTypeLabels: Record<string, string> = {
     creature: "Creatures",
     enchantment: "Enchantments",
+    sorcery: "Sorcery",
     artifact: "Artifacts",
     land: "Lands",
   };

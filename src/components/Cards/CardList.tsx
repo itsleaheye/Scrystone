@@ -1,17 +1,13 @@
-import { GiTripleClaws } from "react-icons/gi";
 import type { CollectionCard, DeckCard } from "../../types/MagicTheGathering";
-import { FaBookOpen, FaTree } from "react-icons/fa";
-import { BsStars } from "react-icons/bs";
-import { LuPickaxe } from "react-icons/lu";
-import { HiQuestionMarkCircle } from "react-icons/hi";
 import "../styles.css";
 import { CardView } from "./CardView";
 import React from "react";
 import { EmptyView } from "../shared/EmptyView";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { MdCancel } from "react-icons/md";
+import { getTypeIcon } from "../shared/TypeIcon";
 
-interface CardListViewProps {
+interface CardListProps {
   cardFocused:
     | DeckCard
     | (CollectionCard & { quantityOwned: number; quantityNeeded?: number })
@@ -33,7 +29,7 @@ interface CardListViewProps {
   hasCards: boolean;
 }
 
-export function CardListView({
+export function CardList({
   cardFocused,
   editable,
   filteredAndSortedCards,
@@ -41,12 +37,12 @@ export function CardListView({
   onChangeQuantity,
   setCardFocused,
   hasCards,
-}: CardListViewProps) {
+}: CardListProps) {
   const isMobile = useMediaQuery("(max-width: 650px)");
 
   return (
     <div className="cardListContainer">
-      <div className="flexCol">
+      <div>
         {filteredAndSortedCards.map((card, index) => {
           return (
             <CardListItem
@@ -164,25 +160,4 @@ function CardListItem({
       </p>
     </div>
   );
-}
-
-function getTypeIcon(type?: string) {
-  if (!type) return;
-
-  switch (type) {
-    case "Creature":
-      return <GiTripleClaws />;
-    case "Enchantment":
-      return <FaBookOpen />;
-    case "Sorcery":
-      return <BsStars />;
-    case "Instant":
-      return <BsStars />;
-    case "Artifact":
-      return <LuPickaxe />;
-    case "Land":
-      return <FaTree />;
-    default:
-      return <HiQuestionMarkCircle />;
-  }
 }

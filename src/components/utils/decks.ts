@@ -2,6 +2,7 @@ import type {
   Card,
   CardTypeSummary,
   CollectionCard,
+  Deck,
   DeckCard,
 } from "../../types/MagicTheGathering";
 import { normalizeCardName } from "./normalize";
@@ -86,7 +87,13 @@ export function getDeckTypeSummary(cards: DeckCard[]) {
   );
 }
 
-const DEFAULT_TYPES = ["Creature", "Enchantment", "Artifact", "Land"];
+const DEFAULT_TYPES = [
+  "Artifact",
+  "Creature",
+  "Enchantment",
+  "Land",
+  "Sorcery",
+];
 
 export function getDeckTypeSummaryWithDefaults(
   cards: DeckCard[]
@@ -97,5 +104,11 @@ export function getDeckTypeSummaryWithDefaults(
   return DEFAULT_TYPES.map(
     (type) =>
       summaries.get(type) ?? { type, quantityNeeded: 0, quantityOwned: 0 }
+  );
+}
+
+export function isDeckFullyOwned(deck: Deck): boolean {
+  return deck.cards.every(
+    (card) => (card.quantityOwned ?? 0) >= (card.quantityNeeded ?? 0)
   );
 }

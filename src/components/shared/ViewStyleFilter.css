@@ -1,0 +1,40 @@
+.mobileBottom {
+  margin-bottom: var(--pad-xxs);
+}
+
+.viewStylesContainer {
+  height: 40px;
+  padding: 0 var(--pad-xxs);
+  justify-content: space-between;
+  display: flex;
+  border: 2px solid var(--blue);
+  border-radius: var(--border-radius-base);
+
+  .viewButtons {
+    gap: var(--pad-xs);
+
+    .active {
+      opacity: 100%;
+      color: var(--white);
+      transition: var(--ease-in);
+    }
+    .inactive {
+      opacity: 0.5;
+      transition: var(--ease-in);
+    }
+
+    div:hover {
+      color: var(--blue);
+      transition: var(--ease-in);
+      cursor: pointer;
+    }
+  }
+  div {
+    display: flex;
+    justify-content: center;
+  }
+  svg {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+}

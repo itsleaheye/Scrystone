@@ -20,6 +20,8 @@ export interface DeckCard extends Card {
   quantityOwned: number;
 }
 
+export type DeckFormat = "Commander" | "Standard" | "Draft";
+
 export interface Deck {
   id: number;
   cards: DeckCard[];
@@ -27,7 +29,7 @@ export interface Deck {
   description?: string;
   isFavorite?: boolean;
   name: string;
-  format: "Commander" | "Standard";
+  format: DeckFormat;
   size: number;
   price?: number;
 }

@@ -39,7 +39,7 @@ export function normalizeCardType(type?: string) {
   if (!type) return undefined;
 
   if (type === "Legendary") return "Creature";
-  if (type === "Sorcery") return "Enchantment";
+  if (type === "Instant") return "Sorcery";
   if (
     ([
       "Swamp",

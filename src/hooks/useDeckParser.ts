@@ -1,5 +1,5 @@
 import React from "react";
-import type { Deck, DeckCard } from "../types/MagicTheGathering";
+import type { Deck, DeckCard, DeckFormat } from "../types/MagicTheGathering";
 import {
   generateUniqueDeckId,
   getDeckCost,
@@ -9,6 +9,10 @@ import {
 export function useDeckParser() {
   const [decks, setDecks] = React.useState<Deck[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
+
+  const isValidFormat = (value: any): value is DeckFormat => {
+    return ["Commander", "Standard", "Draft"].includes(value);
+  };
 
   const onDeckSave = (
     cards: DeckCard[],
@@ -32,12 +36,15 @@ export function useDeckParser() {
 
     const colours = getDeckManaSummary(deckCards);
     const deckPrice = getDeckCost(cards);
+    const validFormat: DeckFormat = isValidFormat(format)
+      ? format
+      : "Commander";
 
     const deck: Deck = {
       id: id ?? generateUniqueDeckId(),
       name: name.length > 1 ? name : "Unnamed Deck",
       description,
-      format: format == "Commander" ? "Commander" : "Standard",
+      format: validFormat,
       colours: colours,
       cards: deckCards,
       size: cards.length,
@@ -79,22 +86,33 @@ export function useDeckParser() {
     setLoading(false);
   };
 
-  const onDeckExport = (deckCards: DeckCard[], deckName: string) => {
+  const onDeckExport = (
+    deckCards: DeckCard[],
+    deckName: string,
+    format: string
+  ) => {
     const sortedCards = [...deckCards].sort((a, b) =>
       a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
     );
-    const fileContent = sortedCards
-      .map((card) => {
-        const quantityOwned = card.quantityOwned ?? 0;
-        const namePrefix = quantityOwned < card.quantityNeeded ? "*" : "";
 
-        return `${namePrefix}${card.name} ${quantityOwned}/${
-          card.quantityNeeded
-        } - ${card.set} - $${
-          card.price ? Number(card.price).toFixed(2) : "n/a"
-        } per`;
-      })
-      .join("\n");
+    // Header
+    const header = `**${deckName} Card List | ${format}**\n`;
+    let fileContent = header;
+    fileContent += "=".repeat(header.length) + "\n";
+
+    // Add individual card
+    sortedCards.forEach((card) => {
+      const quantityOwned = card.quantityOwned;
+      const quantityNeeded = card.quantityNeeded;
+      const namePrefix = quantityOwned < quantityNeeded ? "*" : "";
+      const price = card.price ? `$${Number(card.price).toFixed(2)}` : "$n/a";
+
+      fileContent += `${namePrefix} ${
+        card.name
+      } x${quantityOwned}/${quantityNeeded} | (${
+        card.set ?? "Unknown Set"
+      }) | ${price} per\n`;
+    });
 
     // Binary Large Object
     const blob = new Blob([fileContent], {
@@ -113,6 +131,7 @@ export function useDeckParser() {
 
   return {
     decks,
+    isValidFormat,
     loading,
     onDeckDelete,
     onDeckExport,

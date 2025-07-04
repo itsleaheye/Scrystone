@@ -1,15 +1,32 @@
 .deckCardSummary {
   color: var(--black);
+  min-width: 200px;
+
+  .centredList {
+    margin: 0 auto;
+  }
 
   ul {
     list-style: none;
     padding-left: 0;
-    width: 100%;
+    width: 175px;
   }
 
   li {
+    align-items: center;
+    display: flex;
     text-decoration: none;
+
+    svg {
+      margin-right: var(--pad-xxs);
+    }
   }
+}
+
+.noBorder {
+  border-top: 2px solid var(--off-white);
+  padding-top: var(--pad-xs);
+  padding-bottom: var(--pad-xxs);
 }
 
 .hasBorder {

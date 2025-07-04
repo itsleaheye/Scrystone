@@ -17,6 +17,10 @@ export function useCardParser() {
   const [error, setError] = React.useState<string | null>(null);
   const [currentProgress, setCurrentProgress] = React.useState<number>(0);
   const [totalProgress, setTotalProgress] = React.useState<number>(0);
+  const [uploadTime, setUploadTime] = React.useState<string | null>(() => {
+    const saved = localStorage.getItem("mtg_cards_updated_at");
+    return saved ? saved : null;
+  });
 
   const handleError = (message: string) => {
     setLoading(false);
@@ -46,7 +50,11 @@ export function useCardParser() {
               }
             );
 
+            const timestamp = format(new Date(), "MMMM dd yyyy,  hh:mm a");
             localStorage.setItem("mtg_cards", JSON.stringify(parsedCards));
+            localStorage.setItem("mtg_cards_updated_at", timestamp);
+
+            setUploadTime(timestamp);
             setLoading(false);
           },
         });
@@ -94,7 +102,7 @@ export function useCardParser() {
     collection: {
       size: collectionSummary.size,
       value: collectionSummary.value,
-      updatedAt: format(new Date(), "MMMM dd yyyy,  hh:mm a"), // To do: Fix this so its stored in local Storage and not recalculated on each render of useCardParser
+      updatedAt: uploadTime,
     },
     onCollectionUpload,
     onDeckCardAdd,

@@ -35,6 +35,7 @@ export const DeckField = ({
       <select value={value} onChange={(e) => onChange(e.target.value)}>
         <option value="Commander">Commander</option>
         <option value="Standard">Standard</option>
+        <option value="Draft">Draft</option>
       </select>
     );
   } else {

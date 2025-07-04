@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import type { DeckCard } from "../types/MagicTheGathering";
-import { normalizeCardName } from "./utils/normalize";
 import { TbListSearch } from "react-icons/tb";
+import { normalizeCardName } from "../utils/normalize";
+import type { DeckCard } from "../../types/MagicTheGathering";
 
 interface CardSearchBarProps {
   onDeckCardAdd: (cardName: string) => Promise<void>;
