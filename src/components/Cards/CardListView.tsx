@@ -159,7 +159,9 @@ function CardListItem({
         </p>
       </div>
       {!isMobile && <p className="overflowElipse setDetails">({card.set})</p>}
-      <p className="priceDetails">${card.price?.toFixed(2) ?? "$n/a"}</p>
+      <p className="priceDetails">
+        {typeof card.price === "number" ? `$${card.price.toFixed(2)}` : "$n/a"}
+      </p>
     </div>
   );
 }
