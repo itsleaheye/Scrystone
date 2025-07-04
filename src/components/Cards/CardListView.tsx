@@ -6,7 +6,7 @@ import { LuPickaxe } from "react-icons/lu";
 import { HiQuestionMarkCircle } from "react-icons/hi";
 import "../styles.css";
 import { CardView } from "./CardView";
-import React, { useEffect } from "react";
+import React from "react";
 import { EmptyView } from "../shared/EmptyView";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { MdCancel } from "react-icons/md";
