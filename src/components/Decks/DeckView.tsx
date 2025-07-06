@@ -1,10 +1,7 @@
 import type { Card, Deck } from "../../types/MagicTheGathering";
 import { CardTypeSummary } from "../shared/CardTypeSummary";
 import "../styles.css";
-import {
-  getDeckTypeSummaryWithDefaults,
-  isDeckFullyOwned,
-} from "../utils/decks";
+import { getDeckTypeSummaryWithDefaults, isDeckReady } from "../utils/decks";
 import { getCardsFromStorage } from "../utils/storage";
 import { ManaRow } from "./ManaRow";
 
@@ -25,7 +22,7 @@ export function DeckView({ deck, setCurrentView }: Props) {
   return (
     <div
       className={`deck cursor-pointer ${
-        isDeckFullyOwned(deck) ? "opacity-100" : "opacity-60"
+        isDeckReady(deck) ? "opacity-100" : "opacity-60"
       }`}
       onClick={handleClick}
     >

@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import type {
   Card,
   CardTypeSummary,
@@ -7,6 +8,7 @@ import type {
 } from "../../types/MagicTheGathering";
 import { normalizeCardName } from "./normalize";
 import { getCardsFromStorage } from "./storage";
+import { de } from "date-fns/locale";
 
 export function getDeckManaSummary(cards: DeckCard[]) {
   const allSymbols: string[] = [];
@@ -107,8 +109,26 @@ export function getDeckTypeSummaryWithDefaults(
   );
 }
 
-export function isDeckFullyOwned(deck: Deck): boolean {
-  return deck.cards.every(
-    (card) => (card.quantityOwned ?? 0) >= (card.quantityNeeded ?? 0)
+export function isDeckReady(deck: Deck): boolean {
+  const deckSize = deck.cards.reduce(
+    (sum, card) => sum + (card.quantityNeeded || 0),
+    0
   );
+  let requiredSize = 60;
+  switch (deck.format) {
+    case "Commander":
+      requiredSize = 100;
+      break;
+    case "Standard":
+      requiredSize = 60;
+      break;
+    case "Draft":
+      requiredSize = 40;
+      break;
+    default:
+      requiredSize = 60; // Default to standard size
+      break;
+  }
+
+  return deckSize == requiredSize;
 }

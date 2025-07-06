@@ -9,7 +9,6 @@
   ul {
     list-style: none;
     padding-left: 0;
-    width: 175px;
   }
 
   li {
@@ -27,6 +26,8 @@
   border-top: 2px solid var(--off-white);
   padding-top: var(--pad-xs);
   padding-bottom: var(--pad-xxs);
+  justify-content: center;
+  display: flex;
 }
 
 .hasBorder {
@@ -37,6 +38,8 @@
   margin: var(--pad-xxs) auto 0 auto;
   width: 100%;
   border-top: 2px solid var(--off-white);
+  padding: var(--pad-xs) 0;
+  justify-content: center;
 }
 
 @media only screen and (min-width: 650px) {
@@ -45,5 +48,6 @@
     border-left: 2px var(--off-white) solid;
     padding-left: var(--pad-xs);
     text-align: left;
+    justify-content: start;
   }
 }

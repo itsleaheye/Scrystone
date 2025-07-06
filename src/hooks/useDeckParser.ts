@@ -95,24 +95,40 @@ export function useDeckParser() {
       a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
     );
 
-    // Header
-    const header = `**${deckName} Card List | ${format}**\n`;
+    // Deck list full header
+    const header = `**${deckName} Complete Card List | ${format}**\n`;
     let fileContent = header;
     fileContent += "=".repeat(header.length) + "\n";
 
     // Add individual card
     sortedCards.forEach((card) => {
-      const quantityOwned = card.quantityOwned;
-      const quantityNeeded = card.quantityNeeded;
-      const namePrefix = quantityOwned < quantityNeeded ? "*" : "";
       const price = card.price ? `$${Number(card.price).toFixed(2)}` : "$n/a";
 
-      fileContent += `${namePrefix} ${
-        card.name
-      } x${quantityOwned}/${quantityNeeded} | (${
+      fileContent += `${card.quantityNeeded} ${card.name} | (${
         card.set ?? "Unknown Set"
       }) | ${price} per\n`;
     });
+
+    // Seperate section for missing cards
+    const missingCards = sortedCards.filter(
+      (card) => (card.quantityOwned ?? 0) < (card.quantityNeeded ?? 0)
+    );
+    if (missingCards.length > 0) {
+      // Missing cards list header
+      const missingHeader = `\n**The Following Cards Are Still Needed**\n`;
+      fileContent += missingHeader;
+      fileContent += "=".repeat(missingHeader.length) + "\n";
+
+      missingCards.forEach((card) => {
+        const stillNeeds =
+          (card.quantityNeeded ?? 0) - (card.quantityOwned ?? 0);
+        const price = card.price ? `$${Number(card.price).toFixed(2)}` : "$n/a";
+
+        fileContent += `${stillNeeds} ${card.name} | (${
+          card.set ?? "Unknown Set"
+        }) | ${price} per\n`;
+      });
+    }
 
     // Binary Large Object
     const blob = new Blob([fileContent], {
