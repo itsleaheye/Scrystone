@@ -6,9 +6,9 @@ import { TbCardsFilled } from "react-icons/tb";
 import { GiCash } from "react-icons/gi";
 import { DeckDetailView } from "./Decks/DeckDetailView.tsx";
 import { DeckListView } from "./Decks/DeckListView.tsx";
-import { getCardsFromStorage } from "./utils/storage.ts";
+import { getCardsFromStorage } from "../utils/storage.ts";
 import { IconItem } from "./shared/IconItem.tsx";
-import { Welcome } from "./Welcome.tsx";
+import { Welcome } from "./Welcome/Welcome.tsx";
 import { CardPreview } from "./Cards/CardPreview.tsx";
 
 export default function Dashboard() {
@@ -68,7 +68,7 @@ export default function Dashboard() {
             <p className="subtext">
               {hasCollection
                 ? `Last synced on ${collection.updatedAt}`
-                : "Don’t have a .csv from TCGPlayer? Learn how."}
+                : "Never synced yet"}
               {/* To do: 'See how to export it' should link to a popup or article */}
             </p>
           </div>
@@ -90,27 +90,26 @@ export default function Dashboard() {
         </div>
       )}
 
-      {hasCollection ? (
-        <div
-          className="dataContainer"
-          style={{
-            opacity: loading ? 0.5 : 1,
-            pointerEvents: loading ? "none" : "auto",
-            transition: "opacity 0.5s ease",
-          }}
-        >
-          {currentView === "dashboard" && (
-            <CardPreview collectionCards={cards} />
-          )}
-          {currentView.startsWith("deckCreateEditView") &&
-            renderDeckDetailView(currentView, setCurrentView)}
-          {currentView === "deckCollection" && (
-            <DeckListView setCurrentView={setCurrentView} />
-          )}
-        </div>
-      ) : (
-        <Welcome />
-      )}
+      <div
+        className="dataContainer"
+        style={{
+          opacity: loading ? 0.5 : 1,
+          pointerEvents: loading ? "none" : "auto",
+          transition: "opacity 0.5s ease",
+        }}
+      >
+        {currentView === "dashboard" &&
+          (hasCollection ? (
+            <CardPreview collectionCards={cards} viewPreference="cardGallery" />
+          ) : (
+            <Welcome />
+          ))}
+        {currentView.startsWith("deckCreateEditView") &&
+          renderDeckDetailView(currentView, setCurrentView)}
+        {currentView === "deckCollection" && (
+          <DeckListView setCurrentView={setCurrentView} />
+        )}
+      </div>
     </div>
   );
 }

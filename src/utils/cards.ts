@@ -1,4 +1,4 @@
-import type { CollectionCard } from "../../types/MagicTheGathering";
+import type { CollectionCard } from "../types/MagicTheGathering";
 import { normalizeCardName } from "./normalize";
 
 export function mergeCardQuantities<T extends { name: string }>(

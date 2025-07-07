@@ -2,7 +2,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { ActionButton } from "../shared/PrimaryActions";
 import { FaPlus } from "react-icons/fa6";
 import { DeckView } from "./DeckView";
-import { getDecksFromStorage } from "../utils/storage";
+import { getDecksFromStorage } from "../../utils/storage";
 import { EmptyView } from "../shared/EmptyView";
 
 interface Props {

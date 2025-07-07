@@ -1,0 +1,54 @@
+.welcomeSubtext {
+  margin: 0 auto var(--pad-sm) auto;
+  border-bottom: 2px solid var(--dark-gray);
+  padding-bottom: var(--pad-xs);
+}
+
+.welcomeContainer {
+  max-width: 750px;
+
+  h2 {
+    color: var(--green);
+  }
+
+  svg {
+    color: var(--off-white);
+    width: 1.5rem;
+    height: 1.5rem;
+    padding-top: 3px;
+    margin: var(--pad-xs) 0 var(--pad-xs) 0;
+  }
+}
+
+.welcomeStep {
+  padding: var(--pad-xs);
+  border: 2px solid var(--dark-gray);
+  border-radius: var(--border-radius-base);
+
+  &:hover {
+    border-color: var(--blue);
+  }
+
+  .stepNumber {
+    background-color: var(--blue);
+    color: var(--white);
+    min-width: 2.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--border-radius-base);
+    padding-top: 3px;
+    text-align: center;
+  }
+
+  ul {
+    margin-left: 2rem;
+    margin-top: var(--pad-xs);
+    gap: var(--pad-xxxs);
+    display: flex;
+    flex-direction: column;
+
+    li::marker {
+      color: var(--blue);
+    }
+  }
+}

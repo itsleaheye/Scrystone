@@ -1,4 +1,4 @@
-import type { CollectionCard } from "../../types/MagicTheGathering";
+import type { CollectionCard } from "../types/MagicTheGathering";
 import { normalizeCardName, normalizeCardType } from "./normalize";
 import { getScryfallCard } from "./scryfall";
 

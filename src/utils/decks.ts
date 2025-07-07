@@ -1,14 +1,12 @@
-import { useMemo } from "react";
 import type {
   Card,
   CardTypeSummary,
   CollectionCard,
   Deck,
   DeckCard,
-} from "../../types/MagicTheGathering";
+} from "../types/MagicTheGathering";
 import { normalizeCardName } from "./normalize";
 import { getCardsFromStorage } from "./storage";
-import { de } from "date-fns/locale";
 
 export function getDeckManaSummary(cards: DeckCard[]) {
   const allSymbols: string[] = [];

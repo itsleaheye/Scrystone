@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { TbListSearch } from "react-icons/tb";
-import { normalizeCardName } from "../utils/normalize";
+import { normalizeCardName } from "../../utils/normalize";
 import type { DeckCard } from "../../types/MagicTheGathering";
 
 interface CardSearchBarProps {

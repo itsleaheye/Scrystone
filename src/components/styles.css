@@ -306,6 +306,7 @@
   opacity: 0.75;
   font-size: var(--font-size-sm);
   margin-bottom: 0;
+  text-align: center;
 }
 
 .emphasis {
@@ -315,7 +316,7 @@
 
 .borderBottom {
   border-bottom: 2px solid var(--dark-gray);
-  padding-bottom: var(--pad-sm);
+  padding-bottom: var(--pad-xs);
   margin-bottom: var(--pad-xxs);
 }
 
@@ -462,11 +463,6 @@
   max-width: 1600px;
   margin: 0 auto;
   background: var(--black);
-}
-
-.welcomeSubtext {
-  max-width: 550px;
-  margin: 0 auto;
 }
 
 .loading {

@@ -1,4 +1,4 @@
-import type { CollectionCard } from "../../types/MagicTheGathering";
+import type { CollectionCard } from "../types/MagicTheGathering";
 
 export function getCollectionSummary(cards?: CollectionCard[]): {
   size: number;

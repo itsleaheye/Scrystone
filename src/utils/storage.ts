@@ -1,4 +1,4 @@
-import type { CollectionCard, Deck } from "../../types/MagicTheGathering";
+import type { CollectionCard, Deck } from "../types/MagicTheGathering";
 import { normalizeCardName } from "./normalize";
 
 export function getCardsFromStorage(): CollectionCard[] {

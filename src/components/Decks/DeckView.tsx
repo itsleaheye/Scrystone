@@ -1,8 +1,8 @@
 import type { Card, Deck } from "../../types/MagicTheGathering";
 import { CardTypeSummary } from "../shared/CardTypeSummary";
 import "../styles.css";
-import { getDeckTypeSummaryWithDefaults, isDeckReady } from "../utils/decks";
-import { getCardsFromStorage } from "../utils/storage";
+import { getDeckTypeSummaryWithDefaults, isDeckReady } from "../../utils/decks";
+import { getCardsFromStorage } from "../../utils/storage";
 import { ManaRow } from "./ManaRow";
 
 interface Props {

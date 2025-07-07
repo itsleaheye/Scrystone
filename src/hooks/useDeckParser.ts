@@ -4,7 +4,7 @@ import {
   generateUniqueDeckId,
   getDeckCost,
   getDeckManaSummary,
-} from "../components/utils/decks";
+} from "../utils/decks";
 
 export function useDeckParser() {
   const [decks, setDecks] = React.useState<Deck[]>([]);

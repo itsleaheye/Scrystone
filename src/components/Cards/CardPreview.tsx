@@ -1,9 +1,9 @@
 import type { CollectionCard, DeckCard } from "../../types/MagicTheGathering";
-import { getCardsFromStorage } from "../utils/storage";
-import { getDecksFromStorage } from "../utils/storage";
-import { normalizeCardName } from "../utils/normalize";
+import { getCardsFromStorage } from "../../utils/storage";
+import { getDecksFromStorage } from "../../utils/storage";
+import { normalizeCardName } from "../../utils/normalize";
 import { CardView } from "./CardView";
-import { mergeCardQuantities } from "../utils/cards";
+import { mergeCardQuantities } from "../../utils/cards";
 import { useEffect, useState } from "react";
 import React from "react";
 import { EmptyView } from "../shared/EmptyView";

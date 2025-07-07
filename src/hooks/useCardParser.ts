@@ -1,14 +1,11 @@
 import React from "react";
 import type { DeckCard } from "../types/MagicTheGathering";
 import Papa from "papaparse";
-import { getScryfallCard } from "../components/utils/scryfall";
-import {
-  normalizeCardName,
-  normalizeCardType,
-} from "../components/utils/normalize";
-import { parseCSVToCollectionCards } from "../components/utils/parseCSVToCollectionCards";
-import { getCardsFromStorage } from "../components/utils/storage";
-import { getCollectionSummary } from "../components/utils/summaries";
+import { getScryfallCard } from "../utils/scryfall";
+import { normalizeCardName, normalizeCardType } from "../utils/normalize";
+import { parseCSVToCollectionCards } from "../utils/parseCSVToCollectionCards";
+import { getCardsFromStorage } from "../utils/storage";
+import { getCollectionSummary } from "../utils/summaries";
 import { format } from "date-fns";
 
 export function useCardParser() {
