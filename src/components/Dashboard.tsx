@@ -69,7 +69,6 @@ export default function Dashboard() {
               {hasCollection
                 ? `Last synced on ${collection.updatedAt}`
                 : "Never synced yet"}
-              {/* To do: 'See how to export it' should link to a popup or article */}
             </p>
           </div>
         </div>
@@ -83,7 +82,7 @@ export default function Dashboard() {
 
       {loading && (
         <div className="loading">
-          {/* To be replaced by spinning planewalker logo */}
+          <div className="spinner"></div>
           <p className="text-center">
             Loading {currentProgress}/{totalProgress} cards
           </p>
