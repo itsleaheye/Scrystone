@@ -102,11 +102,7 @@ export function useDeckParser() {
 
     // Add individual card
     sortedCards.forEach((card) => {
-      const price = card.price ? `$${Number(card.price).toFixed(2)}` : "$n/a";
-
-      fileContent += `${card.quantityNeeded} ${card.name} | (${
-        card.set ?? "Unknown Set"
-      }) | ${price} per\n`;
+      fileContent += `${card.quantityNeeded}x ${card.name}`;
     });
 
     // Seperate section for missing cards
@@ -122,11 +118,8 @@ export function useDeckParser() {
       missingCards.forEach((card) => {
         const stillNeeds =
           (card.quantityNeeded ?? 0) - (card.quantityOwned ?? 0);
-        const price = card.price ? `$${Number(card.price).toFixed(2)}` : "$n/a";
 
-        fileContent += `${stillNeeds} ${card.name} | (${
-          card.set ?? "Unknown Set"
-        }) | ${price} per\n`;
+        fileContent += `${stillNeeds}x ${card.name}`;
       });
     }
 
