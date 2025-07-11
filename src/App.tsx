@@ -24,6 +24,9 @@ export default function App() {
   } = useCardParser();
   const hasCollection = collection.size > 0;
 
+  const showConfirmation =
+    location.pathname.includes("/new") || location.pathname.includes("/edit");
+
   return (
     <div className="container">
       <div className="headingContainer">
@@ -43,13 +46,25 @@ export default function App() {
               isActive={location.pathname === "/"}
               icon={<TbCardsFilled />}
               text={`Cards`}
-              onClick={() => navigate("/")}
+              onClick={() => {
+                if (showConfirmation && !window.confirm("Discard changes?")) {
+                  navigate("/");
+                } else {
+                  navigate("/");
+                }
+              }}
             />
             <IconItem
               isActive={location.pathname.startsWith("/deck")}
               icon={<WalletIcon />}
               text={`Decks`}
-              onClick={() => navigate("/decks")}
+              onClick={() => {
+                if (showConfirmation && !window.confirm("Discard changes?")) {
+                  navigate("/decks");
+                } else {
+                  navigate("/decks");
+                }
+              }}
             />
           </div>
 
