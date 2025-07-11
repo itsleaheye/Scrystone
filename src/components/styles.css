@@ -539,7 +539,7 @@
     }
     textarea {
       width: 373px;
-      height: 45px;
+      height: 75px;
     }
     .deckBreakdown {
       justify-content: end;
@@ -602,6 +602,7 @@
     flex-direction: row;
     gap: var(--pad-xs);
     justify-content: center;
+    align-items: baseline;
 
     .searchContainer {
       margin: 0;

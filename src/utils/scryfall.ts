@@ -1,6 +1,6 @@
 import {
   normalizeCardName,
-  normalizeColourIdentity,
+  normalizeColorIdentity,
   normalizeMana,
 } from "./normalize";
 import { getCachedCard, setCachedCard } from "./storage";
@@ -64,7 +64,7 @@ export async function getScryfallCard(
 
 function formatScryfallDetails(card: any): ScryfallDetails {
   const manaCost =
-    normalizeColourIdentity(card.color_identity) ?? card.mana_cost;
+    normalizeColorIdentity(card.color_identity) ?? card.mana_cost; //Scryfall uses American spelling and underscores
   const { cost, colours } = manaCost
     ? normalizeMana(manaCost as string)
     : { cost: undefined, colours: undefined };

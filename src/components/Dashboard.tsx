@@ -4,8 +4,6 @@ import "./styles.css";
 import { ArrowUpTrayIcon, WalletIcon } from "@heroicons/react/16/solid";
 import { TbCardsFilled } from "react-icons/tb";
 import { GiCash } from "react-icons/gi";
-import { DeckDetailView } from "./Decks/DeckDetailView.tsx";
-import { DeckListView } from "./Decks/DeckListView.tsx";
 import { getCardsFromStorage } from "../utils/storage.ts";
 import { IconItem } from "./shared/IconItem.tsx";
 import { Welcome } from "./Welcome/Welcome.tsx";
@@ -97,28 +95,22 @@ export default function Dashboard() {
           transition: "opacity 0.5s ease",
         }}
       >
-        {currentView === "dashboard" &&
-          (hasCollection ? (
-            <CardPreview collectionCards={cards} viewPreference="cardGallery" />
-          ) : (
-            <Welcome />
-          ))}
-        {currentView.startsWith("deckCreateEditView") &&
-          renderDeckDetailView(currentView, setCurrentView)}
-        {currentView === "deckCollection" && (
-          <DeckListView setCurrentView={setCurrentView} />
+        {hasCollection ? (
+          <CardPreview collectionCards={cards} viewPreference="cardGallery" />
+        ) : (
+          <Welcome />
         )}
       </div>
     </div>
   );
 }
 
-function renderDeckDetailView(
-  currentView: string,
-  setCurrentView: React.Dispatch<React.SetStateAction<string>>
-) {
-  const match = currentView.match(/^deckCreateEditView=(.+)$/);
-  const deckId = match ? Number(match[1]) : undefined;
+// function renderDeckDetailView(
+//   currentView: string,
+//   setCurrentView: React.Dispatch<React.SetStateAction<string>>
+// ) {
+//   const match = currentView.match(/^deckCreateEditView=(.+)$/);
+//   const deckId = match ? Number(match[1]) : undefined;
 
-  return <DeckDetailView setCurrentView={setCurrentView} deckId={deckId} />;
-}
+//   return <DeckDetailView setCurrentView={setCurrentView} deckId={deckId} />;
+// }

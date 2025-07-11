@@ -1,4 +1,5 @@
-import "../styles.css";
+import "../../styles.css";
+import "../Deck.css";
 
 const manaColourMap: Record<string, string> = {
   B: "black",
@@ -9,10 +10,14 @@ const manaColourMap: Record<string, string> = {
 };
 
 interface ManaRowProps {
-  colours: string[];
+  colours?: string[];
 }
 
 export function ManaRow({ colours }: ManaRowProps) {
+  if (!colours || colours.length === 0) {
+    return <></>;
+  }
+
   return (
     <div className="manaRow">
       {colours.map((manaColour, index) => {
