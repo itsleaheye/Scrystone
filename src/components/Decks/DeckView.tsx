@@ -1,22 +1,20 @@
-import type { Card, Deck } from "../../types/MagicTheGathering";
-import { CardTypeSummary } from "../shared/CardTypeSummary";
+import type { Deck } from "../../types/MagicTheGathering";
+import { TypeSummary } from "../shared/TypeSummary";
 import "../styles.css";
 import { getDeckTypeSummaryWithDefaults, isDeckReady } from "../../utils/decks";
-import { getCardsFromStorage } from "../../utils/storage";
-import { ManaRow } from "./ManaRow";
+import { ManaRow } from "./components/ManaRow";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   deck: Deck;
-  setCurrentView?: (view: string) => void;
 }
 
-export function DeckView({ deck, setCurrentView }: Props) {
+export function DeckView({ deck }: Props) {
   const summary = getDeckTypeSummaryWithDefaults(deck.cards);
+  const navigate = useNavigate();
 
   const handleClick = () => {
-    if (typeof setCurrentView === "function") {
-      setCurrentView(`deckCreateEditView=${deck.id}`);
-    }
+    navigate(`/deck/${deck.id}/`);
   };
 
   return (
@@ -35,42 +33,10 @@ export function DeckView({ deck, setCurrentView }: Props) {
       {deck.colours && deck.colours.length > 0 && (
         <ManaRow colours={deck.colours} />
       )}
-      <CardTypeSummary summary={summary} />
+      <TypeSummary summary={summary} />
       <div className="formatTag">
         <p>{deck.format}</p>
       </div>
     </div>
-  );
-}
-
-export function CardTypeDetailRow({
-  allCardsofType,
-  type,
-}: {
-  allCardsofType: Card[];
-  type?: string;
-}) {
-  if (!type) return <></>;
-
-  const cards = getCardsFromStorage();
-  const ownedDeckCardsofType = allCardsofType.filter((cardOfType) =>
-    cards.some(
-      (card) =>
-        card.type?.toLowerCase() === type &&
-        card.name.toLowerCase() === cardOfType.name.toLowerCase()
-    )
-  ).length;
-
-  const cardTypeLabels: Record<string, string> = {
-    creature: "Creatures",
-    enchantment: "Enchantments",
-    sorcery: "Sorcery",
-    artifact: "Artifacts",
-    land: "Lands",
-  };
-  const cardTypeLabel = cardTypeLabels[type as string] || type;
-
-  return (
-    <div className="flexRow">{`${cardTypeLabel} ${ownedDeckCardsofType}/${allCardsofType.length}`}</div>
   );
 }

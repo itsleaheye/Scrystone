@@ -1,4 +1,4 @@
-import type { CollectionCard } from "../types/MagicTheGathering";
+import type { CollectionCard, DeckCard } from "../types/MagicTheGathering";
 import { normalizeCardName } from "./normalize";
 
 export function mergeCardQuantities<T extends { name: string }>(
@@ -17,4 +17,19 @@ export function mergeCardQuantities<T extends { name: string }>(
       ? { ...card, quantityOwned }
       : { ...card, quantityNeeded: 0, quantityOwned };
   });
+}
+
+export function getColoursFromCards(cards?: DeckCard[]): string[] {
+  if (!cards || cards.length === 0) {
+    return [];
+  }
+
+  const colourSet = new Set<string>();
+  for (const card of cards) {
+    (card.manaTypes || []).forEach((colour) => {
+      colourSet.add(colour);
+    });
+  }
+
+  return Array.from(colourSet).sort();
 }

@@ -2,15 +2,12 @@ import type { CardTypeSummary } from "../../types/MagicTheGathering";
 import { getTypeIcon } from "./TypeIcon";
 import "./CardTypeSummary.css";
 
-interface CardTypeSummaryProps {
+interface TypeSummaryProps {
   summary: CardTypeSummary[];
   hasBorder?: boolean;
 }
 
-export function CardTypeSummary({
-  summary,
-  hasBorder = false,
-}: CardTypeSummaryProps) {
+export function TypeSummary({ summary, hasBorder = false }: TypeSummaryProps) {
   return (
     <div className={`deckCardSummary ${hasBorder ? "hasBorder" : "noBorder"}`}>
       <ul className={hasBorder ? "" : "centredList"}>

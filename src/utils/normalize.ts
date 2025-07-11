@@ -31,7 +31,7 @@ export function normalizeMana(manaCostStr: string): {
   };
 }
 
-export function normalizeColourIdentity(colorIdentity: string[]): string {
+export function normalizeColorIdentity(colorIdentity: string[]): string {
   return colorIdentity.map((color) => `{${color}}`).join("");
 }
 

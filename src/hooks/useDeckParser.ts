@@ -102,7 +102,7 @@ export function useDeckParser() {
 
     // Add individual card
     sortedCards.forEach((card) => {
-      fileContent += `${card.quantityNeeded}x ${card.name}`;
+      fileContent += `${card.quantityNeeded}x ${card.name} \n`;
     });
 
     // Seperate section for missing cards
@@ -119,7 +119,7 @@ export function useDeckParser() {
         const stillNeeds =
           (card.quantityNeeded ?? 0) - (card.quantityOwned ?? 0);
 
-        fileContent += `${stillNeeds}x ${card.name}`;
+        fileContent += `${stillNeeds}x ${card.name} \n`;
       });
     }
 
