@@ -40,7 +40,7 @@ export function DeckPreview() {
 
       {/* Deck card list */}
       <CardPreview
-        activeCardPreview={!isMobile ? cards[cards.length - 1] : undefined}
+        activeCardPreview={undefined}
         deckCards={cards}
         isDeckView={true}
         viewPreference="List"
