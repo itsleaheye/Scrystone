@@ -229,36 +229,6 @@
   }
 }
 
-.manaPlaceholder {
-  width: 2rem;
-  height: 2rem;
-  display: block;
-  border-radius: 50%;
-  background: var(--off-white);
-}
-.black {
-  background: var(--black);
-}
-.green {
-  background: var(--dark-green);
-}
-.blue {
-  background-color: var(--dark-blue);
-}
-.red {
-  background-color: var(--red);
-}
-.white {
-  background: var(--white);
-  border: 2px solid var(--off-white);
-}
-.manaRow {
-  margin-bottom: var(--pad-xs);
-  display: flex;
-  gap: var(--pad-xxs);
-  justify-content: center;
-}
-
 .flexRow {
   display: flex;
   flex-direction: row;
@@ -552,9 +522,7 @@
       }
     }
   }
-  .manaRow {
-    justify-content: start;
-  }
+
   .deckCardActions {
     display: flex;
     align-items: center;

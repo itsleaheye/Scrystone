@@ -1,6 +1,5 @@
 export interface Card {
   imageUrl?: string;
-  manaCost?: number;
   manaTypes?: string[];
   name: string;
   number?: string;
@@ -8,7 +7,7 @@ export interface Card {
   rarity?: string;
   set?: string;
   type?: string;
-  isFoil?: boolean; // To do: Might remove this
+  tcgPlayerId?: string;
 }
 
 export interface CollectionCard extends Card {

@@ -1,12 +1,18 @@
 import "../../styles.css";
 import "../Deck.css";
+import manaBlack from "../../../assets/manaBlack.svg";
+import manaGreen from "../../../assets/manaGreen.svg";
+import manaWhite from "../../../assets/manaWhite.svg";
+import manaBlue from "../../../assets/manaBlue.svg";
+import manaRed from "../../../assets/manaRed.svg";
+import manaDefault from "../../../assets/manaDefault.svg";
 
-const manaColourMap: Record<string, string> = {
-  B: "black",
-  W: "white",
-  U: "blue",
-  G: "green",
-  R: "red",
+const manaIcon: Record<string, string> = {
+  B: manaBlack,
+  W: manaWhite,
+  U: manaBlue,
+  G: manaGreen,
+  R: manaRed,
 };
 
 interface ManaRowProps {
@@ -21,9 +27,16 @@ export function ManaRow({ colours }: ManaRowProps) {
   return (
     <div className="manaRow">
       {colours.map((manaColour, index) => {
-        const className = manaColourMap[manaColour] ?? "";
+        const src = manaIcon[manaColour] || manaDefault;
 
-        return <span key={index} className={`manaPlaceholder ${className}`} />;
+        return (
+          <img
+            key={index}
+            src={src}
+            alt={`${manaColour} mana symbol`}
+            className="manaIcon"
+          />
+        );
       })}
     </div>
   );

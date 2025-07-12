@@ -26,7 +26,7 @@ export async function parseCSVToCollectionCards(
     try {
       await delay(REQUEST_DELAY_MS);
 
-      const scryfallDetails = await getScryfallCard(name);
+      const scryfallDetails = await getScryfallCard(name, rawCard.productId);
       if (!scryfallDetails) {
         console.warn(`No Scryfall data found for: ${name}`);
         onProgress?.(i + 1, total);
@@ -37,14 +37,13 @@ export async function parseCSVToCollectionCards(
 
       cards.push({
         name,
-        manaCost: scryfallDetails.manaCost,
         manaTypes: scryfallDetails.manaTypes,
         number: rawCard["Card Number"],
         price: scryfallDetails.price ? scryfallDetails.price * 1.37 : undefined,
         rarity: rawCard["Rarity"],
         set: rawCard["Set"],
         type,
-        isFoil: rawCard.isFoil,
+        tcgPlayerId: rawCard["Product ID"],
         imageUrl: scryfallDetails.previewUrl,
         quantityOwned: rawCard["Quantity"] || 1,
       });

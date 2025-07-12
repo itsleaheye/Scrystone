@@ -2,6 +2,7 @@ import type { CollectionCard, DeckCard } from "../../types/MagicTheGathering";
 import { CardFooter } from "./CardFooter";
 import "./Card.css";
 import { CardHeader } from "./CardHeader";
+import cardDefault from "../../assets/cardBackDefault.jpg";
 
 interface CardViewProps {
   card:
@@ -22,17 +23,15 @@ export function CardView({
 }: CardViewProps) {
   return (
     <div className={`${editable ? "editableCard card" : "card"}`}>
-      {card.imageUrl && (
-        <img
-          alt={card.name}
-          className={`cardArt ${
-            isDeckView && card.quantityOwned < (card.quantityNeeded ?? 0)
-              ? "opacity-50"
-              : ""
-          }`}
-          src={card.imageUrl}
-        />
-      )}
+      <img
+        alt={card.name}
+        className={`cardArt ${
+          isDeckView && card.quantityOwned < (card.quantityNeeded ?? 0)
+            ? "opacity-50"
+            : ""
+        }`}
+        src={card.imageUrl ?? cardDefault}
+      />
       {editable && (
         <CardHeader
           isMobile={isMobile}

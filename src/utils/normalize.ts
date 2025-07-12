@@ -13,7 +13,6 @@ export function normalizeDeckName(name: string): string {
 }
 
 export function normalizeMana(manaCostStr: string): {
-  cost?: number;
   colours?: string[];
 } {
   // manaCostStr comes from Scryfall as '{2}{B}' or '{2}{W}{W}'
@@ -22,11 +21,9 @@ export function normalizeMana(manaCostStr: string): {
     ?.map((t) => t.slice(1, -1));
   if (!manaTokens) return {};
 
-  const cost = manaTokens.find((token) => /^\d+$/.test(token));
   const colours = manaTokens.filter((token) => /^[WUBRG]$/.test(token));
 
   return {
-    cost: cost ? parseInt(cost, 10) : undefined,
     colours: colours.length ? colours : undefined,
   };
 }

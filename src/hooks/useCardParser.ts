@@ -79,7 +79,6 @@ export function useCardParser() {
       set: scryfallCard?.set,
       quantityNeeded: 1,
       quantityOwned: ownedMatch?.quantityOwned ?? 0,
-      manaCost: scryfallCard?.manaCost,
       manaTypes: scryfallCard?.manaTypes,
     };
 

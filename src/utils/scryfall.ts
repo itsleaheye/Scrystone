@@ -6,7 +6,6 @@ import {
 import { getCachedCard, setCachedCard } from "./storage";
 
 interface ScryfallDetails {
-  manaCost?: number;
   manaTypes?: string[];
   previewUrl?: string;
   price: number;
@@ -15,17 +14,27 @@ interface ScryfallDetails {
 }
 
 export async function getScryfallCard(
-  cardName: string
+  cardName: string,
+  tcgPlayerId?: string
 ): Promise<ScryfallDetails | undefined> {
-  const normalizedName = normalizeCardName(cardName);
-  const query = encodeURIComponent(normalizedName);
+  const cached = getCachedCard(cardName);
+  if (cached) return formatScryfallDetails(cached);
+  // Try to fetch card details by TCGPlayer ID first
+  if (tcgPlayerId) {
+    const url = `https://api.scryfall.com/cards/tcgplayer/${tcgPlayerId}`;
+    const res = await fetch(url);
+    if (res.ok) {
+      const data = await res.json();
+      setCachedCard(cardName, data);
 
-  // Check if we have a cached version of this card first
-  const cached = getCachedCard(normalizedName);
-  if (cached) {
-    return formatScryfallDetails(cached);
+      return formatScryfallDetails(data);
+    }
   }
 
+  // Fallback to searching by card name
+  const normalizedName = normalizeCardName(cardName);
+
+  const query = encodeURIComponent(normalizedName);
   const urls = [
     `https://api.scryfall.com/cards/named?fuzzy=${query}`, //fuzzy search
     `https://api.scryfall.com/cards/search?q=${query}`, // general search
@@ -53,11 +62,9 @@ export async function getScryfallCard(
     }
 
     setCachedCard(normalizedName, data);
-
     return formatScryfallDetails(data);
   } catch (error) {
     console.error(`Error fetching card details for "${cardName}":`, error);
-
     return;
   }
 }
@@ -65,15 +72,14 @@ export async function getScryfallCard(
 function formatScryfallDetails(card: any): ScryfallDetails {
   const manaCost =
     normalizeColorIdentity(card.color_identity) ?? card.mana_cost; //Scryfall uses American spelling and underscores
-  const { cost, colours } = manaCost
+  const { colours } = manaCost
     ? normalizeMana(manaCost as string)
-    : { cost: undefined, colours: undefined };
+    : { colours: undefined };
 
   return {
     previewUrl:
       card.image_uris?.normal || card.card_faces?.[0]?.image_uris?.normal,
     price: parseFloat(card.prices?.usd) || 0,
-    manaCost: cost,
     manaTypes: colours,
     type: card.type_line?.split("—")[0]?.trim().split(" ")[0],
     set: card.set_name,
