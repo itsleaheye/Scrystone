@@ -1,6 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDeckParser } from "../../hooks/useDeckParser";
-import type { Deck, DeckFormat } from "../../types/MagicTheGathering";
+import type {
+  CardTypeSummary,
+  Deck,
+  DeckFormat,
+} from "../../types/MagicTheGathering";
 import { GiCash } from "react-icons/gi";
 import { RiCheckboxCircleFill, RiErrorWarningFill } from "react-icons/ri";
 import { useCardParser } from "../../hooks/useCardParser";
@@ -14,12 +18,12 @@ import { DeckField } from "./DeckField";
 import { ManaRow } from "./ManaRow";
 import { getDeckCost, getDeckTypeSummaryWithDefaults } from "../../utils/decks";
 import { getDecksFromStorage } from "../../utils/storage";
-import { CardTypeSummary } from "../shared/CardTypeSummary";
 import { CardPreview } from "../Cards/CardPreview";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { PiExportBold } from "react-icons/pi";
 import { ViewStyleFilter } from "../shared/ViewStyleFilter";
 import { CardSearchBar } from "../shared/CardSearchBar";
+import { TypeSummary } from "../shared/TypeSummary";
 
 export const DeckDetailView = ({
   deckId,
@@ -38,15 +42,25 @@ export const DeckDetailView = ({
   const [viewStyle, setViewStyle] = useState<string>("List");
 
   useEffect(() => {
-    if (deckId !== undefined) {
-      const foundDeck = getDecksFromStorage(deckId)[0];
-      setActiveDeck(foundDeck);
+    if (deckId === undefined) return;
 
-      if (foundDeck) {
-        setCards(foundDeck.cards);
+    async function loadDeck() {
+      try {
+        const decks = await getDecksFromStorage(deckId);
+        const foundDeck = decks[0];
+        setActiveDeck(foundDeck);
+
+        if (foundDeck) {
+          setCards(foundDeck.cards);
+        }
+      } catch (error) {
+        console.error("Failed to load deck:", error);
+        setActiveDeck(undefined);
       }
     }
-  }, [deckId]);
+
+    loadDeck();
+  }, [deckId, setCards]);
 
   const { name, setName, description, setDescription, format, setFormat } =
     useDeckFormState(activeDeck);
@@ -70,17 +84,20 @@ export const DeckDetailView = ({
   );
   const isDeckReady = currentDeckSize == requiredDeckSize;
 
-  // For sake of performance, memoize the summary
-  const summary = useMemo(
-    () =>
-      getDeckTypeSummaryWithDefaults(
-        editable ? cards : activeDeck?.cards || []
-      ),
-    [cards, editable, activeDeck]
-  );
+  const [summary, setSummary] = useState<CardTypeSummary[]>([]);
 
-  const handleSave = () => {
-    const savedDeck = onDeckSave(
+  useEffect(() => {
+    async function loadSummary() {
+      let summaryResult = await getDeckTypeSummaryWithDefaults(
+        editable ? cards : activeDeck?.cards || []
+      );
+      setSummary(summaryResult);
+    }
+    loadSummary();
+  }, [cards, editable, activeDeck]);
+
+  const handleSave = async () => {
+    const savedDeck = await onDeckSave(
       cards,
       name,
       format,
@@ -213,7 +230,7 @@ export const DeckDetailView = ({
           </div>
 
           {/* Overview col 2  */}
-          <CardTypeSummary summary={summary} hasBorder={true} />
+          <TypeSummary summary={summary} hasBorder={true} />
         </div>
 
         {/* Overview col 3 */}

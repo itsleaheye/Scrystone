@@ -65,9 +65,7 @@ export async function getScryfallCard(
 function formatScryfallDetails(card: any): ScryfallDetails {
   const manaCost =
     normalizeColourIdentity(card.color_identity) ?? card.mana_cost;
-  const { cost, colours } = manaCost
-    ? normalizeMana(manaCost as string)
-    : { cost: undefined, colours: undefined };
+  const { cost, colours } = normalizeMana(manaCost);
 
   return {
     previewUrl:

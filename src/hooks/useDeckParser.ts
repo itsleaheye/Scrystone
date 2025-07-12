@@ -5,6 +5,9 @@ import {
   getDeckCost,
   getDeckManaSummary,
 } from "../utils/decks";
+import { auth, db } from "../firebase";
+import { deleteDoc, doc, setDoc } from "firebase/firestore";
+import { getDecksFromStorage } from "../utils/storage";
 
 export function useDeckParser() {
   const [decks, setDecks] = React.useState<Deck[]>([]);
@@ -14,7 +17,7 @@ export function useDeckParser() {
     return ["Commander", "Standard", "Draft"].includes(value);
   };
 
-  const onDeckSave = (
+  const onDeckSave = async (
     cards: DeckCard[],
     name: string,
     format: string,
@@ -23,10 +26,7 @@ export function useDeckParser() {
   ) => {
     setLoading(true);
 
-    const existingRawDecks = localStorage.getItem("mtg_decks");
-    const existingDecks: Deck[] = existingRawDecks
-      ? JSON.parse(existingRawDecks)
-      : [];
+    const existingDecks = await getDecksFromStorage();
 
     const deckCards: DeckCard[] = cards.map((card) => ({
       ...card,
@@ -64,14 +64,18 @@ export function useDeckParser() {
       }
     })();
 
-    localStorage.setItem("mtg_decks", JSON.stringify(updatedDecks));
+    const uid = auth.currentUser?.uid;
+    if (!uid) return;
+
+    await setDoc(doc(db, "users", uid, "decks", String(deck.id)), deck);
+
     setDecks(updatedDecks);
     setLoading(false);
 
     return deck;
   };
 
-  const onDeckDelete = (id: number) => {
+  const onDeckDelete = async (id: number) => {
     setLoading(true);
 
     const existingRawDecks = localStorage.getItem("mtg_decks");
@@ -81,7 +85,17 @@ export function useDeckParser() {
 
     const updatedDecks = existingDecks.filter((deck) => deck.id !== id);
 
-    localStorage.setItem("mtg_decks", JSON.stringify(updatedDecks));
+    const uid = auth.currentUser?.uid;
+    if (!uid) return;
+
+    try {
+      const deckRef = doc(db, "users", uid, "decks", id.toString());
+      await deleteDoc(deckRef);
+    } catch (error) {
+      console.error("Error deleting card:", error);
+    }
+
+    // localStorage.setItem("mtg_decks", JSON.stringify(updatedDecks));
     setDecks(updatedDecks);
     setLoading(false);
   };

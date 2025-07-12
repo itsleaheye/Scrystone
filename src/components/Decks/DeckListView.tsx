@@ -4,13 +4,25 @@ import { FaPlus } from "react-icons/fa6";
 import { DeckView } from "./DeckView";
 import { getDecksFromStorage } from "../../utils/storage";
 import { EmptyView } from "../shared/EmptyView";
+import { useEffect, useState } from "react";
+import type { Deck } from "../../types/MagicTheGathering";
 
 interface Props {
   setCurrentView: (view: string) => void;
 }
 
 export function DeckListView({ setCurrentView }: Props) {
-  const decks = getDecksFromStorage();
+  const [decks, setDecks] = useState<Deck[]>([]);
+
+  useEffect(() => {
+    getDecksFromStorage()
+      .then((data) => {
+        setDecks(data);
+      })
+      .catch(() => {
+        setDecks([]);
+      });
+  }, []);
 
   return (
     <>

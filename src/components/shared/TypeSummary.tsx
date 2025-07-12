@@ -7,7 +7,7 @@ interface CardTypeSummaryProps {
   hasBorder?: boolean;
 }
 
-export function CardTypeSummary({
+export function TypeSummary({
   summary,
   hasBorder = false,
 }: CardTypeSummaryProps) {

@@ -44,7 +44,6 @@ export async function parseCSVToCollectionCards(
         rarity: rawCard["Rarity"],
         set: rawCard["Set"],
         type,
-        isFoil: rawCard.isFoil,
         imageUrl: scryfallDetails.previewUrl,
         quantityOwned: rawCard["Quantity"] || 1,
       });

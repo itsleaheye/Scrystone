@@ -1,4 +1,8 @@
-import type { CollectionCard, DeckCard } from "../../types/MagicTheGathering";
+import type {
+  CollectionCard,
+  Deck,
+  DeckCard,
+} from "../../types/MagicTheGathering";
 import { getCardsFromStorage } from "../../utils/storage";
 import { getDecksFromStorage } from "../../utils/storage";
 import { normalizeCardName } from "../../utils/normalize";
@@ -49,7 +53,18 @@ export function CardPreview({
     );
   }
 
-  const ownedCards = getCardsFromStorage();
+  const [ownedCards, setOwnedCards] = useState<CollectionCard[]>([]);
+
+  useEffect(() => {
+    getCardsFromStorage()
+      .then((data) => {
+        setOwnedCards(data);
+      })
+      .catch(() => {
+        setOwnedCards([]);
+      });
+  }, []);
+
   const sourceCards = deckCards ?? collectionCards ?? [];
   const cardsWithQuantities = mergeCardQuantities(
     sourceCards,
@@ -122,7 +137,17 @@ export function CardPreview({
   ];
 
   const isMobile = useMediaQuery("(max-width: 650px)");
-  const decks = getDecksFromStorage();
+
+  const [decks, setDecks] = useState<Deck[]>([]);
+  useEffect(() => {
+    getDecksFromStorage()
+      .then((data) => {
+        setDecks(data);
+      })
+      .catch(() => {
+        setDecks([]);
+      });
+  }, []);
 
   const [viewStyle, setViewStyle] = useState<string>(viewPreference ?? "Grid");
   const [filterColour, setFilterColour] = useState<string[]>([]);

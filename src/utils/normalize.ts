@@ -26,8 +26,8 @@ export function normalizeMana(manaCostStr: string): {
   const colours = manaTokens.filter((token) => /^[WUBRG]$/.test(token));
 
   return {
-    cost: cost ? parseInt(cost, 10) : undefined,
-    colours: colours.length ? colours : undefined,
+    cost: cost ? parseInt(cost, 10) : 0, // To do fix this
+    colours: colours.length ? colours : [],
   };
 }
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import type { DeckCard } from "../types/MagicTheGathering";
 import Papa from "papaparse";
 import { getScryfallCard } from "../utils/scryfall";
@@ -7,17 +7,33 @@ import { parseCSVToCollectionCards } from "../utils/parseCSVToCollectionCards";
 import { getCardsFromStorage } from "../utils/storage";
 import { getCollectionSummary } from "../utils/summaries";
 import { format } from "date-fns";
+import { collection, doc, setDoc } from "firebase/firestore";
+import { auth, db } from "../firebase";
 
 export function useCardParser() {
-  const [cards, setCards] = React.useState<DeckCard[]>([]);
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
-  const [currentProgress, setCurrentProgress] = React.useState<number>(0);
-  const [totalProgress, setTotalProgress] = React.useState<number>(0);
-  const [uploadTime, setUploadTime] = React.useState<string | null>(() => {
+  const [cards, setCards] = useState<DeckCard[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [currentProgress, setCurrentProgress] = useState<number>(0);
+  const [totalProgress, setTotalProgress] = useState<number>(0);
+
+  const [uploadTime, setUploadTime] = useState<string | null>(() => {
     const saved = localStorage.getItem("mtg_cards_updated_at");
     return saved ? saved : null;
   });
+
+  const [collectionSummary, setCollectionSummary] = useState({
+    size: 0,
+    value: 0,
+  });
+
+  useEffect(() => {
+    const loadSummary = async () => {
+      const storedCards = await getCardsFromStorage();
+      setCollectionSummary(getCollectionSummary(storedCards));
+    };
+    loadSummary();
+  }, []);
 
   const handleError = (message: string) => {
     setLoading(false);
@@ -47,11 +63,38 @@ export function useCardParser() {
               }
             );
 
+            if (!auth.currentUser) {
+              handleError("You must be logged in to upload your collection.");
+              return;
+            }
+
+            const uid = auth.currentUser.uid;
+            const userCollectionRef = collection(db, "users", uid, "cards");
+
+            for (const card of parsedCards) {
+              const cardRef = doc(userCollectionRef, card.name);
+              const sanitizedCard = {
+                ...card,
+                manaCost: card.manaCost ?? null,
+                price: card.price ?? null,
+                manaTypes: card.manaTypes ?? [],
+              };
+
+              await setDoc(cardRef, sanitizedCard);
+            }
+
             const timestamp = format(new Date(), "MMMM dd yyyy,  hh:mm a");
-            localStorage.setItem("mtg_cards", JSON.stringify(parsedCards));
-            localStorage.setItem("mtg_cards_updated_at", timestamp);
+            await setDoc(
+              doc(db, "users", uid),
+              {
+                collectionUpdatedAt: timestamp,
+              },
+              { merge: true }
+            );
+            console.log("timestamp:", timestamp);
 
             setUploadTime(timestamp);
+            setCollectionSummary(getCollectionSummary(parsedCards));
             setLoading(false);
           },
         });
@@ -63,7 +106,7 @@ export function useCardParser() {
   );
 
   const onDeckCardAdd = React.useCallback(async (cardName: string) => {
-    const ownedCards = getCardsFromStorage();
+    const ownedCards = await getCardsFromStorage();
     const ownedMatch = ownedCards.find(
       (card) => normalizeCardName(card.name) === normalizeCardName(cardName)
     );
@@ -85,9 +128,6 @@ export function useCardParser() {
 
     setCards((prevCards) => [...prevCards, newCard]);
   }, []);
-
-  const storedCards = getCardsFromStorage();
-  const collectionSummary = getCollectionSummary(storedCards);
 
   return {
     cards,

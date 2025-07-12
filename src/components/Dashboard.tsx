@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useCardParser } from "../hooks/useCardParser.ts";
 import "./styles.css";
 import { ArrowUpTrayIcon, WalletIcon } from "@heroicons/react/16/solid";
@@ -10,20 +10,43 @@ import { getCardsFromStorage } from "../utils/storage.ts";
 import { IconItem } from "./shared/IconItem.tsx";
 import { Welcome } from "./Welcome/Welcome.tsx";
 import { CardPreview } from "./Cards/CardPreview.tsx";
+import { LoginRegisterForm, useAuth } from "./LoginForm.tsx";
+import type { CollectionCard } from "../types/MagicTheGathering.ts";
 
 export default function Dashboard() {
-  const cards = getCardsFromStorage();
+  const [cards, setCards] = useState<CollectionCard[]>([]);
+  const [collectionSize, setCollectionSize] = useState<number>(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getCardsFromStorage()
+      .then((data) => {
+        setCards(data);
+        setCollectionSize(data.length);
+        setLoading(false);
+      })
+      .catch(() => {
+        setCards([]);
+        setCollectionSize(0);
+        setLoading(false);
+      });
+  }, []);
+
   const {
-    loading,
     error,
     onCollectionUpload,
+    loading: collectionLoading,
     collection,
     currentProgress,
     totalProgress,
   } = useCardParser();
-  const hasCollection = collection.size > 0;
+
+  const hasCollection = collectionSize > 0;
 
   const [currentView, setCurrentView] = React.useState("dashboard"); // Didn't feel like setting up a router or EntryPoint. Shame Leah
+
+  const { user } = useAuth();
+  // If login state changes, reset current view
 
   return (
     <div className="container">
@@ -80,7 +103,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {loading && (
+      {collectionLoading && (
         <div className="loading">
           <div className="spinner"></div>
           <p className="text-center">
@@ -97,8 +120,9 @@ export default function Dashboard() {
           transition: "opacity 0.5s ease",
         }}
       >
+        <LoginRegisterForm />
         {currentView === "dashboard" &&
-          (hasCollection ? (
+          (hasCollection && user ? (
             <CardPreview collectionCards={cards} viewPreference="cardGallery" />
           ) : (
             <Welcome />
