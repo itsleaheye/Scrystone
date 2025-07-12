@@ -55,7 +55,7 @@ export function DeckEdit() {
         editable={editable || location.pathname.includes("/deck/new")}
         isMobile={isMobile}
         onBack={() => {
-          if (window.confirm("Are you sure you want to delete this deck?")) {
+          if (window.confirm("Discard changes and go back?")) {
             navigate(editable ? `/deck/${deck.id}` : "/decks");
           }
         }}
