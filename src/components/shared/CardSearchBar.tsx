@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { TbListSearch } from "react-icons/tb";
 import { normalizeCardName } from "../../utils/normalize";
 import type { DeckCard } from "../../types/MagicTheGathering";
+import { FaSearch } from "react-icons/fa";
 
 interface CardSearchBarProps {
   onDeckCardAdd: (cardName: string) => Promise<void>;
@@ -49,6 +50,7 @@ export function CardSearchBar({
   return (
     <div className="searchContainer">
       <p className="bold">Add Card</p>
+      <FaSearch className="inlineIcon" />
       <input
         type="text"
         value={query}

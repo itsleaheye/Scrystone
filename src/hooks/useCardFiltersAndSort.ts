@@ -1,24 +1,22 @@
 import { useMemo } from "react";
-import type { CollectionCard, Deck } from "../types/MagicTheGathering";
+import type { CollectionCard } from "../types/MagicTheGathering";
 
 interface UseCardFiltersAndSort {
   cards: (CollectionCard & {
     quantityOwned: number;
     quantityNeeded?: number;
   })[];
-  decks: Deck[];
   filterColour: string[];
-  filterDeck: string;
   filterType: string[];
+  searchTerm?: string;
   sortBy: string;
 }
 
 export function useCardFiltersAndSort({
   cards,
-  decks,
   filterColour,
-  filterDeck,
   filterType,
+  searchTerm = "",
   sortBy,
 }: UseCardFiltersAndSort) {
   return useMemo(() => {
@@ -35,16 +33,12 @@ export function useCardFiltersAndSort({
         c.manaTypes?.some((colour) => filterColour.includes(colour))
       );
     }
-    if (filterDeck !== "All") {
-      const matchingDeck = decks.find((d) => d.name === filterDeck);
-      if (matchingDeck) {
-        const deckCardNames = new Set(
-          matchingDeck.cards.map((c) => c.name.toLowerCase())
-        );
-        filtered = filtered.filter((c) =>
-          deckCardNames.has(c.name?.toLowerCase() ?? "")
-        );
-      }
+
+    if (searchTerm?.trim().length > 1) {
+      const loweredSearch = searchTerm.trim().toLowerCase();
+      filtered = filtered.filter((c) =>
+        c.name?.toLowerCase().includes(loweredSearch)
+      );
     }
 
     // Follow with sort handling
@@ -58,5 +52,5 @@ export function useCardFiltersAndSort({
           return (a.name ?? "").localeCompare(b.name ?? "");
       }
     });
-  }, [cards, sortBy, filterType, filterColour, filterDeck]);
+  }, [cards, sortBy, filterType, filterColour, searchTerm]);
 }

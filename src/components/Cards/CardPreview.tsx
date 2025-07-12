@@ -1,6 +1,5 @@
 import type { CollectionCard, DeckCard } from "../../types/MagicTheGathering";
 import { getCardsFromStorage } from "../../utils/storage";
-import { getDecksFromStorage } from "../../utils/storage";
 import { normalizeCardName } from "../../utils/normalize";
 import { CardView } from "./CardView";
 import { mergeCardQuantities } from "../../utils/cards";
@@ -13,6 +12,7 @@ import { TbArrowsSort, TbSortAscendingLetters } from "react-icons/tb";
 import Select from "react-select";
 import { ViewStyleFilter } from "../shared/ViewStyleFilter";
 import { CardList } from "./CardList";
+import { FaSearch } from "react-icons/fa";
 
 interface CardPreviewProps {
   activeCardPreview?: DeckCard;
@@ -86,7 +86,7 @@ export function CardPreview({
       if (!changedCard || (changedCard.quantityNeeded ?? 0) <= 0) {
         setCardFocused(undefined);
       } else {
-        // Update cardFocused if it matches the changed card. Keeps the quantities up to date
+        // Update cardFocused if it matches the changed card. Keeps quantity in sync
         setCardFocused((prevFocused) => {
           if (!prevFocused) return prevFocused;
           if (
@@ -122,12 +122,11 @@ export function CardPreview({
   ];
 
   const isMobile = useMediaQuery("(max-width: 650px)");
-  const decks = getDecksFromStorage();
 
   const [viewStyle, setViewStyle] = useState<string>(viewPreference ?? "Grid");
   const [filterColour, setFilterColour] = useState<string[]>([]);
   const [filterType, setFilterType] = useState<string[]>([]);
-  const [filterDeck, setFilterDeck] = useState<string>("All");
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("Name");
 
   useEffect(() => {
@@ -142,11 +141,10 @@ export function CardPreview({
 
   const filteredAndSortedCards = useCardFiltersAndSort({
     cards: cardsWithQuantities,
-    decks,
-    filterDeck,
     sortBy,
     filterType,
     filterColour,
+    searchTerm,
   });
 
   const [cardFocused, setCardFocused] = useState<
@@ -163,8 +161,6 @@ export function CardPreview({
     }
   }, [activeCardPreview]);
 
-  const showDeckFilter = false;
-
   return (
     <>
       {!editable && (
@@ -175,28 +171,23 @@ export function CardPreview({
               viewStyle={viewStyle}
               setViewStyle={setViewStyle}
             />
-            {showDeckFilter && (
+            {!editable && (
               <div className="flexCol">
-                <p>In Deck</p>
-                <select
-                  className="selectDeckInput"
-                  value={filterDeck}
-                  onChange={(e) => {
-                    setFilterDeck(e.target.value);
-                    setCardFocused(undefined);
+                <p>Search</p>
+                <FaSearch className="inlineIcon" />
+                <input
+                  type="text"
+                  className="searchInput"
+                  placeholder="Card name..."
+                  onChange={(term) => {
+                    if (term.target.value.length > 1) {
+                      setCardFocused(undefined);
+                      setSearchTerm(term.target.value);
+                    } else {
+                      setSearchTerm("");
+                    }
                   }}
-                >
-                  <option value="All">All Decks</option>
-                  {decks.length > 0 &&
-                    decks.map((deck, index) => {
-                      const deckName = deck.name;
-                      return (
-                        <option key={index} value={deckName}>
-                          {deckName}
-                        </option>
-                      );
-                    })}
-                </select>
+                />
               </div>
             )}
             <div className="flexCol">
@@ -259,10 +250,7 @@ export function CardPreview({
           <div className="cardFoundTotal">
             <p>
               {filteredAndSortedCards.length} unique cards{" "}
-              {(filterColour.length > 0 ||
-                filterDeck !== "All" ||
-                filterType.length > 0) &&
-                "found"}
+              {(filterColour.length > 0 || filterType.length > 0) && "found"}
             </p>
           </div>
         </>
