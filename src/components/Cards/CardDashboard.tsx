@@ -2,13 +2,9 @@ import { getCardsFromStorage } from "../../utils/storage";
 import { Welcome } from "../Welcome/Welcome";
 import { CardPreview } from "./CardPreview";
 
-interface CardDashboardProps {
-  hasCollection: boolean;
-}
-
-export function CardDashboard({ hasCollection }: CardDashboardProps) {
+export function CardDashboard() {
   const cards = getCardsFromStorage();
-  if (!hasCollection) return <Welcome />;
+  if (!cards || cards.length == 0) return <Welcome />;
 
   return <CardPreview collectionCards={cards} viewPreference="Grid" />;
 }

@@ -101,7 +101,7 @@ export function DeckEdit() {
       <CardPreview
         activeCardPreview={!isMobile ? cards[cards.length - 1] : undefined}
         deckCards={cards}
-        editable={editable}
+        editable={true}
         isDeckView={true}
         setCards={setCards}
         viewPreference={viewStyle}

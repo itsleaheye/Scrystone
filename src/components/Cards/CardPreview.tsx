@@ -155,6 +155,7 @@ export function CardPreview({
       })
     | undefined
   >(!isMobile && activeCardPreview ? activeCardPreview : undefined);
+
   useEffect(() => {
     if (activeCardPreview && activeCardPreview !== cardFocused) {
       setCardFocused(activeCardPreview);
