@@ -249,8 +249,12 @@ export function CardPreview({
           </div>
           <div className="cardFoundTotal">
             <p>
-              {filteredAndSortedCards.length} unique cards{" "}
-              {(filterColour.length > 0 || filterType.length > 0) && "found"}
+              {filteredAndSortedCards.length} unique card
+              {filteredAndSortedCards.length > 1 && "s"}{" "}
+              {(filterColour.length > 0 ||
+                filterType.length > 0 ||
+                searchTerm.length > 1) &&
+                "found"}
             </p>
           </div>
         </>
