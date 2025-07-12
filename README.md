@@ -34,7 +34,7 @@
 ### 🛠 Tech Stack
 
 - **Languages:** Typescript, CSS, JS
-- **Libraries:** React, Vite, Tailwind, ReactIcons, DateFNSm, Select
+- **Libraries:** React, Vite, Tailwind, ReactIcons, DateFNSm, Select, React Router
 - **Storage:** Browser Local Storage
 - **IDE** - Visual Studio Code
 
@@ -54,11 +54,10 @@
 
 ### 🚧 Plan for V2 
 
-- Routing to support `back` keyboard actions**
+- ~~Routing to support `back` keyboard actions**~~ ✔️
 - [Card name search bar](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=1-3&t=YXOAXnY0SHo6VljJ-4) in collection view**
 - Render the art preview that matches the card (i.e. borderless card renders borderless art)
 - OnClick in collection view, flip animation and show value, set, quantity, and if it's in a deck
 - Render mana symbols instead of just colours
-- 'Import Deck' functionality added**
 - Deck view [CSS update](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=1-597&t=YXOAXnY0SHo6VljJ-4)
 - Hover card summary for [breakdown of missing cards](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=2-185&t=YXOAXnY0SHo6VljJ-4)
