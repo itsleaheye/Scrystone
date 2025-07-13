@@ -12,7 +12,6 @@ import { useDeckParser } from "../../../hooks/useDeckParser";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
 import { ImSpinner } from "react-icons/im";
-import { useEffect, useState } from "react";
 
 interface DeckActionsProps {
   editable?: boolean;
@@ -21,7 +20,7 @@ interface DeckActionsProps {
   onBack: () => void;
   onPrimary: () => void;
   onCardsImport?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  loading: boolean;
+  loading?: boolean;
 }
 
 export const DeckActions = ({
@@ -36,12 +35,6 @@ export const DeckActions = ({
   const { onDeckDelete, onDeckExport } = useDeckParser();
   const navigate = useNavigate();
   const location = useLocation();
-
-  // const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  // useEffect(() => {
-  //   setIsLoading(loading);
-  // }, [loading]);
 
   return (
     <div className="actionRow flexRow">
