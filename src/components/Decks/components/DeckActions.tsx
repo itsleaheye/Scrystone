@@ -1,10 +1,18 @@
-import { FaArrowLeft, FaTrash, FaSave, FaEdit } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaTrash,
+  FaSave,
+  FaEdit,
+  FaDownload,
+} from "react-icons/fa";
 import { PiExportBold } from "react-icons/pi";
 import type { Deck } from "../../../types/MagicTheGathering";
 import { ActionButton } from "../../shared/PrimaryActions";
 import { useDeckParser } from "../../../hooks/useDeckParser";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
+import { ImSpinner } from "react-icons/im";
+import { useEffect, useState } from "react";
 
 interface DeckActionsProps {
   editable?: boolean;
@@ -12,6 +20,8 @@ interface DeckActionsProps {
   isMobile?: boolean;
   onBack: () => void;
   onPrimary: () => void;
+  onCardsImport?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  loading: boolean;
 }
 
 export const DeckActions = ({
@@ -20,10 +30,18 @@ export const DeckActions = ({
   isMobile = false,
   onBack,
   onPrimary,
+  onCardsImport,
+  loading = false,
 }: DeckActionsProps) => {
   const { onDeckDelete, onDeckExport } = useDeckParser();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  // useEffect(() => {
+  //   setIsLoading(loading);
+  // }, [loading]);
 
   return (
     <div className="actionRow flexRow">
@@ -58,6 +76,25 @@ export const DeckActions = ({
             onClick={() => onDeckExport(deck.cards, deck.name, deck.format)}
             variation="secondary"
           />
+        )}
+        {location.pathname.includes("/new") && (
+          <div className="importContainer">
+            <input
+              className="hidden"
+              id="deckImportInput"
+              type="file"
+              accept=".txt"
+              onChange={onCardsImport}
+            />
+            <label htmlFor="deckImportInput">
+              {loading ? (
+                <ImSpinner className="importSpinner" />
+              ) : (
+                <FaDownload className="uploadIcon" />
+              )}
+              {!isMobile && !loading && "Import"}
+            </label>
+          </div>
         )}
         {location.pathname == "/decks" ? (
           <ActionButton

@@ -494,6 +494,13 @@
   }
 }
 
+.importSpinner {
+  animation: slowFastSlowSpin 1.5s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  transform-origin: center;
+  display: block;
+  background-position: center;
+}
+
 .overflowElipse {
   white-space: nowrap;
   overflow: hidden;

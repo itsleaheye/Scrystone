@@ -1,4 +1,3 @@
-import React from "react";
 import type { DeckCard } from "../types/MagicTheGathering";
 import Papa from "papaparse";
 import { getScryfallCard } from "../utils/scryfall";
@@ -7,14 +6,15 @@ import { parseCSVToCollectionCards } from "../utils/parseCSVToCollectionCards";
 import { getCardsFromStorage } from "../utils/storage";
 import { getCollectionSummary } from "../utils/summaries";
 import { format } from "date-fns";
+import { useCallback, useState, type ChangeEvent } from "react";
 
 export function useCardParser() {
-  const [cards, setCards] = React.useState<DeckCard[]>([]);
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
-  const [currentProgress, setCurrentProgress] = React.useState<number>(0);
-  const [totalProgress, setTotalProgress] = React.useState<number>(0);
-  const [uploadTime, setUploadTime] = React.useState<string | null>(() => {
+  const [cards, setCards] = useState<DeckCard[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [currentProgress, setCurrentProgress] = useState<number>(0);
+  const [totalProgress, setTotalProgress] = useState<number>(0);
+  const [uploadTime, setUploadTime] = useState<string | null>(() => {
     const saved = localStorage.getItem("mtg_cards_updated_at");
     return saved ? saved : null;
   });
@@ -24,8 +24,8 @@ export function useCardParser() {
     setError(message);
   };
 
-  const onCollectionUpload = React.useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onCollectionUpload = useCallback(
+    async (e: ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return handleError("Please select a .csv file to upload");
 
@@ -62,28 +62,75 @@ export function useCardParser() {
     []
   );
 
-  const onDeckCardAdd = React.useCallback(async (cardName: string) => {
-    const ownedCards = getCardsFromStorage();
-    const ownedMatch = ownedCards.find(
-      (card) => normalizeCardName(card.name) === normalizeCardName(cardName)
-    );
+  const onDeckCardAdd = useCallback(
+    async (cardName: string, quantityNeeded?: number) => {
+      const ownedCards = getCardsFromStorage();
+      const ownedMatch = ownedCards.find(
+        (card) => normalizeCardName(card.name) === normalizeCardName(cardName)
+      );
 
-    const scryfallCard = await getScryfallCard(cardName);
-    const type = normalizeCardType(scryfallCard?.type);
+      const scryfallCard = await getScryfallCard(cardName);
+      const type = normalizeCardType(scryfallCard?.type);
 
-    const newCard: DeckCard = {
-      imageUrl: scryfallCard?.previewUrl,
-      name: cardName,
-      price: scryfallCard?.price, //To do, convert to CAD
-      type,
-      set: scryfallCard?.set,
-      quantityNeeded: 1,
-      quantityOwned: ownedMatch?.quantityOwned ?? 0,
-      manaTypes: scryfallCard?.manaTypes,
-    };
+      const newCard: DeckCard = {
+        imageUrl: scryfallCard?.previewUrl,
+        name: cardName,
+        price: scryfallCard?.price, //To do, convert to CAD
+        type,
+        set: scryfallCard?.set,
+        quantityNeeded: quantityNeeded ?? 1,
+        quantityOwned: ownedMatch?.quantityOwned ?? 0,
+        manaTypes: scryfallCard?.manaTypes,
+      };
 
-    setCards((prevCards) => [...prevCards, newCard]);
-  }, []);
+      setCards((prevCards) => [...prevCards, newCard]);
+    },
+    []
+  );
+
+  const onCardsImport = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) {
+        handleError?.("Please select a .txt file to upload");
+        return;
+      }
+
+      setLoading?.(true);
+
+      try {
+        const fileText = await file.text();
+        const lines = fileText.split("\n");
+        let readingDeck = true;
+
+        for (const line of lines) {
+          if (
+            line.trim().startsWith("**The Following Cards Are Still Needed")
+          ) {
+            readingDeck = false;
+            break;
+          }
+
+          if (!readingDeck || !line.trim()) continue;
+
+          const match = line.match(/^(\d+)x\s+(.+)$/);
+          if (!match) continue;
+
+          const quantity = parseInt(match[1], 10);
+          const name = match[2].trim();
+
+          // Call your existing card adding logic
+          await onDeckCardAdd(name, quantity);
+        }
+      } catch (err) {
+        console.error(err);
+        handleError?.("Failed to parse or process the deck file.");
+      } finally {
+        setLoading?.(false);
+      }
+    },
+    [onDeckCardAdd, handleError, setLoading]
+  );
 
   const storedCards = getCardsFromStorage();
   const collectionSummary = getCollectionSummary(storedCards);
@@ -102,5 +149,6 @@ export function useCardParser() {
     },
     onCollectionUpload,
     onDeckCardAdd,
+    onCardsImport,
   };
 }

@@ -13,6 +13,7 @@ import { getDeckCost } from "../../../utils/decks";
 import { useMemo } from "react";
 import { RiCheckboxCircleFill, RiErrorWarningFill } from "react-icons/ri";
 import { getColoursFromCards } from "../../../utils/cards";
+import "../../styles.css";
 
 interface DeckPreviewProps {
   deck?: Deck;

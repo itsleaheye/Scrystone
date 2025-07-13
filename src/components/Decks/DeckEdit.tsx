@@ -30,7 +30,8 @@ export function DeckEdit() {
   }, [deckId]);
 
   const editable = deck !== undefined;
-  const { cards, onDeckCardAdd, setCards } = useCardParser();
+  const { cards, onDeckCardAdd, setCards, onCardsImport, loading } =
+    useCardParser();
 
   useEffect(() => {
     if (deck && deck.cards) {
@@ -69,6 +70,8 @@ export function DeckEdit() {
           );
           navigate(`/deck/${savedDeck.id}`);
         }}
+        onCardsImport={onCardsImport}
+        loading={loading}
       />
 
       {/* Deck overview */}
