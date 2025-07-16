@@ -21,11 +21,14 @@ export function DeckEdit() {
   useEffect(() => {
     if (deckId !== undefined) {
       const foundDeck = getDecksFromStorage(Number(deckId))[0];
-      setDeck(foundDeck);
 
-      if (foundDeck) {
-        setCards(foundDeck.cards);
+      if (!foundDeck) {
+        navigate("/decks", { replace: true });
+        return;
       }
+
+      setDeck(foundDeck);
+      setCards(foundDeck.cards);
     }
   }, [deckId]);
 
