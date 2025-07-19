@@ -11,20 +11,20 @@ A 'Magic the Gathering' web app built with React, Tailwind CSS, and the Scryfall
 
 - **Deck Building** – Create decks and categorize cards by type, mana cost, etc.
 
-- **Card Collection Tracker** – Upload your card collection and automatically match them to your deck needs.
+- **Card Collection Tracker** – Upload your card collection and automatically match them to your deck needs
 
 - **Filtering and sorting** - Search for cards by type, colour, and sort by price, type or card names
 
-- **Deck Exporting** - Export your deck list in a MTG Goldfish format, which is wildly used by hobby shop's deck lists
+- **Deck Exporting** - Export your deck list to see what cards your missing or to share with friends
 
   <img src="https://github.com/user-attachments/assets/3da3ec3f-55cb-4ee2-b1ce-2b40604e3c60" width="300">
 
-- **Scryfall API Integration** – Fetch real-time card details like art, price, and rarities.
+- **Scryfall API Integration** – Fetch real-time card details like art, price, and rarities
 
-- **Local Storage** – All data is stored in-browser; no sign-up or accounts necessary.
+- **Local Storage** – All data is stored in-browser; no sign-up or accounts necessary
   - F_irebase prototype in the `/firebase` branch_
 
-- **Responsive UI** – A clean, fast, and mobile-friendly design, aided by Tailwind.
+- **Responsive UI** – A clean, fast, and mobile-friendly design, aided by Tailwind
 
 ---
 
