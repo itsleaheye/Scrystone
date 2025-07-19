@@ -71,13 +71,23 @@ export function useCardParser() {
 
       const scryfallCard = await getScryfallCard(cardName);
       const type = normalizeCardType(scryfallCard?.type);
+      let setName = scryfallCard?.setName;
+      if (
+        cardName === "Mountain" ||
+        cardName === "Plains" ||
+        cardName == "Island" ||
+        cardName === "Swamp" ||
+        cardName === "Forest"
+      ) {
+        setName = "Any";
+      }
 
       const newCard: DeckCard = {
         imageUrl: scryfallCard?.previewUrl,
         name: cardName,
-        price: scryfallCard?.price, //To do, convert to CAD
+        price: scryfallCard?.price && scryfallCard.price * 1.37, //To do, convert to CAD
         type,
-        set: scryfallCard?.set,
+        setName,
         quantityNeeded: quantityNeeded ?? 1,
         quantityOwned: ownedMatch?.quantityOwned ?? 0,
         manaTypes: scryfallCard?.manaTypes,

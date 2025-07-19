@@ -21,7 +21,9 @@
 }
 
 .headingContainer {
-  background: url("../assets/wallpaper.png") center/cover;
+  background: url("../assets/hero.png");
+  background-size: cover;
+  background-position: center;
   padding: 2rem 0;
 }
 

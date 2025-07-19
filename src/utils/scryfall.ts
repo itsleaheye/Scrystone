@@ -10,35 +10,36 @@ interface ScryfallDetails {
   previewUrl?: string;
   price: number;
   type: string;
-  set: string;
+  setName: string;
 }
 
 export async function getScryfallCard(
   cardName: string,
+  set?: string,
   tcgPlayerId?: string
 ): Promise<ScryfallDetails | undefined> {
-  const cached = getCachedCard(cardName);
+  const normalizedName = normalizeCardName(cardName);
+  const cacheKey = `${normalizedName}-${set}`;
+  const cached = getCachedCard(cacheKey);
   if (cached) return formatScryfallDetails(cached);
+
   // Try to fetch card details by TCGPlayer ID first
   if (tcgPlayerId) {
     const url = `https://api.scryfall.com/cards/tcgplayer/${tcgPlayerId}`;
     const res = await fetch(url);
     if (res.ok) {
       const data = await res.json();
-      setCachedCard(cardName, data);
+      setCachedCard(cacheKey, data);
 
       return formatScryfallDetails(data);
     }
   }
 
-  // Fallback to searching by card name
-  const normalizedName = normalizeCardName(cardName);
-
   const query = encodeURIComponent(normalizedName);
   const urls = [
-    `https://api.scryfall.com/cards/named?fuzzy=${query}`, //fuzzy search
-    `https://api.scryfall.com/cards/search?q=${query}`, // general search
-    `https://api.scryfall.com/cards/search?q=!${query}`, // exact search
+    `https://api.scryfall.com/cards/search?q=!${query}&set:${set}`, // exact search + set filter
+    `https://api.scryfall.com/cards/search?q=${query}&set:${set}`, // fuzzy search + set filter
+    `https://api.scryfall.com/cards/named?fuzzy=${query}`, // fallback fuzzy named search without set filter
   ];
 
   try {
@@ -82,6 +83,6 @@ function formatScryfallDetails(card: any): ScryfallDetails {
     price: parseFloat(card.prices?.usd) || 0,
     manaTypes: colours,
     type: card.type_line?.split("—")[0]?.trim().split(" ")[0],
-    set: card.set_name,
+    setName: card.set_name,
   };
 }

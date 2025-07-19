@@ -5,7 +5,7 @@ export interface Card {
   number?: string;
   price?: number;
   rarity?: string;
-  set?: string;
+  setName?: string;
   type?: string;
   tcgPlayerId?: string;
 }

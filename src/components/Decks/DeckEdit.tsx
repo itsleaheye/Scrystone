@@ -94,7 +94,14 @@ export function DeckEdit() {
       />
 
       {/* Search bar and results */}
-      <div className="deckCardActions">
+      <div
+        className="deckCardActions"
+        style={{
+          opacity: loading ? 0.5 : 1,
+          pointerEvents: loading ? "none" : "auto",
+          transition: "opacity 0.5s ease",
+        }}
+      >
         <ViewStyleFilter
           isMobile={isMobile}
           setViewStyle={setViewStyle}
@@ -104,14 +111,22 @@ export function DeckEdit() {
       </div>
 
       {/* Deck card list */}
-      <CardPreview
-        activeCardPreview={!isMobile ? cards[cards.length - 1] : undefined}
-        deckCards={cards}
-        editable={true}
-        isDeckView={true}
-        setCards={setCards}
-        viewPreference={viewStyle}
-      />
+      <span
+        style={{
+          opacity: loading ? 0.5 : 1,
+          pointerEvents: loading ? "none" : "auto",
+          transition: "opacity 0.5s ease",
+        }}
+      >
+        <CardPreview
+          activeCardPreview={!isMobile ? cards[cards.length - 1] : undefined}
+          deckCards={cards}
+          editable={true}
+          isDeckView={true}
+          setCards={setCards}
+          viewPreference={viewStyle}
+        />
+      </span>
     </>
   );
 }

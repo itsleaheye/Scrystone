@@ -155,7 +155,9 @@ function CardListItem({
             : `x${card.quantityOwned}`}
         </p>
       </div>
-      {!isMobile && <p className="overflowElipse setDetails">({card.set})</p>}
+      {!isMobile && (
+        <p className="overflowElipse setDetails">({card.setName})</p>
+      )}
       <p className="priceDetails">
         {typeof card.price === "number" ? `$${card.price.toFixed(2)}` : "$n/a"}
       </p>

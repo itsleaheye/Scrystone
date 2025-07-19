@@ -95,6 +95,7 @@ export function CardPreview({
             return {
               ...prevFocused,
               quantityNeeded: changedCard.quantityNeeded,
+              quantityOwned: changedCard.quantityOwned,
             };
           }
           return prevFocused;

@@ -10,8 +10,16 @@ export function mergeCardQuantities<T extends { name: string }>(
     const normalizedName = normalizeCardName(card.name);
 
     const quantityOwned = ownedCards
-      .filter((owned) => normalizeCardName(owned.name) === normalizedName)
-      .reduce((sum, match) => sum + (Number(match.quantityOwned) || 0), 0);
+      .filter(
+        (owned) =>
+          normalizeCardName(owned.name) === normalizedName &&
+          (("setName" in card && card.setName == "Any") ||
+            ("setName" in card && owned.setName === card.setName))
+      )
+      .reduce(
+        (sum, match) => sum + (parseInt(match.quantityOwned as any, 10) || 0),
+        0
+      );
 
     return isDeckView
       ? { ...card, quantityOwned }

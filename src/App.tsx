@@ -77,6 +77,7 @@ export default function App() {
               type="file"
               accept=".csv"
               onChange={onCollectionUpload}
+              disabled={loading}
             />
             <label htmlFor="fileInput">
               <ArrowUpTrayIcon className="uploadIcon" />

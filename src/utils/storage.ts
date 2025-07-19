@@ -1,5 +1,4 @@
 import type { CollectionCard, Deck } from "../types/MagicTheGathering";
-import { normalizeCardName } from "./normalize";
 
 export function getCardsFromStorage(): CollectionCard[] {
   const rawCards = localStorage.getItem("mtg_cards");
@@ -22,16 +21,16 @@ export function getDecksFromStorage(deckId?: number): Deck[] {
 type ScryfallCardCache = Record<string, any>;
 const LOCAL_STORAGE_KEY = "scryfall_card_cache";
 
-export function getCachedCard(name: string): any | null {
+export function getCachedCard(cacheKey: string): any | null {
   const cache = getCache();
 
-  return cache[normalizeCardName(name)] || null;
+  return cache[cacheKey] || null;
 }
 
-export function setCachedCard(name: string, data: any) {
+export function setCachedCard(cacheKey: string, data: any) {
   const cache = getCache();
 
-  cache[normalizeCardName(name)] = data;
+  cache[cacheKey] = data;
   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(cache));
 }
 
