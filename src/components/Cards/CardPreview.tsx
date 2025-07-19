@@ -22,6 +22,7 @@ interface CardPreviewProps {
   isDeckView?: boolean;
   setCards?: React.Dispatch<React.SetStateAction<DeckCard[]>>;
   viewPreference?: string;
+  onSetChange?: (cardName: string, set: string) => void;
 }
 export function CardPreview({
   activeCardPreview,
@@ -31,6 +32,7 @@ export function CardPreview({
   isDeckView = false,
   setCards,
   viewPreference,
+  onSetChange,
 }: CardPreviewProps) {
   // If there are no cards to render, early return
   const hasCards =
@@ -95,6 +97,7 @@ export function CardPreview({
             return {
               ...prevFocused,
               quantityNeeded: changedCard.quantityNeeded,
+              quantityOwned: changedCard.quantityOwned,
             };
           }
           return prevFocused;
@@ -161,6 +164,23 @@ export function CardPreview({
       setCardFocused(activeCardPreview);
     }
   }, [activeCardPreview]);
+
+  const handleSetChange = (cardName: string, set: string) => {
+    if (onSetChange) {
+      onSetChange(cardName, set);
+    }
+
+    setCardFocused((prevFocused) => {
+      if (!prevFocused) return prevFocused;
+      if (normalizeCardName(prevFocused.name) === normalizeCardName(cardName)) {
+        return {
+          ...prevFocused,
+          set,
+        };
+      }
+      return prevFocused;
+    });
+  };
 
   return (
     <>
@@ -271,6 +291,7 @@ export function CardPreview({
                 editable={editable}
                 isDeckView={isDeckView}
                 onChangeQuantity={onChangeQuantity}
+                onSetChange={handleSetChange}
               />
             );
           })}
@@ -280,10 +301,11 @@ export function CardPreview({
           cardFocused={cardFocused}
           editable={editable}
           filteredAndSortedCards={filteredAndSortedCards}
+          hasCards={hasCards}
           isDeckView={isDeckView}
           onChangeQuantity={onChangeQuantity}
+          onSetChange={handleSetChange}
           setCardFocused={setCardFocused}
-          hasCards={hasCards}
         />
       )}
     </>

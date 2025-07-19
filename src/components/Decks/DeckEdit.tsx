@@ -4,7 +4,10 @@ import { DeckActions } from "./components/DeckActions";
 import type { Deck } from "../../types/MagicTheGathering";
 import { useDeckParser } from "../../hooks/useDeckParser";
 import { useDeckFormState } from "../../hooks/useDeckFormState";
-import { useCardParser } from "../../hooks/useCardParser";
+import {
+  getMatchingCollectionCard,
+  useCardParser,
+} from "../../hooks/useCardParser";
 import { DeckHeader } from "./components/DeckHeader";
 import { useEffect, useMemo, useState } from "react";
 import { getDeckTypeSummaryWithDefaults } from "../../utils/decks";
@@ -50,6 +53,28 @@ export function DeckEdit() {
     useDeckFormState(deck);
 
   const summary = useMemo(() => getDeckTypeSummaryWithDefaults(cards), [cards]);
+
+  const onSetChange = async (cardName: string, newSet: string) => {
+    const updatedCard = await getMatchingCollectionCard(cardName, newSet);
+
+    if (!updatedCard) {
+      console.warn("No matching card found for", cardName, newSet);
+      return;
+    }
+
+    setCards((prevCards) =>
+      prevCards.map((card) =>
+        card.name === cardName
+          ? {
+              ...card,
+              set: newSet,
+              imageUrl: updatedCard.imageUrl,
+              quantityOwned: updatedCard.quantityOwned,
+            }
+          : card
+      )
+    );
+  };
 
   return (
     <>
@@ -111,6 +136,7 @@ export function DeckEdit() {
         isDeckView={true}
         setCards={setCards}
         viewPreference={viewStyle}
+        onSetChange={onSetChange}
       />
     </>
   );

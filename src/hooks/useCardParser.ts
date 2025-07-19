@@ -1,9 +1,13 @@
-import type { DeckCard } from "../types/MagicTheGathering";
+import type { CollectionCard, DeckCard } from "../types/MagicTheGathering";
 import Papa from "papaparse";
 import { getScryfallCard } from "../utils/scryfall";
 import { normalizeCardName, normalizeCardType } from "../utils/normalize";
 import { parseCSVToCollectionCards } from "../utils/parseCSVToCollectionCards";
-import { getCardsFromStorage } from "../utils/storage";
+import {
+  getCachedCard,
+  getCardsFromStorage,
+  setCachedCard,
+} from "../utils/storage";
 import { getCollectionSummary } from "../utils/summaries";
 import { format } from "date-fns";
 import { useCallback, useState, type ChangeEvent } from "react";
@@ -69,18 +73,36 @@ export function useCardParser() {
         (card) => normalizeCardName(card.name) === normalizeCardName(cardName)
       );
 
-      const scryfallCard = await getScryfallCard(cardName);
-      const type = normalizeCardType(scryfallCard?.type);
+      const set = ownedMatch?.set ?? "";
+      let scryfallCard = null;
+      if (set) {
+        const cacheKey = `${normalizeCardName(cardName)}-${set}`;
+        scryfallCard = getCachedCard(cacheKey);
+        if (!scryfallCard) {
+          scryfallCard = await getScryfallCard(cardName, set);
+          if (scryfallCard) {
+            setCachedCard(cacheKey, scryfallCard);
+          }
+        }
+      } else {
+        // Fallback if no set is known
+        scryfallCard = await getScryfallCard(cardName);
+      }
+
+      const type = normalizeCardType(ownedMatch?.type ?? scryfallCard?.type);
+      const price = scryfallCard
+        ? scryfallCard.price * 1.37 // To do: convert to live CAD
+        : ownedMatch?.price;
 
       const newCard: DeckCard = {
-        imageUrl: scryfallCard?.previewUrl,
+        imageUrl: scryfallCard?.previewUrl ?? ownedMatch?.imageUrl,
         name: cardName,
-        price: scryfallCard?.price, //To do, convert to CAD
+        price,
         type,
-        set: scryfallCard?.set,
+        set: scryfallCard.set_name,
         quantityNeeded: quantityNeeded ?? 1,
         quantityOwned: ownedMatch?.quantityOwned ?? 0,
-        manaTypes: scryfallCard?.manaTypes,
+        manaTypes: ownedMatch?.manaTypes ?? scryfallCard?.manaTypes,
       };
 
       setCards((prevCards) => [...prevCards, newCard]);
@@ -150,5 +172,29 @@ export function useCardParser() {
     onCollectionUpload,
     onDeckCardAdd,
     onCardsImport,
+  };
+}
+
+export async function getMatchingCollectionCard(
+  name: string,
+  set: string
+): Promise<CollectionCard | undefined> {
+  const collection = getCardsFromStorage();
+  const localMatch = collection.find((c) => c.name === name && c.set === set);
+
+  console.log("localMatch?.imageUrl", localMatch?.imageUrl);
+  if (localMatch?.imageUrl) return localMatch;
+
+  const scryfallCard = await getScryfallCard(name, set);
+  if (!scryfallCard) return undefined;
+
+  console.log("preview", scryfallCard.previewUrl);
+
+  return {
+    ...localMatch,
+    name,
+    set,
+    quantityOwned: localMatch?.quantityOwned ?? 0,
+    imageUrl: scryfallCard.previewUrl ?? "",
   };
 }
