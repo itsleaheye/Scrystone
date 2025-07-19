@@ -17,6 +17,7 @@ export interface CollectionCard extends Card {
 export interface DeckCard extends Card {
   quantityNeeded: number;
   quantityOwned: number;
+  setPreference?: string;
 }
 
 export type DeckFormat = "Commander" | "Standard" | "Draft";

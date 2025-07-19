@@ -24,6 +24,14 @@
     position: relative;
   }
 
+  .cardSet {
+    opacity: 0;
+    position: absolute;
+    top: 20%;
+    display: flex;
+    width: 95%;
+  }
+
   .cardHeader {
     opacity: 0;
     display: flex;
@@ -45,12 +53,14 @@
       display: none;
     }
 
-    .cardChip {
-      opacity: 1 !important;
+    img {
+      opacity: 0.6;
       transition: var(--ease-in);
     }
 
-    .cardHeader {
+    .cardHeader,
+    .cardChip,
+    .cardSet {
       opacity: 1 !important;
       transition: var(--ease-in);
     }

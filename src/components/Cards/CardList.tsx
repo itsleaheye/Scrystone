@@ -6,6 +6,8 @@ import { EmptyView } from "../shared/EmptyView";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { MdCancel } from "react-icons/md";
 import { getTypeIcon } from "../shared/TypeIcon";
+import { getCardsFromStorage } from "../../utils/storage";
+import { normalizeCardName } from "../../utils/normalize";
 
 interface CardListProps {
   cardFocused:
@@ -27,16 +29,18 @@ interface CardListProps {
     >
   >;
   hasCards: boolean;
+  onSetChange?: (cardName: string, set: string) => void;
 }
 
 export function CardList({
   cardFocused,
   editable,
   filteredAndSortedCards,
+  hasCards,
   isDeckView,
   onChangeQuantity,
+  onSetChange,
   setCardFocused,
-  hasCards,
 }: CardListProps) {
   const isMobile = useMediaQuery("(max-width: 650px)");
 
@@ -63,6 +67,7 @@ export function CardList({
               editable={editable}
               isDeckView={isDeckView}
               onChangeQuantity={onChangeQuantity}
+              onSetChange={onSetChange}
             />
           ) : (
             <EmptyView
@@ -100,8 +105,9 @@ export function CardList({
               card={cardFocused}
               editable={editable}
               isDeckView={isDeckView}
-              onChangeQuantity={onChangeQuantity}
               isMobile={isMobile}
+              onChangeQuantity={onChangeQuantity}
+              onSetChange={onSetChange}
             />
           </div>
         </div>
@@ -134,7 +140,19 @@ function CardListItem({
   isMobile,
   setCardFocused,
 }: CardListItemProps) {
-  const showWarning = (card.quantityOwned ?? 0) < (card.quantityNeeded ?? 1);
+  const ownedCards = getCardsFromStorage();
+  const quantityOwned = ownedCards
+    .filter(
+      (owned) =>
+        normalizeCardName(owned.name) === card.name &&
+        (card.set === "Any" || owned.set === card.set)
+    )
+    .reduce(
+      (sum, match) => sum + (parseInt(match.quantityOwned as any, 10) || 0),
+      0
+    );
+
+  const showWarning = (quantityOwned ?? 0) < (card.quantityNeeded ?? 1);
 
   return (
     <div
@@ -145,14 +163,14 @@ function CardListItem({
         className={`${
           showWarning ? "redText primaryDetails" : "primaryDetails"
         } ${isMobile ? "primaryExtended" : ""}`}
-        onMouseEnter={() => setCardFocused && setCardFocused(card)}
+        // onMouseEnter={() => setCardFocused && setCardFocused(card)}
       >
         {getTypeIcon(card.type)}
         <p className="bold overflowElipse">
           {card.name}{" "}
           {isDeckView
-            ? `${card.quantityOwned}/${card.quantityNeeded}`
-            : `x${card.quantityOwned}`}
+            ? `${quantityOwned}/${card.quantityNeeded}`
+            : `x${quantityOwned}`}
         </p>
       </div>
       {!isMobile && <p className="overflowElipse setDetails">({card.set})</p>}
