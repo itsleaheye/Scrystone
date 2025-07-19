@@ -22,6 +22,7 @@ A 'Magic the Gathering' web app built with React, Tailwind CSS, and the Scryfall
 - **Scryfall API Integration** – Fetch real-time card details like art, price, and rarities.
 
 - **Local Storage** – All data is stored in-browser; no sign-up or accounts necessary.
+  - Considered FireBase and built a fully functioning prototype in the `/firebase` branch
 
 - **Responsive UI** – A clean, fast, and mobile-friendly design, aided by Tailwind.
 
