@@ -43,19 +43,21 @@ A 'Magic the Gathering' web app built with React, Tailwind CSS, and the Scryfall
 
 1. Clone this repository
 2. Open a terminal at the root folder `/scrystone` and run `cd scrystone` to open the project folder
-3. If you don't have NPM or Node.js locally, install Node and NPM `npm install` _(Run this command if you see an error like `'vite' is not recognized as an internal or external command`)_
+3. If you don't have Node.js locally, [install Node](https://nodejs.org/en/download)
 4. Start the development server `npm run dev`
-5. Open your browser and go to `http://localhost:5173`
+5. Open a browser and go to `http://localhost:5173`
 
 ---
 
 ### 🚧 Plan for V2
 
-- ~~Routing to support `back` keyboard actions\*\*~~ ✔️
-- [Card name search bar](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=1-3&t=YXOAXnY0SHo6VljJ-4) ~~in collection view~~\*\* ✔️
-- Render the art preview that matches the card (i.e. borderless card renders borderless art)
-- OnClick in collection view, flip animation and show value, set, quantity, and if it's in a deck
-- ~~Import decks~~
-- ~~Render mana symbols instead of just colours~~ ✔️
-- Deck view [CSS update](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=1-597&t=YXOAXnY0SHo6VljJ-4)
-- Hover card summary for [breakdown of missing cards](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=2-185&t=YXOAXnY0SHo6VljJ-4)
+- [x] Improve collection download speeds
+- [x] Routing integration
+- [x] Card search bar added to card action row | [Design](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=1-3&t=YXOAXnY0SHo6VljJ-4)
+- [ ] Card set distinguishment _-currently in progress-_
+- [ ] Render the art preview that matches the card (i.e. borderless card renders borderless art)
+- [ ] OnClick in collection view, flip animation and show value, set, quantity, and if it's in a deck
+- [x] Ability to import decks
+- [x] Render mana symbols instead of placeholder solid colours
+- [ ] Deck view [CSS update](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=1-597&t=YXOAXnY0SHo6VljJ-4)
+- [ ] Hover card summary for breakdown of missing cards | [Design](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=2-185&t=YXOAXnY0SHo6VljJ-4)
