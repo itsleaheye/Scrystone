@@ -43,7 +43,6 @@ export async function getScryfallCard({
   }
 
   const query = encodeURIComponent(normalizedName);
-  console.log(query);
   const urls = [
     `https://api.scryfall.com/cards/search?q=!${query}&set:${set}`, // exact search + set filter
     `https://api.scryfall.com/cards/search?q=${query}&set:${set}`, // fuzzy search + set filter
@@ -62,7 +61,6 @@ export async function getScryfallCard({
 
       // If response returns an array, take the 1st card and stop if valid
       data = Array.isArray(data.data) ? data.data[0] : data;
-      console.log("data", data);
       if (data) break;
     }
 

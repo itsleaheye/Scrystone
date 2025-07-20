@@ -73,8 +73,6 @@ export function useCardParser() {
         (card) => normalizeCardName(card.name) === normalizeCardName(cardName)
       );
 
-      console.log("setPreference", setPreference);
-
       const scryfallCard = await getScryfallCard({
         cardName,
         set: setPreference,
