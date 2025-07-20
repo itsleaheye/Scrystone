@@ -22,11 +22,11 @@ export async function parseCSVToCollectionCards(
     }
 
     try {
-      const scryfallDetails = await getScryfallCard(
-        name,
-        rawCard["Set"],
-        rawCard["Product ID"]
-      );
+      const scryfallDetails = await getScryfallCard({
+        cardName: name,
+        set: rawCard["Set"],
+        tcgPlayerId: rawCard["Product ID"],
+      });
       if (!scryfallDetails) {
         console.warn(`No Scryfall data found for: ${name}`);
         return null;
@@ -40,6 +40,7 @@ export async function parseCSVToCollectionCards(
         number: rawCard["Card Number"],
         price: scryfallDetails.price ? scryfallDetails.price * 1.37 : undefined,
         rarity: rawCard["Rarity"],
+        set: rawCard["Set"],
         setName: scryfallDetails.setName,
         type,
         tcgPlayerId: rawCard["Product ID"],

@@ -63,13 +63,23 @@ export function useCardParser() {
   );
 
   const onDeckCardAdd = useCallback(
-    async (cardName: string, quantityNeeded?: number) => {
+    async (
+      cardName: string,
+      quantityNeeded?: number,
+      setPreference?: string
+    ) => {
       const ownedCards = getCardsFromStorage();
       const ownedMatch = ownedCards.find(
         (card) => normalizeCardName(card.name) === normalizeCardName(cardName)
       );
 
-      const scryfallCard = await getScryfallCard(cardName);
+      console.log("setPreference", setPreference);
+
+      const scryfallCard = await getScryfallCard({
+        cardName,
+        set: setPreference,
+      });
+
       const type = normalizeCardType(scryfallCard?.type);
       let setName = scryfallCard?.setName;
       if (
@@ -87,7 +97,8 @@ export function useCardParser() {
         name: cardName,
         price: scryfallCard?.price && scryfallCard.price * 1.37, //To do, convert to CAD
         type,
-        setName,
+        set: scryfallCard?.set ?? "Any",
+        setName: setName ?? "Any",
         quantityNeeded: quantityNeeded ?? 1,
         quantityOwned: ownedMatch?.quantityOwned ?? 0,
         manaTypes: scryfallCard?.manaTypes,

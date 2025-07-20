@@ -54,7 +54,7 @@ export function getDeckTypeSummary(cards: DeckCard[]) {
 
   const deckCountByName = new Map<
     string,
-    { type: string; quantityNeeded: number; setName?: string }
+    { type: string; quantityNeeded: number; setName: string }
   >();
 
   cards.forEach((card) => {

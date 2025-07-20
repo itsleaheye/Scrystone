@@ -9,10 +9,6 @@ export function getCollectionSummary(cards?: CollectionCard[]): {
       const quantity = Number(card.quantityOwned) ?? 0;
       const price = parseFloat(card.price?.toString() ?? "0");
 
-      if (card.type == "Land") {
-        console.log(card.name, card.quantityOwned);
-      }
-
       acc.size += quantity;
       // If is a valid number
       if (!isNaN(price)) {

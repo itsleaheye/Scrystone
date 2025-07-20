@@ -46,7 +46,7 @@ export function useDeckParser() {
         const match = ownedCards.find(
           (owned) =>
             normalizeCardName(owned.name) === normalizedName &&
-            owned.setName === card.setName
+            owned.set === card.set
         );
         quantityOwned = match?.quantityOwned ?? 0;
       }

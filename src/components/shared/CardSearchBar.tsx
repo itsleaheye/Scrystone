@@ -3,9 +3,14 @@ import { TbListSearch } from "react-icons/tb";
 import { normalizeCardName } from "../../utils/normalize";
 import type { DeckCard } from "../../types/MagicTheGathering";
 import { FaSearch } from "react-icons/fa";
+import { getCardsFromStorage } from "../../utils/storage";
 
 interface CardSearchBarProps {
-  onDeckCardAdd: (cardName: string) => Promise<void>;
+  onDeckCardAdd: (
+    cardName: string,
+    quantityNeeded?: number,
+    setPreference?: string
+  ) => Promise<void>;
   deckCards: DeckCard[];
 }
 
@@ -18,6 +23,7 @@ export function CardSearchBar({
   const deckCardNames = new Set(
     deckCards.map((c) => normalizeCardName(c.name))
   );
+  const ownedCards = getCardsFromStorage();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -41,8 +47,17 @@ export function CardSearchBar({
     return () => controller.abort();
   }, [query]);
 
-  const handleSuggestionClick = (cardName: string) => {
-    onDeckCardAdd(cardName);
+  const handleSuggestionClick = async (cardName: string) => {
+    // If we own a card with the same name, default to it's set
+    const match = ownedCards.find(
+      (card: any) =>
+        normalizeCardName(card.name) === normalizeCardName(cardName)
+    );
+    if (match) {
+      await onDeckCardAdd(cardName, undefined, match.set);
+    } else {
+      await onDeckCardAdd(cardName); // If not found in collection
+    }
     setQuery("");
     setSuggestions([]);
   };
