@@ -96,8 +96,8 @@
 }
 
 .searchContainer {
-  margin: var(--pad-xs) auto;
-  max-width: 400px;
+  /* margin: var(--pad-xs) auto; */
+  /* max-width: 400px; */
 
   .inlineIcon {
     margin-top: 12px;
@@ -541,26 +541,33 @@
       text-align: left;
     }
     .flexSwap {
+      width: auto;
       flex-direction: row;
     }
     .flexSwapInverse {
       flex-direction: column;
+    }
+    .staticDeckCol1 {
+      .deckFields {
+        flex-direction: row !important;
+        gap: var(--pad-xs);
+      }
     }
     .deckCol1 {
       padding-right: var(--pad-xs);
       justify-content: center;
       flex-direction: column;
       display: flex;
+      max-width: 300px;
 
       .deckFields {
-        flex-direction: row;
-        gap: var(--pad-xs);
+        flex-direction: column;
         align-items: center;
         display: flex;
       }
     }
     textarea {
-      width: 373px;
+      width: 284px;
       height: 75px;
     }
     .deckBreakdown {
@@ -578,10 +585,16 @@
   .deckCardActions {
     display: flex;
     align-items: center;
-    flex-direction: column;
+    flex-direction: row;
+    gap: var(--pad-xs);
+    margin-bottom: var(--pad-xs);
 
     .flexCol {
       align-items: start;
+    }
+
+    .searchContainer {
+      width: 100%;
     }
   }
 }
@@ -612,16 +625,35 @@
 
     .deckBreakdown {
       max-width: 100%;
-      gap: var(--pad-sm);
+      gap: var(--pad-xxs);
     }
     .flexSwapInverse {
       flex-direction: row;
     }
+
+    textarea {
+      width: 358 px;
+    }
+
+    .deckCol1 {
+      min-width: 375px;
+
+      .deckFields {
+        gap: var(--pad-xs);
+        flex-direction: row;
+
+        select {
+          min-width: 150px;
+        }
+      }
+    }
+
     .staticDeckCol1 {
       min-width: 375px;
 
       .deckFields {
         justify-content: space-between;
+        flex-direction: row;
       }
     }
   }

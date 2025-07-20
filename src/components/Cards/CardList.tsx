@@ -145,7 +145,7 @@ function CardListItem({
         className={`${
           showWarning ? "redText primaryDetails" : "primaryDetails"
         } ${isMobile ? "primaryExtended" : ""}`}
-        onMouseEnter={() => setCardFocused && setCardFocused(card)}
+        // onMouseEnter={() => setCardFocused && setCardFocused(card)}
       >
         {getTypeIcon(card.type)}
         <p className="bold overflowElipse">

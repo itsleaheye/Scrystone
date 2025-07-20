@@ -1,9 +1,11 @@
 export function normalizeCardName(name: string): string {
   return name
+    .normalize("NFD") // Required for accents
     .replace(/\s*\([^)]+\)/g, "") // Remove all '()' groups
     .split(" - ")[0] // Use only the part before ' - s'
     .split("//")[0] // Use only the part before '//'
     .replace(/^(Checklist Card|Token|Token Card|Emblem|Plane)\s*-\s*/i, "") // Remove prefix
+    .replace(/[\u0300-\u036f]/g, "") // Remove accents
     .replace(/"/g, "") // Remove quotation marks
     .trim(); // Remove trailing white spaces
 }
