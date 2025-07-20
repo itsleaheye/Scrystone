@@ -54,7 +54,7 @@ A 'Magic the Gathering' web app built with React, Tailwind CSS, and the Scryfall
 - [x] Improve collection download speeds
 - [x] Routing integration
 - [x] Card search bar added to card action row | [Design](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=1-3&t=YXOAXnY0SHo6VljJ-4)
-- [ ] Card set distinguishment _-currently in progress-_
+- [x] Card set distinguishment
 - [ ] Render the art preview that matches the card (i.e. borderless card renders borderless art)
 - [ ] OnClick in collection view, flip animation and show value, set, quantity, and if it's in a deck
 - [x] Ability to import decks
