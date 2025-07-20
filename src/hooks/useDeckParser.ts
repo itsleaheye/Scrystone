@@ -5,6 +5,8 @@ import {
   getDeckCost,
   getDeckManaSummary,
 } from "../utils/decks";
+import { getCardsFromStorage } from "../utils/storage";
+import { normalizeCardName } from "../utils/normalize";
 
 export function useDeckParser() {
   const [decks, setDecks] = React.useState<Deck[]>([]);
@@ -28,11 +30,32 @@ export function useDeckParser() {
       ? JSON.parse(existingRawDecks)
       : [];
 
-    const deckCards: DeckCard[] = cards.map((card) => ({
-      ...card,
-      quantityNeeded: card.quantityNeeded,
-      quantityOwned: card.quantityOwned,
-    }));
+    const ownedCards = getCardsFromStorage();
+
+    const deckCards: DeckCard[] = cards.map((card) => {
+      const normalizedName = card.name ? normalizeCardName(card.name) : "";
+      let quantityOwned = 0;
+
+      if (card.setName === "Any") {
+        // Sum all owned cards with matching name
+        quantityOwned = ownedCards
+          .filter((owned) => normalizeCardName(owned.name) === normalizedName)
+          .reduce((sum, owned) => sum + (owned.quantityOwned ?? 0), 0);
+      } else {
+        // Match by name and set
+        const match = ownedCards.find(
+          (owned) =>
+            normalizeCardName(owned.name) === normalizedName &&
+            owned.setName === card.setName
+        );
+        quantityOwned = match?.quantityOwned ?? 0;
+      }
+
+      return {
+        ...card,
+        quantityOwned,
+      };
+    });
 
     const colours = getDeckManaSummary(deckCards);
     const deckPrice = getDeckCost(cards);

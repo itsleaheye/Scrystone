@@ -42,13 +42,19 @@ export function generateUniqueDeckId() {
 
 export function getDeckTypeSummary(cards: DeckCard[]) {
   const ownedCards: CollectionCard[] = getCardsFromStorage();
-  const ownedByName = new Map(
-    ownedCards.map((card) => [normalizeCardName(card.name), card])
-  );
+
+  const totalQuantityByName = new Map<string, number>();
+  ownedCards.forEach((card) => {
+    const normalizedName = normalizeCardName(card.name);
+    totalQuantityByName.set(
+      normalizedName,
+      (totalQuantityByName.get(normalizedName) ?? 0) + (card.quantityOwned ?? 0)
+    );
+  });
 
   const deckCountByName = new Map<
     string,
-    { type: string; quantityNeeded: number }
+    { type: string; quantityNeeded: number; setName?: string }
   >();
 
   cards.forEach((card) => {
@@ -57,14 +63,27 @@ export function getDeckTypeSummary(cards: DeckCard[]) {
     deckCountByName.set(normalizeCardName(card.name), {
       type: card.type,
       quantityNeeded: card?.quantityNeeded ?? 0,
+      setName: card.setName,
     });
   });
 
   const quantityNeededByType = new Map<string, number>();
   const quantityOwnedByType = new Map<string, number>();
 
-  deckCountByName.forEach(({ type, quantityNeeded }, cardName) => {
-    const quantityOwned = ownedByName.get(cardName)?.quantityOwned ?? 0;
+  deckCountByName.forEach(({ type, quantityNeeded, setName }, cardName) => {
+    let quantityOwned = 0;
+
+    if (setName === "Any") {
+      // Sum quantity of all cards with this name
+      quantityOwned = totalQuantityByName.get(cardName) ?? 0;
+    } else {
+      // Match by both name and set
+      const match = ownedCards.find(
+        (card) =>
+          normalizeCardName(card.name) === cardName && card.setName === setName
+      );
+      quantityOwned = match?.quantityOwned ?? 0;
+    }
 
     quantityNeededByType.set(
       type,
