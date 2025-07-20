@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/735e172c-8334-4427-828a-fd83f9e6cbbd" width="100%">
+<img  width="100%"alt="image" src="https://github.com/user-attachments/assets/ad7475e4-9eec-4b25-8a01-527bffe7e16e" />
 
 # Scrystone | [View Live](https://scrystone.netlify.app/) | [View Style Guide](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=0-1&t=gWOUaWJ88Al3ZS2z-1)
 
@@ -72,4 +72,6 @@ A 'Magic the Gathering' web app built with React, Tailwind CSS, and the Scryfall
 <img width="750" alt="image" src="https://github.com/user-attachments/assets/b991831a-f9ac-4a3b-9538-1a04834cad3f" />
 <img width="750" alt="image" src="https://github.com/user-attachments/assets/a1507162-9c4e-4dca-900e-33d2e2c064ce" />
 
+### V1 stills
+<img src="https://github.com/user-attachments/assets/735e172c-8334-4427-828a-fd83f9e6cbbd" width="750" >
 
