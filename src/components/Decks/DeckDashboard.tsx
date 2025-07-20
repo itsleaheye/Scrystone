@@ -9,7 +9,7 @@ export function DeckDashboard() {
   const navigate = useNavigate();
 
   return (
-    <>
+    <div className="p-[var(--pad-sm)] mx-auto" style={{ maxWidth: "1600px" }}>
       {/* Actions header */}
       <DeckActions
         onBack={() => {
@@ -33,6 +33,6 @@ export function DeckDashboard() {
           title="No decks found"
         />
       )}
-    </>
+    </div>
   );
 }

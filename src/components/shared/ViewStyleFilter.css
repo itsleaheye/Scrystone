@@ -7,7 +7,8 @@
   padding: 0 var(--pad-xxs);
   justify-content: space-between;
   display: flex;
-  border: 2px solid var(--blue);
+  border: 2px solid var(--darker-gray);
+  background-color: var(--darkest-gray);
   border-radius: var(--border-radius-base);
 
   .viewButtons {
@@ -24,6 +25,7 @@
     }
 
     div:hover {
+      opacity: 1;
       color: var(--blue);
       transition: var(--ease-in);
       cursor: pointer;

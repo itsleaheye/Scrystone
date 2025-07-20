@@ -1,62 +1,94 @@
-import { WelcomeStep } from "./WelcomeStep";
 import "./Welcome.css";
 import "../styles.css";
-import { FaArrowDown } from "react-icons/fa";
+import { FaFileCsv, FaQuestionCircle, FaUpload } from "react-icons/fa";
+import { WalletIcon } from "@heroicons/react/16/solid";
+
+const faqQuestions = [
+  {
+    question: "I bought some new cards. How do I update my collection?",
+    answer: (
+      <p>
+        Grab your most up to date .csv of your cards and press the ‘Sync Cards’
+        button. Scrystone will go through your collection checking for any cards
+        that were added or removed, or even have a new quantity, and update your
+        collection accordingly.
+        <br />
+        <br />
+        Your decks will also automatically check against the most recent .csv
+        uploaded.
+      </p>
+    ),
+  },
+  {
+    question: "How can I share my decks with friends?",
+    answer: (
+      <p>
+        After you have built a deck, check out the `Export` button to download a
+        .txt file of your deck card list. You can share this .txt file with
+        friends and they can even `Import` the cards list directly into their
+        decks.
+      </p>
+    ),
+  },
+  {
+    question: "How do I know which deck cards are missing?",
+    answer: (
+      <p>
+        1. Your deck summary will show you for each type how many cards you own
+        vs how many the deck required. It will bolden types that you are missing
+        the cards for.
+        <br />
+        2. On deck `Export` you will see a lower section in your .txt file
+        stating the quantity and name of cards missing.{" "}
+        <span className="bold">
+          You can copy this section into any hobby web store’s deck list to
+          quickly purchase your missing cards.
+        </span>
+        <br />
+        3. On both the gallery and list view on the deck builder, you will see
+        each card shows a total of quantity owned / quantity needed.{" "}
+        <span className="bold">
+          The list view will highlight missing cards in red.
+        </span>
+      </p>
+    ),
+  },
+];
 
 export function Welcome() {
   return (
-    <div className="text-center dataContainer welcomeContainer">
-      <h2>Getting Started with Scrystone</h2>
-      <p className="welcomeSubtext">
-        <span className="bold">
-          Bring your Magic the Gathering collection to life!
-        </span>{" "}
-        Upload your cards to instantly preview your entire collection, build and
-        customize decks, and keep track of what you own and what you still need.
-        <br />
-        <br />
-        Stay organized, synced, and ready to draft your next win, even on the
-        go.
-      </p>
-      <WelcomeStep
-        number={1}
-        heading={"Export Your Collection"}
-        description={`If you're using TCGPlayer to track your Magic cards, you’re in luck, as exporting is easy:`}
-        steps={[
-          "Open the TCGPlayer app on your mobile device",
-          `Go to your desired 'Collection'`,
-          `Tap the 'Export' button to generate a .csv of your card list`,
-          "Save the file to your device",
-        ]}
-      />
-
-      <FaArrowDown />
-
-      <WelcomeStep
-        number={2}
-        heading={"Upload to Scrystone"}
-        description={`Now that you have your collection in a .csv, let's upload those cards:`}
-        steps={[
-          "Open back up Scrystone",
-          `Click “Upload Your Cards”`,
-          "Select the .csv file you just exported",
-          "Wait for Scrystone to process your cards",
-        ]}
-      />
-
-      <FaArrowDown />
-
-      <WelcomeStep
-        number={3}
-        heading={"Deck building and previews"}
-        description={`After processing, your collection will be previewable. From here you can:`}
-        steps={[
-          "Preview cards in your collection",
-          "Build and edit decks",
-          "Export deck lists to share with friends",
-          "See which cards you own and which you may be missing",
-        ]}
-      />
-    </div>
+    <>
+      <div className="howContainer text-center">
+        <h2>How It Works</h2>
+        <div className="flexSwap">
+          <div className="step">
+            <FaFileCsv />
+            <p>Download your card list as a .csv</p>
+          </div>
+          <div className="step step2">
+            <FaUpload />
+            <p>Upload it to Scrystone</p>
+          </div>
+          <div className="step">
+            <WalletIcon />
+            <p>Start building and sharing decks</p>
+          </div>
+        </div>
+      </div>
+      <div className="faqContainer flexCol">
+        <div className="flexRow">
+          <FaQuestionCircle />
+          <h2>FAQ</h2>
+        </div>
+        {faqQuestions.map((faq) => {
+          return (
+            <div className="text-center question">
+              <p className="emphasis bold">{faq.question}</p>
+              {faq.answer}
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 }

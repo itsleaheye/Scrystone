@@ -4,51 +4,88 @@
   padding-bottom: var(--pad-xs);
 }
 
-.welcomeContainer {
-  max-width: 750px;
+.howContainer {
+  background-color: var(--blackest);
+  padding: var(--pad-sm);
+  width: 100%;
 
   h2 {
-    color: var(--green);
+    margin-bottom: var(--pad-xs);
   }
 
-  svg {
-    color: var(--off-white);
-    width: 1.5rem;
-    height: 1.5rem;
-    padding-top: 3px;
-    margin: var(--pad-xs) 0 var(--pad-xs) 0;
+  .flexSwap {
+    gap: var(--pad-sm);
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: center;
+
+    .step {
+      display: flex;
+      flex-direction: row;
+      gap: var(--pad-xs);
+      align-items: center;
+      text-align: left;
+
+      p {
+        max-width: 145px;
+        font-size: var(--font-size-md);
+        line-height: 1.2;
+        font-weight: bold;
+      }
+
+      svg {
+        fill: var(--blue);
+        width: 2rem;
+        height: 2rem;
+      }
+    }
+
+    .step2 p {
+      max-width: 175px;
+    }
   }
 }
 
-.welcomeStep {
-  padding: var(--pad-xs);
-  border: 2px solid var(--dark-gray);
-  border-radius: var(--border-radius-base);
+.faqContainer {
+  max-width: 715px;
+  margin: var(--pad-sm) auto;
+  display: flex;
+  justify-content: center;
+  padding: var(--pad-sm);
+  gap: var(--pad-sm);
 
-  &:hover {
-    border-color: var(--blue);
+  .question {
+    padding-bottom: var(--pad-sm);
+    border-bottom: 2px solid var(--darker-gray);
   }
 
-  .stepNumber {
-    background-color: var(--blue);
+  .question:last-child {
+    border-bottom: none;
+  }
+
+  .emphasis {
+    margin-bottom: var(--pad-xxxs);
+    font-size: var(--font-size-md);
+  }
+
+  p {
     color: var(--white);
-    min-width: 2.5rem;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: var(--border-radius-base);
-    padding-top: 3px;
-    text-align: center;
   }
 
-  ul {
-    margin-left: 2rem;
-    margin-top: var(--pad-xs);
-    gap: var(--pad-xxxs);
-    display: flex;
-    flex-direction: column;
+  svg {
+    color: var(--blue);
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
 
-    li::marker {
-      color: var(--blue);
-    }
+/* === Media Queries (Responsive) === */
+@media only screen and (min-width: 750px) {
+  .flexSwap {
+    flex-direction: row !important;
+    justify-content: center;
+    gap: var(--pad-md);
+    align-content: start;
   }
 }

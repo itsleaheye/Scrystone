@@ -8,7 +8,11 @@ import React from "react";
 import { EmptyView } from "../shared/EmptyView";
 import { useCardFiltersAndSort } from "../../hooks/useCardFiltersAndSort";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
-import { TbArrowsSort, TbSortAscendingLetters } from "react-icons/tb";
+import {
+  TbSortAscendingLetters,
+  TbSortAscendingShapesFilled,
+  TbSortDescendingNumbers,
+} from "react-icons/tb";
 import Select from "react-select";
 import { ViewStyleFilter } from "../shared/ViewStyleFilter";
 import { CardList } from "./CardList";
@@ -163,6 +167,12 @@ export function CardPreview({
     }
   }, [activeCardPreview]);
 
+  const getSortIcon = () => {
+    if (sortBy === "Name") return <TbSortAscendingLetters />;
+    if (sortBy === "Price") return <TbSortDescendingNumbers />;
+    return <TbSortAscendingShapesFilled />;
+  };
+
   return (
     <>
       {!editable && (
@@ -232,11 +242,7 @@ export function CardPreview({
             </div>
             <div className="flexCol">
               <p className="filterIconAndText">
-                {sortBy === "Name" ? (
-                  <TbSortAscendingLetters />
-                ) : (
-                  <TbArrowsSort />
-                )}
+                {getSortIcon()}
                 Sort By
               </p>
               <select

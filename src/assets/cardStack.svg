@@ -1,0 +1,22 @@
+<svg width="260" height="180" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Clipping paths so side cards don’t overlap the middle -->
+    <clipPath id="clip-left">
+      <!-- Clip right half of left card away -->
+      <rect x="0" y="0" width="110" height="180"></rect>
+    </clipPath>
+    <clipPath id="clip-right">
+      <!-- Clip left half of right card away -->
+      <rect x="150" y="0" width="110" height="180"></rect>
+    </clipPath>
+  </defs>
+
+  <!-- Left tilted card -->
+  <rect x="50" y="40" width="80" height="120" fill="none" stroke="#000" stroke-width="4" rx="8" ry="8" transform="rotate(-15 90 100)" clip-path="url(#clip-left)"></rect>
+
+  <!-- Right tilted card -->
+  <rect x="130" y="40" width="80" height="120" fill="none" stroke="#000" stroke-width="4" rx="8" ry="8" transform="rotate(15 170 100)" clip-path="url(#clip-right)"></rect>
+
+  <!-- Middle card -->
+  <rect x="90" y="30" width="80" height="120" fill="none" stroke="#000" stroke-width="4" rx="8" ry="8"></rect>
+</svg>

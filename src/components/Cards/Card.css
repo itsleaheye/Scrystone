@@ -97,7 +97,7 @@
   background: var(--blackest);
   border-radius: 13px;
   padding: 0.25rem;
-  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.2), 0px -5px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.75), 0px -5px 5px rgba(0, 0, 0, 0.75);
 
   .quantityHeader {
     width: 3.25rem;
@@ -123,7 +123,7 @@
 
   .cardArt,
   .cardPlaceholder {
-    border-radius: var(--border-radius-lg);
+    border-radius: 15px;
   }
 
   .cardPlaceholder {
@@ -215,8 +215,8 @@
 }
 
 .cardFoundTotal {
-  border-top: 2px solid var(--dark-gray);
-  border-bottom: 2px solid var(--dark-gray);
+  border-top: 2px solid var(--darker-gray);
+  border-bottom: 2px solid var(--darker-gray);
   padding: var(--pad-xxs);
   text-align: center;
   margin-bottom: var(--pad-xs);

@@ -1,43 +1,113 @@
 /* === Core Layout & Components === */
 
 .pageTitle {
-  text-align: center;
+  background-color: var(--blackest);
+  display: flex;
+  flex-direction: column;
+  gap: var(--pad-xxs);
+  align-items: center;
+  margin-bottom: var(--pad-md);
   max-width: 100%;
-  margin: 4rem auto;
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: var(--pad-xxs);
-  color: var(--white);
+  padding: var(--pad-xxs) var(--pad-xs);
 
   h1 {
-    font-size: var(--font-size-xxl);
     font-family: "Source Serif 4", serif;
-    letter-spacing: 3px;
+    font-size: 20px;
     font-weight: 600;
-    margin: var(--pad-xxs) 0 -6px;
+    letter-spacing: 2px;
+    text-align: center;
   }
+
+  .isActive {
+    opacity: 1;
+    color: var(--green);
+  }
+
   p {
+    font-size: 16px;
     font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 0 var(--pad-xxs);
+    text-align: center;
+
+    &:hover {
+      cursor: pointer;
+      opacity: 0.7;
+      transition: var(--ease-in);
+    }
   }
+}
+
+.flexBetween {
+  justify-content: space-between;
+  width: 100%;
 }
 
 .headingContainer {
-  background: url("../assets/wallpaper.png");
+  background: url("../assets/heroLong.png");
   background-size: cover;
-  background-position: center;
-  padding: 2rem 0;
+  background-position: top;
+  height: 550px;
 }
 
 .summaryContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--pad-xxs);
   background: var(--black);
   border-radius: var(--border-radius-base);
   max-width: 330px;
   margin: 0 auto;
-  padding: var(--pad-sm) var(--pad-sm) var(--pad-xs);
+  padding: var(--pad-sm);
   box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2), 0 -5px 5px rgba(0, 0, 0, 0.2);
+
+  .flexCol {
+    /* max-width: 260px; */
+    gap: var(--pad-xxs);
+    align-items: center;
+    text-align: center;
+
+    .summaryIcon svg {
+      margin: 0 auto;
+      width: 5rem;
+      height: 5rem;
+    }
+
+    h2 {
+      line-height: 1;
+    }
+    p {
+      line-height: 1.25;
+    }
+  }
+
+  .summaryIcon svg {
+    height: 10rem;
+    width: 10rem;
+    color: var(--blue);
+  }
+
+  .uploadContainer {
+    margin-top: var(--pad-xxs);
+    label {
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      padding: var(--pad-xxxs) var(--pad-xs);
+      justify-content: center;
+      background-color: var(--blue);
+      border-radius: var(--border-radius-base);
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--ease-in);
+
+      &:hover {
+        opacity: 0.5;
+      }
+    }
+    svg {
+      width: 0.85rem;
+      height: 0.85rem;
+      margin-right: 0.5rem;
+    }
+  }
 }
 
 .deckName {
@@ -67,31 +137,6 @@
     margin: 0 !important;
     color: var(--white) !important;
     text-transform: uppercase;
-  }
-}
-
-.uploadContainer {
-  label {
-    display: flex;
-    align-items: center;
-    background: var(--blue);
-    padding: var(--pad-xxs);
-    justify-content: center;
-    border-radius: var(--border-radius-base);
-    font-weight: 600;
-    margin: 0 auto var(--pad-xxs) auto;
-    cursor: pointer;
-    transition: var(--ease-in);
-    max-width: 175px;
-
-    &:hover {
-      opacity: 0.5;
-    }
-  }
-  svg {
-    width: 1.25rem;
-    height: 1.25rem;
-    margin-right: 0.5rem;
   }
 }
 
@@ -323,9 +368,9 @@
       font-weight: bold;
     }
     .searchInput {
-      background: var(--darker-gray);
+      background: var(--darkest-gray);
       border-radius: var(--border-radius-base);
-      border: 2px solid var(--blue);
+      border: 2px solid var(--darker-gray);
       height: 40px;
       padding: var(--pad-xxxs) var(--pad-xxs) var(--pad-xxxs) var(--pad-sm);
       color: var(--white);
@@ -341,9 +386,9 @@
       }
     }
     select {
-      background: var(--darker-gray);
+      background: var(--darkest-gray);
       border-radius: var(--border-radius-base);
-      border: 2px solid var(--blue);
+      border: 2px solid var(--darker-gray);
       color: var(--white);
       font-size: var(--font-size-base);
       margin-bottom: var(--pad-xxs);
@@ -356,9 +401,9 @@
       }
     }
     .selectMulti__control {
-      background: var(--darker-gray);
+      background: var(--darkest-gray);
       border-radius: var(--border-radius-base);
-      border: 2px solid var(--blue);
+      border: 2px solid var(--darker-gray);
       color: var(--white);
     }
     .selectMulti {
@@ -366,15 +411,15 @@
       margin-bottom: var(--pad-xxs);
     }
     .selectMulti__menu {
-      background: var(--darker-gray);
+      background: var(--darkest-gray);
     }
     .selectMulti__option {
       color: var(--white);
-      background: var(--darker-gray);
+      background: var(--darkest-gray);
     }
     .selectMulti__option--is-focused {
       cursor: pointer;
-      background-color: var(--dark-gray);
+      background: var(--darker-gray);
       transition: var(--ease-in);
     }
     .selectMulti__indicator-separator {
@@ -426,7 +471,7 @@
   textarea {
     font-size: var(--font-size-base);
     border-radius: var(--border-radius-base);
-    border: 2px solid var(--dark-gray);
+    border: 2px solid var(--darker-gray);
     padding: var(--pad-xxxs) var(--pad-xs);
     color: var(--black);
     margin-bottom: var(--pad-xs);
@@ -468,8 +513,6 @@
 }
 
 .dataContainer {
-  padding: var(--pad-xs);
-  max-width: 1600px;
   margin: 0 auto;
   background: var(--black);
 }
@@ -511,6 +554,19 @@
 
 /* === Media Queries (Responsive) === */
 @media only screen and (min-width: 650px) {
+  .headingContainer {
+    height: 450px;
+
+    .pageTitle {
+      flex-direction: row;
+      justify-content: space-between;
+
+      h1 {
+        text-align: left;
+        font-size: 25px;
+      }
+    }
+  }
   .filtersRow {
     flex-direction: row;
     gap: var(--pad-xxs);
@@ -531,7 +587,12 @@
   }
   .summaryContainer {
     margin: 0 auto 2rem auto;
-    max-width: 400px;
+    max-width: 500px;
+
+    .flexCol {
+      align-items: start;
+      text-align: left;
+    }
   }
   .deckOverview {
     flex-direction: row;
@@ -600,9 +661,6 @@
 }
 
 @media only screen and (min-width: 900px) {
-  .dataContainer {
-    padding: var(--pad-sm);
-  }
   .filtersRow {
     gap: var(--pad-xs);
     max-width: 1600px;

@@ -5,14 +5,15 @@ import { DeckEdit } from "./components/Decks/DeckEdit";
 import { DeckPreview } from "./components/Decks/DeckPreview";
 import { useCardParser } from "./hooks/useCardParser";
 import { CardDashboard } from "./components/Cards/CardDashboard";
-import { WalletIcon, ArrowUpTrayIcon } from "@heroicons/react/16/solid";
-import { GiCash } from "react-icons/gi";
-import { TbCardsFilled } from "react-icons/tb";
-import { IconItem } from "./components/shared/IconItem";
+import { FaUpload } from "react-icons/fa";
+import { TbCards } from "react-icons/tb";
+import { useMediaQuery } from "./hooks/useMediaQuery";
+import { Welcome } from "./components/Welcome/Welcome";
 
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
+  const isMobile = useMediaQuery("(max-width: 650px)");
 
   const {
     currentProgress,
@@ -31,64 +32,91 @@ export default function App() {
     <div className="container">
       <div className="headingContainer">
         <div className="pageTitle">
-          <h1>SCRYSTONE</h1>
-          <p>A Magic the Gathering collection tool</p>
+          <div>
+            <h1>SCRYSTONE</h1>
+          </div>
+          <div className="flexRow">
+            <div
+              className={
+                location.pathname === "/how-it-works" ? "isActive" : ""
+              }
+              onClick={() => {
+                if (showConfirmation && window.confirm("Discard changes?")) {
+                  navigate("/how-it-works");
+                }
+                if (!showConfirmation) {
+                  navigate("/how-it-works");
+                }
+              }}
+            >
+              <p>How it Works</p>
+            </div>
+            <div
+              className={location.pathname === "/" ? "isActive" : ""}
+              onClick={() => {
+                if (showConfirmation && window.confirm("Discard changes?")) {
+                  navigate("/");
+                }
+                if (!showConfirmation) {
+                  navigate("/");
+                }
+              }}
+            >
+              <p>Collection</p>
+            </div>
+            <div
+              className={
+                location.pathname.startsWith("/deck") ? "isActive" : ""
+              }
+              onClick={() => {
+                if (showConfirmation && window.confirm("Discard changes?")) {
+                  navigate("/decks");
+                }
+                if (!showConfirmation) {
+                  navigate("/decks");
+                }
+              }}
+            >
+              <p>Decks</p>
+            </div>
+          </div>
         </div>
-
-        <div className="summaryContainer">
-          <div className="flexRow borderBottom">
-            <IconItem
-              icon={<GiCash />}
-              text={`Value: $${Math.round(collection.value)}`}
-              onClick={() => alert("Price breakdown will be coming in V2")}
-            />
-            <IconItem
-              isActive={location.pathname === "/"}
-              icon={<TbCardsFilled />}
-              text={`Collection`}
-              onClick={() => {
-                if (showConfirmation && window.confirm("Discard changes?")) {
-                  navigate("/");
-                }
-                if (!showConfirmation) {
-                  navigate("/");
-                }
-              }}
-            />
-            <IconItem
-              isActive={location.pathname.startsWith("/deck")}
-              icon={<WalletIcon />}
-              text={`Decks`}
-              onClick={() => {
-                if (showConfirmation && window.confirm("Discard changes?")) {
-                  navigate("/decks");
-                }
-                if (!showConfirmation) {
-                  navigate("/decks");
-                }
-              }}
-            />
-          </div>
-
-          <div className="uploadContainer">
-            <input
-              className="hidden"
-              id="fileInput"
-              type="file"
-              accept=".csv"
-              onChange={onCollectionUpload}
-              disabled={loading}
-            />
-            <label htmlFor="fileInput">
-              <ArrowUpTrayIcon className="uploadIcon" />
-              {hasCollection ? "Sync Cards" : "Upload Your Cards"}
-            </label>
-            <p className="subtext">
+        <div className="summaryContainer flexRow">
+          <div className="flexCol">
+            {isMobile && (
+              <div className="summaryIcon">
+                <TbCards />
+              </div>
+            )}
+            <h2>Build Powerful Decks From Your Collection</h2>
+            <p>
               {hasCollection
-                ? `Last synced on ${collection.updatedAt}`
-                : "Never synced yet"}
+                ? "Your cards are in. Start building decks and see exactly what you own, and what you’ll need."
+                : "Upload your card collection and start brewing with our MTG deck building tools."}
             </p>
+            <div className="uploadContainer">
+              <input
+                className="hidden"
+                id="fileInput"
+                type="file"
+                accept=".csv"
+                onChange={onCollectionUpload}
+                disabled={loading}
+              />
+              <label htmlFor="fileInput">
+                <FaUpload className="uploadIcon" />
+                {hasCollection ? "Sync Cards" : "Upload Collection"}
+              </label>
+            </div>
+            {hasCollection && (
+              <p className="subtext">Last synced {collection.updatedAt}</p>
+            )}
           </div>
+          {!isMobile && (
+            <div className="summaryIcon">
+              <TbCards />
+            </div>
+          )}
         </div>
       </div>
 
@@ -121,6 +149,7 @@ export default function App() {
           <Route path="/deck/:deckId" element={<DeckPreview />} />
           <Route path="/deck/:deckId/edit" element={<DeckEdit />} />
           <Route path="/deck/new" element={<DeckEdit />} />
+          <Route path="/how-it-works" element={<Welcome />} />
         </Routes>
       </div>
     </div>

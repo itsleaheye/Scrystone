@@ -52,7 +52,7 @@ export function DeckEdit() {
   const summary = useMemo(() => getDeckTypeSummaryWithDefaults(cards), [cards]);
 
   return (
-    <>
+    <div className="p-[var(--pad-sm)] mx-auto" style={{ maxWidth: "1600px" }}>
       {/* Actions header */}
       <DeckActions
         deck={deck}
@@ -127,6 +127,6 @@ export function DeckEdit() {
           viewPreference={viewStyle}
         />
       </span>
-    </>
+    </div>
   );
 }
