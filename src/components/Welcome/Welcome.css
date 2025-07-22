@@ -82,10 +82,12 @@
 
 /* === Media Queries (Responsive) === */
 @media only screen and (min-width: 750px) {
-  .flexSwap {
-    flex-direction: row !important;
-    justify-content: center;
-    gap: var(--pad-md);
-    align-content: start;
+  .howContainer {
+    .flexSwap {
+      flex-direction: row !important;
+      justify-content: center;
+      gap: var(--pad-md);
+      align-content: start;
+    }
   }
 }
