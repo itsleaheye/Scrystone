@@ -12,6 +12,7 @@ import { CardPreview } from "../Cards/CardPreview";
 import { ViewStyleFilter } from "../shared/ViewStyleFilter";
 import { CardSearchBar } from "../shared/CardSearchBar";
 import { getDecksFromStorage } from "../../utils/storage";
+import "../styles.css";
 
 export function DeckEdit() {
   const { deckId } = useParams<{ deckId: string }>();
@@ -52,7 +53,7 @@ export function DeckEdit() {
   const summary = useMemo(() => getDeckTypeSummaryWithDefaults(cards), [cards]);
 
   return (
-    <div className="p-[var(--pad-sm)] mx-auto" style={{ maxWidth: "1600px" }}>
+    <div className="contentContainer" style={{ maxWidth: "1600px" }}>
       {/* Actions header */}
       <DeckActions
         deck={deck}

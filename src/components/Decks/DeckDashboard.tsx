@@ -9,7 +9,7 @@ export function DeckDashboard() {
   const navigate = useNavigate();
 
   return (
-    <div className="p-[var(--pad-sm)] mx-auto" style={{ maxWidth: "1600px" }}>
+    <div className="contentContainer" style={{ maxWidth: "1600px" }}>
       {/* Actions header */}
       <DeckActions
         onBack={() => {

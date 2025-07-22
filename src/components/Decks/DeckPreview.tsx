@@ -22,7 +22,7 @@ export function DeckPreview() {
   const summary = useMemo(() => getDeckTypeSummaryWithDefaults(cards), [cards]);
 
   return (
-    <div className="p-[var(--pad-sm)] mx-auto" style={{ maxWidth: "1600px" }}>
+    <div className="contentContainer" style={{ maxWidth: "1600px" }}>
       {/* Actions header */}
       <DeckActions
         deck={deck}

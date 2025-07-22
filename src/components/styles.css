@@ -110,6 +110,11 @@
   }
 }
 
+.contentContainer {
+  padding: var(--pad-xs);
+  margin: 0 auto;
+}
+
 .deckName {
   font-size: var(--font-size-lg);
   margin: 0 !important;
@@ -150,6 +155,7 @@
     height: 1rem;
     margin-left: 10px;
     position: absolute;
+    fill: var(--dark-gray);
   }
 
   .subtext {
@@ -168,8 +174,8 @@
 .searchBar {
   width: 100%;
   border-radius: var(--border-radius-base);
-  background: var(--dark-gray);
-  border: none;
+  background: var(--darkest-gray);
+  border: 2px solid var(--darker-gray);
   padding: var(--pad-xxs) var(--pad-xs) var(--pad-xxs) var(--pad-sm);
   color: var(--white);
 
@@ -552,8 +558,20 @@
   text-overflow: ellipsis;
 }
 
+.deckCardActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pad-xxs);
+  margin-bottom: var(--pad-xs);
+}
+
 /* === Media Queries (Responsive) === */
 @media only screen and (min-width: 650px) {
+  .contentContainer {
+    padding: var(--pad-sm);
+    margin: 0 auto;
+  }
+
   .headingContainer {
     height: 450px;
 
@@ -647,7 +665,8 @@
     display: flex;
     align-items: center;
     flex-direction: row;
-    gap: var(--pad-xs);
+    gap: var(--pad-sm);
+    flex-direction: row;
     margin-bottom: var(--pad-xs);
 
     .flexCol {
@@ -720,7 +739,6 @@
     flex-direction: row;
     gap: var(--pad-xs);
     justify-content: center;
-    align-items: baseline;
 
     .searchContainer {
       margin: 0;
