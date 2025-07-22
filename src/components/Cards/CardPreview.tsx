@@ -17,6 +17,7 @@ import Select from "react-select";
 import { ViewStyleFilter } from "../shared/ViewStyleFilter";
 import { CardList } from "./CardList";
 import { FaSearch } from "react-icons/fa";
+import { getScryfallCard } from "../../utils/scryfall";
 
 interface CardPreviewProps {
   activeCardPreview?: DeckCard;
@@ -55,11 +56,69 @@ export function CardPreview({
 
   const ownedCards = getCardsFromStorage();
   const sourceCards = deckCards ?? collectionCards ?? [];
-  const cardsWithQuantities = mergeCardQuantities(
-    sourceCards,
-    ownedCards,
-    isDeckView
-  );
+
+  const [cardsWithQuantities, setCardsWithQuantities] = useState<
+    (CollectionCard & { quantityOwned: number; quantityNeeded?: number })[]
+  >(() => mergeCardQuantities(sourceCards, ownedCards, isDeckView));
+
+  async function onChangeSet(cardName: string, newSetName: string) {
+    if (!setCards) return;
+
+    const normalized = normalizeCardName(cardName);
+    const matches = ownedCards.filter(
+      (card) => normalizeCardName(card.name) === normalized
+    );
+
+    let quantityOwned = 0;
+    let preferredCard = matches[0];
+
+    if (newSetName === "All") {
+      quantityOwned = matches.reduce(
+        (sum, c) => sum + Number(c.quantityOwned ?? 0),
+        0
+      );
+    } else {
+      const foundSetCard = matches.find((c) => c.set === newSetName);
+
+      quantityOwned = foundSetCard?.quantityOwned ?? 0;
+      if (!foundSetCard) return;
+      preferredCard = foundSetCard;
+    }
+
+    const scryfallData = await getScryfallCard({
+      cardName: cardName,
+      set: newSetName,
+      tcgPlayerId: preferredCard.tcgPlayerId ?? undefined,
+    });
+
+    setCards((prevCards) =>
+      prevCards.map((card) =>
+        card.name === cardName
+          ? {
+              ...card,
+              set: newSetName === "All" ? "All" : preferredCard.set,
+              setName: newSetName === "All" ? "All" : preferredCard.setName,
+              quantityOwned,
+              imageUrl: scryfallData?.previewUrl ?? card.imageUrl,
+            }
+          : card
+      )
+    );
+
+    setCardsWithQuantities((prevCards) =>
+      prevCards.map((card) =>
+        normalizeCardName(card.name) === normalized
+          ? {
+              ...card,
+              set: newSetName === "All" ? "All" : preferredCard.set,
+              setName: newSetName === "All" ? "All" : preferredCard.setName,
+              quantityOwned,
+              imageUrl: scryfallData?.previewUrl ?? card.imageUrl,
+            }
+          : card
+      )
+    );
+  }
 
   function onChangeQuantity(cardName: string, amount: number) {
     if (!setCards) return;
@@ -277,6 +336,7 @@ export function CardPreview({
                 card={card}
                 editable={editable}
                 isDeckView={isDeckView}
+                onChangeSet={onChangeSet}
                 onChangeQuantity={onChangeQuantity}
               />
             );
@@ -290,6 +350,7 @@ export function CardPreview({
           isDeckView={isDeckView}
           onChangeQuantity={onChangeQuantity}
           setCardFocused={setCardFocused}
+          onChangeSet={onChangeSet}
           hasCards={hasCards}
         />
       )}

@@ -17,7 +17,9 @@ interface CardListProps {
     quantityOwned: number;
     quantityNeeded?: number;
   })[];
+  hasCards: boolean;
   isDeckView: boolean;
+  onChangeSet: (cardName: string, newSetName: string) => void;
   onChangeQuantity: (cardName: string, amount: number) => void;
   setCardFocused: React.Dispatch<
     React.SetStateAction<
@@ -26,7 +28,6 @@ interface CardListProps {
       | undefined
     >
   >;
-  hasCards: boolean;
 }
 
 export function CardList({
@@ -34,6 +35,7 @@ export function CardList({
   editable,
   filteredAndSortedCards,
   isDeckView,
+  onChangeSet,
   onChangeQuantity,
   setCardFocused,
   hasCards,
@@ -62,6 +64,7 @@ export function CardList({
               card={cardFocused}
               editable={editable}
               isDeckView={isDeckView}
+              onChangeSet={onChangeSet}
               onChangeQuantity={onChangeQuantity}
             />
           ) : (
@@ -100,6 +103,7 @@ export function CardList({
               card={cardFocused}
               editable={editable}
               isDeckView={isDeckView}
+              onChangeSet={onChangeSet}
               onChangeQuantity={onChangeQuantity}
               isMobile={isMobile}
             />

@@ -95,3 +95,30 @@ function formatScryfallDetails(card: any): ScryfallDetails {
     setName: card.set_name,
   };
 }
+
+export async function getAllPrintings(cardName: string) {
+  const normalizedName = normalizeCardName(cardName);
+  const query = encodeURIComponent(normalizedName);
+  const url = `https://api.scryfall.com/cards/search?q=${query}&unique=prints`;
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("Failed to fetch all sets of the card");
+
+    const data = await res.json();
+    const cards = data.data as any[];
+
+    cards.sort(
+      (a, b) =>
+        new Date(b.released_at).getTime() - new Date(a.released_at).getTime()
+    );
+
+    return cards.map((c) => ({
+      set: c.set,
+      setName: c.set_name,
+    }));
+  } catch (err) {
+    console.error("Error fetching all sets of:", cardName, err);
+    return [];
+  }
+}
