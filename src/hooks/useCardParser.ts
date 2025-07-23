@@ -132,7 +132,7 @@ export function useCardParser() {
 
           if (!readingDeck || !line.trim()) continue;
 
-          const match = line.match(/^(\d+)x\s+(.+)$/);
+          const match = line.match(/^\s*(\d+)[xX]?\s+(.+)$/); // Supports `1x name`, `1 name`, `1 x name`, and `1X name`
           if (!match) continue;
 
           const quantity = parseInt(match[1], 10);
