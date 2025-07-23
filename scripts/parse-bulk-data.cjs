@@ -1,57 +1,69 @@
-const fs = require("fs");
-const path = require("path");
-const { chain } = require("stream-chain");
-const { parser } = require("stream-json");
-const { streamArray } = require("stream-json/streamers/StreamArray");
-const { Writable } = require("stream");
+import fs from "fs";
+import path from "path";
+import fetch from "node-fetch";
+import { chain } from "stream-chain";
+import { parser } from "stream-json";
+import { streamArray } from "stream-json/streamers/StreamArray";
 
-// We need to stream the bulk JSON due to error "ERR_STRING_TOO_LONG: Cannot create a string longer than 0x1fffffe8 characters"
-const inputPath = path.resolve(__dirname, "../public/mtg-cards-bulk.json");
-const outputPath = path.resolve(__dirname, "../public/mtg-cards-slim.json");
+const outputPath = path.resolve(process.cwd(), "public/mtg-cards-slim.json");
 
-const outputStream = fs.createWriteStream(outputPath);
-outputStream.write("[");
+async function run() {
+  // Step 1: fetch bulk metadata
+  const metaRes = await fetch("https://api.scryfall.com/bulk-data");
+  const meta = await metaRes.json();
+  const allCardsMeta = meta.data.find((d) => d.type === "all_cards");
+  if (!allCardsMeta) throw new Error("No all_cards bulk data");
 
-let isFirst = true;
+  // Step 2: fetch bulk JSON as stream
+  const res = await fetch(allCardsMeta.download_uri);
+  if (!res.ok) throw new Error("Failed to fetch bulk cards");
 
-const pipeline = chain([
-  fs.createReadStream(inputPath),
-  parser(),
-  streamArray(),
-  new Writable({
-    objectMode: true,
-    write({ value: card }, _, callback) {
-      const slimCard = {
-        id: card.id,
-        name: card.name,
-        set: card.set,
-        set_name: card.set_name,
-        mana_cost: card.mana_cost,
-        color_identity: card.color_identity,
-        type_line: card.type_line,
-        image_uris: card.image_uris ?? null,
-        card_faces: card.card_faces ?? null,
-        prices: {
-          usd: card.prices?.usd ?? null,
-        },
-        tcgplayer_product_id: card.identifiers?.tcgplayer_product_id ?? null,
-      };
+  // Step 3: set up stream chain to parse JSON array elements one by one
+  const pipeline = chain([res.body, parser(), streamArray()]);
 
-      const json = JSON.stringify(slimCard);
-      outputStream.write((isFirst ? "" : ",") + json);
-      isFirst = false;
+  // Step 4: create write stream for output JSON file
+  const outStream = fs.createWriteStream(outputPath);
+  outStream.write("[");
 
-      callback();
-    },
-  }),
-]);
+  let isFirst = true;
 
-pipeline.on("end", () => {
-  outputStream.write("]");
-  outputStream.end();
-  console.log(`[!] Success! Slimmed JSON to: ${outputPath}`);
-});
+  pipeline.on("data", ({ value: card }) => {
+    const slimCard = {
+      id: card.id,
+      card_faces: card.card_faces ?? null,
+      color_identity: card.color_identity,
+      image_uris: card.image_uris ?? null,
+      mana_cost: card.mana_cost,
+      name: card.name,
+      set_name: card.set_name,
+      set: card.set,
+      tcgplayer_product_id: card.identifiers?.tcgplayer_product_id ?? null,
+      type_line: card.type_line,
+      prices: {
+        usd: card.prices?.usd ?? null,
+      },
+    };
 
-pipeline.on("error", (error) => {
-  console.error("[!] Error:", error);
+    const json = JSON.stringify(slimCard);
+    if (!isFirst) outStream.write(",");
+
+    outStream.write(json);
+    isFirst = false;
+  });
+
+  pipeline.on("end", () => {
+    outStream.write("]");
+    outStream.end();
+    console.log(`[!] Slimmed JSON written to ${outputPath}`);
+  });
+
+  pipeline.on("error", (err) => {
+    console.error("[!] Streaming error:", err);
+    process.exit(1);
+  });
+}
+
+run().catch((err) => {
+  console.error("[!] Error:", err);
+  process.exit(1);
 });
