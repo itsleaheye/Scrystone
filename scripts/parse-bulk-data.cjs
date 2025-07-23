@@ -8,20 +8,20 @@ import { streamArray } from "stream-json/streamers/StreamArray";
 const outputPath = path.resolve(process.cwd(), "public/mtg-cards-slim.json");
 
 async function run() {
-  // Step 1: fetch bulk metadata
+  // Step 1: Fetch bulk metadata
   const metaRes = await fetch("https://api.scryfall.com/bulk-data");
   const meta = await metaRes.json();
   const allCardsMeta = meta.data.find((d) => d.type === "all_cards");
   if (!allCardsMeta) throw new Error("No all_cards bulk data");
 
-  // Step 2: fetch bulk JSON as stream
+  // Step 2: Fetch bulk JSON as a stream
   const res = await fetch(allCardsMeta.download_uri);
   if (!res.ok) throw new Error("Failed to fetch bulk cards");
 
-  // Step 3: set up stream chain to parse JSON array elements one by one
+  // Step 3: Set up streaming JSON parser chain
   const pipeline = chain([res.body, parser(), streamArray()]);
 
-  // Step 4: create write stream for output JSON file
+  // Step 4: Create write stream for output JSON file
   const outStream = fs.createWriteStream(outputPath);
   outStream.write("[");
 
@@ -30,23 +30,22 @@ async function run() {
   pipeline.on("data", ({ value: card }) => {
     const slimCard = {
       id: card.id,
-      card_faces: card.card_faces ?? null,
-      color_identity: card.color_identity,
-      image_uris: card.image_uris ?? null,
-      mana_cost: card.mana_cost,
       name: card.name,
-      set_name: card.set_name,
       set: card.set,
-      tcgplayer_product_id: card.identifiers?.tcgplayer_product_id ?? null,
+      set_name: card.set_name,
+      mana_cost: card.mana_cost,
+      color_identity: card.color_identity,
       type_line: card.type_line,
+      image_uris: card.image_uris ?? null,
+      card_faces: card.card_faces ?? null,
       prices: {
         usd: card.prices?.usd ?? null,
       },
+      tcgplayer_product_id: card.identifiers?.tcgplayer_product_id ?? null,
     };
 
     const json = JSON.stringify(slimCard);
     if (!isFirst) outStream.write(",");
-
     outStream.write(json);
     isFirst = false;
   });
@@ -54,16 +53,17 @@ async function run() {
   pipeline.on("end", () => {
     outStream.write("]");
     outStream.end();
+
     console.log(`[!] Slimmed JSON written to ${outputPath}`);
   });
 
-  pipeline.on("error", (err) => {
-    console.error("[!] Streaming error:", err);
+  pipeline.on("error", (error) => {
+    console.error("Stream error:", error);
     process.exit(1);
   });
 }
 
-run().catch((err) => {
-  console.error("[!] Error:", err);
+run().catch((error) => {
+  console.error("Fatal error:", error);
   process.exit(1);
 });
