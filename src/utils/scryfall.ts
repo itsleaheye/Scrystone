@@ -1,3 +1,4 @@
+import { findCardByNameAndSet, loadBulkCardData } from "./cards";
 import {
   normalizeCardName,
   normalizeColorIdentity,
@@ -30,7 +31,14 @@ export async function getScryfallCard({
   const cached = getCachedCard(cacheKey);
   if (cached) return formatScryfallDetails(cached);
 
-  // Try to fetch card details by TCGPlayer ID first
+  await loadBulkCardData();
+  const card = findCardByNameAndSet(cardName, set);
+  if (!card) {
+    console.warn(`Card not found locally: ${cardName}`);
+    return;
+  }
+
+  // Fetch with tcg player ID as a backup
   if (tcgPlayerId) {
     const url = `https://api.scryfall.com/cards/tcgplayer/${tcgPlayerId}`;
     const res = await fetch(url);
@@ -42,40 +50,8 @@ export async function getScryfallCard({
     }
   }
 
-  const query = encodeURIComponent(normalizedName);
-  const urls = [
-    `https://api.scryfall.com/cards/search?q=!${query}&set:${set}`, // exact search + set filter
-    `https://api.scryfall.com/cards/search?q=${query}&set:${set}`, // fuzzy search + set filter
-    `https://api.scryfall.com/cards/named?fuzzy=${query}`, // fallback fuzzy named search without set filter
-    `https://api.scryfall.com/cards/search?q=${query}&set:${set}`,
-  ];
-
-  try {
-    let data: any;
-    // Run through each query url and check for a match of scyfall card data
-    for (const url of urls) {
-      const response = await fetch(url);
-      if (!response.ok) continue;
-
-      data = await response.json();
-
-      // If response returns an array, take the 1st card and stop if valid
-      data = Array.isArray(data.data) ? data.data[0] : data;
-      if (data) break;
-    }
-
-    // If no matching cards were ever found, log it
-    if (!data) {
-      console.warn(`Card details not found: ${cardName}`);
-      return;
-    }
-
-    setCachedCard(normalizedName, data);
-    return formatScryfallDetails(data);
-  } catch (error) {
-    console.error(`Error fetching card details for "${cardName}":`, error);
-    return;
-  }
+  setCachedCard(cacheKey, card);
+  return formatScryfallDetails(card);
 }
 
 function formatScryfallDetails(card: any): ScryfallDetails {

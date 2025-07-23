@@ -47,8 +47,8 @@ export async function parseCSVToCollectionCards(
         imageUrl: scryfallDetails.previewUrl,
         quantityOwned: rawCard["Quantity"] || 1,
       };
-    } catch (err) {
-      console.warn(`Failed to fetch Scryfall data for ${name}:`, err);
+    } catch (error) {
+      console.warn(`Failed to fetch Scryfall data for ${name}:`, error);
       return null;
     }
   };

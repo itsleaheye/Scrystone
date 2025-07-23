@@ -141,8 +141,8 @@ export function useCardParser() {
           // Call your existing card adding logic
           await onDeckCardAdd(name, quantity);
         }
-      } catch (err) {
-        console.error(err);
+      } catch (error) {
+        console.error(error);
         handleError?.("Failed to parse or process the deck file.");
       } finally {
         setLoading?.(false);

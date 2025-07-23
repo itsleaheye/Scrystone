@@ -173,6 +173,7 @@
 
 .searchBar {
   width: 100%;
+  height: 40px;
   border-radius: var(--border-radius-base);
   background: var(--darkest-gray);
   border: 2px solid var(--darker-gray);
@@ -663,9 +664,8 @@
 
   .deckCardActions {
     display: flex;
-    align-items: center;
     flex-direction: row;
-    gap: var(--pad-sm);
+    gap: var(--pad-xs);
     flex-direction: row;
     margin-bottom: var(--pad-xs);
 
@@ -736,8 +736,6 @@
   }
   .deckCardActions {
     margin: 0 auto var(--pad-sm) auto;
-    flex-direction: row;
-    gap: var(--pad-xs);
     justify-content: center;
 
     .searchContainer {
