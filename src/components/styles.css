@@ -27,7 +27,7 @@
     font-size: 16px;
     font-weight: 600;
     letter-spacing: 0.5px;
-    padding: 0 var(--pad-xxs);
+    padding: var(--pad-xxxs) var(--pad-xxs);
     text-align: center;
 
     &:hover {
@@ -557,6 +557,12 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.navButton {
+  background-color: var(--blackest);
+  color: var(--white);
+  border: none;
 }
 
 .deckCardActions {

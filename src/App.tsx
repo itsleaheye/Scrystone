@@ -36,10 +36,10 @@ export default function App() {
             <h1>SCRYSTONE</h1>
           </div>
           <div className="flexRow">
-            <div
-              className={
+            <button
+              className={`navButton ${
                 location.pathname === "/how-it-works" ? "isActive" : ""
-              }
+              }`}
               onClick={() => {
                 if (showConfirmation && window.confirm("Discard changes?")) {
                   navigate("/how-it-works");
@@ -50,9 +50,11 @@ export default function App() {
               }}
             >
               <p>How it Works</p>
-            </div>
-            <div
-              className={location.pathname === "/" ? "isActive" : ""}
+            </button>
+            <button
+              className={`navButton ${
+                location.pathname === "/" ? "isActive" : ""
+              }`}
               onClick={() => {
                 if (showConfirmation && window.confirm("Discard changes?")) {
                   navigate("/");
@@ -63,11 +65,11 @@ export default function App() {
               }}
             >
               <p>Collection</p>
-            </div>
-            <div
-              className={
+            </button>
+            <button
+              className={`navButton ${
                 location.pathname.startsWith("/deck") ? "isActive" : ""
-              }
+              }`}
               onClick={() => {
                 if (showConfirmation && window.confirm("Discard changes?")) {
                   navigate("/decks");
@@ -78,7 +80,7 @@ export default function App() {
               }}
             >
               <p>Decks</p>
-            </div>
+            </button>
           </div>
         </div>
         <div className="summaryContainer flexRow">

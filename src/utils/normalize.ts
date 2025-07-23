@@ -23,14 +23,16 @@ export function normalizeMana(manaCostStr: string): {
     ?.map((t) => t.slice(1, -1));
   if (!manaTokens) return {};
 
-  const colours = manaTokens.filter((token) => /^[WUBRG]$/.test(token));
+  const colours = [
+    ...new Set(manaTokens.filter((token) => /^[WUBRG]$/.test(token))),
+  ];
 
   return {
     colours: colours.length ? colours : undefined,
   };
 }
 
-export function normalizeColorIdentity(colorIdentity: string[]): string {
+export function normalizeColourIdentity(colorIdentity: string[]): string {
   return colorIdentity.map((color) => `{${color}}`).join("");
 }
 

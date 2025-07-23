@@ -67,8 +67,7 @@ export function findCardByNameAndSet(
 
   return bulkCardData.find((card) => {
     const nameMatch = normalizeCardName(card.name) === normalizedName;
-    const setMatch =
-      !set || card.set.toLowerCase() === set.toLowerCase() || set == "All";
+    const setMatch = !set || card.set.toLowerCase() === set.toLowerCase();
 
     return nameMatch && setMatch;
   });

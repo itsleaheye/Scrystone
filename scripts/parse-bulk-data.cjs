@@ -55,7 +55,7 @@ async function run() {
   pipeline.on("end", () => {
     outStream.write("]");
     outStream.end();
-    console.log(`[✓] Slimmed JSON written to ${outputPath}`);
+    console.log(`[✓] Finished parsing Scryfall bulk data to ${outputPath}`);
   });
 
   pipeline.on("error", (error) => {
