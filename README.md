@@ -20,7 +20,7 @@ A 'Magic the Gathering' web app built with React, Tailwind CSS, and the Scryfall
 - **Scryfall API Integration** – Fetch real-time card details like art, price, and rarities
 
 - **Local Storage** – All data is stored in-browser; no sign-up or accounts necessary
-  - F_irebase prototype in the `/firebase` branch_
+  - _Firebase prototype in the `/firebase` branch_
 
 - **Responsive UI** – A clean, fast, and mobile-friendly design, aided by Tailwind
 
@@ -32,7 +32,7 @@ A 'Magic the Gathering' web app built with React, Tailwind CSS, and the Scryfall
 
 - **Languages:** Typescript, CSS, JS
 - **Libraries:** React, Vite, Tailwind, ReactIcons, DateFNSm, Select, React Router
-- **Storage:** Browser Local Storage
+- **Storage:** Browser Local Storage & Firebase
 - **IDE** - Visual Studio Code
 
 ---
@@ -54,9 +54,10 @@ A 'Magic the Gathering' web app built with React, Tailwind CSS, and the Scryfall
 - [x] Improve collection download speeds
 - [x] Routing integration
 - [x] Card search bar added to card action row | [Design](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=1-3&t=YXOAXnY0SHo6VljJ-4)
-- [x] Card set distinguishment
+- [x] Card collection set distinguishment
+- [ ] Deck building set control
 - [x] Design V2 (new nav, FTUX, theming)
-- [ ] Render the art preview that matches the card (i.e. borderless card renders borderless art)
+- [x] Render the art preview that matches the card (i.e. borderless card renders borderless art)
 - [ ] OnClick in collection view, flip animation and show value, set, quantity, and if it's in a deck
 - [x] Ability to import decks
 - [x] Render mana symbols instead of placeholder solid colours
