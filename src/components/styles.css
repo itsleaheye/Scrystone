@@ -565,6 +565,23 @@
   border: none;
 }
 
+.navAuthButton {
+  border: 2px solid var(--white);
+  border-radius: var(--border-radius-base);
+
+  &:hover {
+    opacity: 0.75;
+    transition: var(--ease-in);
+  }
+
+  p {
+    padding: 0 3px 0 1px;
+    display: flex;
+    align-items: center;
+    gap: var(--pad-xxs);
+  }
+}
+
 .deckCardActions {
   display: flex;
   flex-direction: column;
