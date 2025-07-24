@@ -1,0 +1,52 @@
+.authForm {
+  width: 100%;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pad-xs);
+  }
+}
+.authInput {
+  font-size: var(--font-size-base);
+  border-radius: var(--border-radius-base);
+  border: 2px solid var(--darker-gray);
+  padding: var(--pad-xxxs) var(--pad-xs);
+  color: var(--white);
+  background-color: var(--darkest-gray);
+
+  &::placeholder {
+    color: var(--white);
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.authButton {
+  border-radius: var(--border-radius-base);
+  background-color: var(--black);
+  color: var(--white);
+  border: 2px solid var(--blue);
+  display: flex;
+  align-items: center;
+  padding: var(--pad-xxxs) var(--pad-xs) var(--pad-xxxs) var(--pad-xxs);
+  gap: var(--pad-xxs);
+  width: 50%;
+  justify-content: center;
+  font-weight: bold;
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.5;
+    transition: var(--ease-in);
+  }
+}
+
+.authSecondaryButton a {
+  background-color: var(--black);
+  color: var(--off-white);
+  text-decoration: none;
+  text-align: center;
+}

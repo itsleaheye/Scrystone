@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { isValidEmail, isValidPassword, useAuth } from "../../utils/auth";
 import { useState } from "react";
 import { loginUser, registerUser } from "../../firebaseAuth";
+import "./Auth.css";
+import { MdLogin } from "react-icons/md";
 
 export function LogInForm() {
   const navigate = useNavigate();
@@ -53,11 +55,8 @@ export function LogInForm() {
   };
 
   return (
-    <div className="text-center">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm"
-      >
+    <div className="text-center authForm">
+      <form onSubmit={handleSubmit}>
         {error && (
           <p className="text-red-600 text-sm mb-4 text-center">{error}</p>
         )}
@@ -68,7 +67,7 @@ export function LogInForm() {
           value={email}
           required
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full mb-4 p-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="authInput"
         />
 
         <input
@@ -77,7 +76,7 @@ export function LogInForm() {
           value={password}
           required
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full mb-4 p-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="authInput"
         />
 
         {isSignUp && (
@@ -87,15 +86,16 @@ export function LogInForm() {
             value={verifyPassword}
             required
             onChange={(e) => setVerifyPassword(e.target.value)}
-            className="w-full mb-4 p-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="authInput"
           />
         )}
 
         <div className="flexRow">
           <button className="authButton" type="submit">
+            {!isSignUp && <MdLogin />}
             {isSignUp ? "Sign Up" : "Log In"}
           </button>
-          <p className="text-sm mt-4 text-center">
+          <p className="text-sm mt-4 text-center authSecondaryButton">
             <a
               onClick={() => setIsSignUp(!isSignUp)}
               className="ml-1 text-blue-600 underline"

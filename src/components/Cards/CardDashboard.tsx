@@ -3,7 +3,6 @@ import { CardPreview } from "./CardPreview";
 
 export function CardDashboard() {
   const cards = getCardsFromStorage();
-  // if (!cards || cards.length == 0) return <Welcome />;
 
   return (
     <div className="contentContainer" style={{ maxWidth: "1600px" }}>

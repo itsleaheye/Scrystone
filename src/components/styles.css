@@ -47,7 +47,7 @@
   background: url("../assets/heroLong.png");
   background-size: cover;
   background-position: top;
-  height: 550px;
+  padding-bottom: var(--pad-md);
 }
 
 .summaryContainer {
@@ -566,12 +566,19 @@
 }
 
 .navAuthButton {
-  border: 2px solid var(--white);
+  color: var(--gray);
+  border: 2px solid var(--gray);
   border-radius: var(--border-radius-base);
 
   &:hover {
-    opacity: 0.75;
+    opacity: 1;
+    color: var(--white);
+    border: 2px solid var(--white);
     transition: var(--ease-in);
+
+    p {
+      opacity: 1;
+    }
   }
 
   p {
@@ -597,8 +604,6 @@
   }
 
   .headingContainer {
-    height: 450px;
-
     .pageTitle {
       flex-direction: row;
       justify-content: space-between;
@@ -628,7 +633,6 @@
     min-width: 100px;
   }
   .summaryContainer {
-    margin: 0 auto 2rem auto;
     max-width: 500px;
 
     .flexCol {
