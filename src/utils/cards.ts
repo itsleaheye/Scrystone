@@ -42,18 +42,28 @@ export function getColoursFromCards(cards?: DeckCard[]): string[] {
   return Array.from(colourSet).sort();
 }
 
-// Load datas from our slimmed JSON file
-let bulkCardData: any[] = [];
+let bulkCardDataMap: Map<string, any> = new Map();
 
 export async function loadBulkCardData(): Promise<void> {
-  if (bulkCardData.length > 0) return; // If already loaded
+  if (bulkCardDataMap.size > 0) return; // Already loaded
 
   try {
     const res = await fetch("/mtg-cards-slim.json");
     if (!res.ok) throw new Error("Failed to load: 'mtg-cards-slim.json'");
 
     const json = await res.json();
-    bulkCardData = json;
+
+    for (const card of json) {
+      const nameKey = getCardKey(card.name);
+      const setKey = getCardKey(card.name, card.set);
+
+      // Fall back
+      if (!bulkCardDataMap.has(nameKey)) {
+        bulkCardDataMap.set(nameKey, card);
+      }
+
+      bulkCardDataMap.set(setKey, card);
+    }
   } catch (error) {
     console.error("[!] Error loading bulk card data:", error);
   }
@@ -63,16 +73,13 @@ export function findCardByNameAndSet(
   cardName: string,
   set?: string
 ): any | undefined {
+  const specificKey = getCardKey(cardName, set);
+  const fallbackKey = getCardKey(cardName);
+
+  return bulkCardDataMap.get(specificKey) ?? bulkCardDataMap.get(fallbackKey);
+}
+
+export function getCardKey(cardName: string, set?: string): string {
   const normalizedName = normalizeCardName(cardName);
-
-  return bulkCardData.find((card) => {
-    const nameMatch = normalizeCardName(card.name) === normalizedName;
-
-    if (set) {
-      const setMatch = !set || card.set.toLowerCase() === set.toLowerCase();
-      return nameMatch && setMatch;
-    }
-
-    return nameMatch;
-  });
+  return set ? `${normalizedName}-${set}` : normalizedName;
 }

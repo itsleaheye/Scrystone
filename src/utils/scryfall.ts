@@ -5,7 +5,7 @@ import { getCachedCard, setCachedCard } from "./storage";
 interface ScryfallDetails {
   manaTypes?: string[];
   name: string;
-  previewUrl?: string;
+  imageUrl?: string;
   price: number;
   set: string;
   setName: string;
@@ -51,14 +51,11 @@ export async function getScryfallCard({
   return formatScryfallDetails(card);
 }
 
-function formatScryfallDetails(card: any): ScryfallDetails {
-  if (card.name === "Exdeath, Void Warlock") {
-    console.log("void", card);
-  }
+export function formatScryfallDetails(card: any): ScryfallDetails {
   const { colours } = normalizeMana(card.mana_cost);
 
   return {
-    previewUrl:
+    imageUrl:
       card.image_uris?.normal || card.card_faces?.[0]?.image_uris?.normal,
     manaTypes: colours ?? [],
     name: card.name,

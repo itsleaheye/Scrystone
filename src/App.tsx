@@ -185,7 +185,9 @@ export default function App() {
         <div className="loading">
           <div className="spinner"></div>
           <p className="text-center">
-            Loading {currentProgress}/{totalProgress} cards
+            {currentProgress !== totalProgress
+              ? `Loading ${currentProgress}/${totalProgress} cards`
+              : "Wrapping up some final details..."}
           </p>
         </div>
       )}

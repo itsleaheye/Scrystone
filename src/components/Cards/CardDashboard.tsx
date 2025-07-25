@@ -5,14 +5,14 @@ import type { CollectionCard } from "../../types/MagicTheGathering";
 
 export function CardDashboard() {
   const [cards, setCards] = useState<CollectionCard[]>([]);
+
+  const loadCards = async () => {
+    const data = await getCardsFromStorage();
+    setCards(data);
+  };
+
   useEffect(() => {
-    getCardsFromStorage()
-      .then((data) => {
-        setCards(data);
-      })
-      .catch(() => {
-        setCards([]);
-      });
+    loadCards();
   }, []);
 
   return (

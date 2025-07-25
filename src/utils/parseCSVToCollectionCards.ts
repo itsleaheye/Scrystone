@@ -1,6 +1,7 @@
 import type { CollectionCard } from "../types/MagicTheGathering";
+import { findCardByNameAndSet, loadBulkCardData } from "./cards";
 import { normalizeCardName, normalizeCardType } from "./normalize";
-import { getScryfallCard } from "./scryfall";
+import { formatScryfallDetails } from "./scryfall";
 
 const REQUEST_DELAY_MS = 100;
 
@@ -8,47 +9,61 @@ export async function parseCSVToCollectionCards(
   rawCards: any[],
   onProgress?: (processed: number, total: number) => void
 ): Promise<CollectionCard[]> {
+  await loadBulkCardData();
+
   let completedCards = 0;
   const total = rawCards.length;
 
   const processCard = async (rawCard: any): Promise<CollectionCard | null> => {
-    const name = normalizeCardName(rawCard.Name);
+    const cardName = normalizeCardName(rawCard.Name);
     if (
-      !name ||
-      name.toLowerCase().includes("token") ||
-      name.toLowerCase().includes("checklist")
+      !cardName ||
+      cardName.toLowerCase().includes("token") ||
+      cardName.toLowerCase().includes("checklist")
     ) {
       return null;
     }
 
     try {
-      const scryfallDetails = await getScryfallCard({
-        cardName: name,
-        set: rawCard["Set"],
-        tcgPlayerId: rawCard["Product ID"],
-      });
-      if (!scryfallDetails) {
-        console.warn(`No Scryfall data found for: ${name}`);
-        return null;
+      const scryfallMatch = findCardByNameAndSet(cardName, rawCard["Set"]);
+      if (!scryfallMatch) {
+        console.warn(`Card not found locally: ${cardName}`);
       }
 
-      const type = normalizeCardType(scryfallDetails.type);
+      // Fallback with tcg player ID
+      if (rawCard["Product ID"]) {
+        const url = `https://api.scryfall.com/cards/tcgplayer/${rawCard["Product ID"]}`;
+
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+
+          return {
+            ...formatScryfallDetails(data),
+            quantityOwned: rawCard["Quantity"] || 1,
+          };
+        } else {
+          return null;
+        }
+      }
+
+      const type = normalizeCardType(scryfallMatch.type);
 
       return {
-        name,
-        manaTypes: scryfallDetails.manaTypes,
+        name: scryfallMatch.name,
+        manaTypes: scryfallMatch.manaTypes,
         number: rawCard["Card Number"],
-        price: scryfallDetails.price ? scryfallDetails.price * 1.37 : undefined,
+        price: scryfallMatch.price ? scryfallMatch.price * 1.37 : undefined,
         rarity: rawCard["Rarity"],
         set: rawCard["Set"],
-        setName: scryfallDetails.setName,
+        setName: scryfallMatch.setName,
         type,
         tcgPlayerId: rawCard["Product ID"],
-        imageUrl: scryfallDetails.previewUrl,
+        imageUrl: scryfallMatch.previewUrl,
         quantityOwned: rawCard["Quantity"] || 1,
       };
     } catch (error) {
-      console.warn(`Failed to fetch Scryfall data for ${name}:`, error);
+      console.warn(`Failed to fetch Scryfall data for ${cardName}:`, error);
       return null;
     }
   };

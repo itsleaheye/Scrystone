@@ -81,6 +81,7 @@ export function DeckEdit() {
           }
         }}
         onPrimary={async () => {
+          console.log(cards, name, format, deck?.id, description);
           const savedDeck = await onDeckSave(
             cards,
             name,

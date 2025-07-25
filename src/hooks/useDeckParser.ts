@@ -64,7 +64,7 @@ export function useDeckParser() {
     const deck: Deck = {
       id: id ?? generateUniqueDeckId(),
       name: name.length > 1 ? name : "Unnamed Deck",
-      description,
+      description: description,
       format: validFormat,
       colours: colours,
       cards: deckCards,

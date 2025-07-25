@@ -9,8 +9,12 @@ import { format } from "date-fns";
 import { useCallback, useEffect, useState, type ChangeEvent } from "react";
 import { auth, db } from "../firebase";
 import { collection, doc, setDoc } from "firebase/firestore";
+import { getCardKey } from "../utils/cards";
+import { useNavigate } from "react-router-dom";
 
 export function useCardParser() {
+  const navigate = useNavigate();
+
   const [cards, setCards] = useState<DeckCard[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,6 +57,11 @@ export function useCardParser() {
           header: true,
           skipEmptyLines: true,
           complete: async (results) => {
+            if (!auth.currentUser) {
+              handleError("You must be logged in to upload your collection.");
+              return;
+            }
+
             const rawCards = results.data as any[];
             const parsedCards = await parseCSVToCollectionCards(
               rawCards,
@@ -62,24 +71,22 @@ export function useCardParser() {
               }
             );
 
-            if (!auth.currentUser) {
-              handleError("You must be logged in to upload your collection.");
-              return;
-            }
-
             const uid = auth.currentUser.uid;
             const userCollectionRef = collection(db, "users", uid, "cards");
 
             await Promise.all(
               parsedCards.map((card) => {
-                const normalizedName = normalizeCardName(card.name);
-                const cacheKey = `${normalizedName}-${card.set}`;
+                const cacheKey = getCardKey(card.name, card.set);
                 const cardRef = doc(userCollectionRef, cacheKey);
 
                 const sanitizedCard = {
                   ...card,
                   price: card.price ?? null,
                   manaTypes: card.manaTypes ?? [],
+                  set: card.set ?? null,
+                  setName: card.setName ?? null,
+                  type: card.type ?? null,
+                  quantityOwned: card.quantityOwned ?? 1,
                 };
 
                 return setDoc(cardRef, sanitizedCard);
@@ -98,6 +105,8 @@ export function useCardParser() {
             setUploadTime(timestamp);
             setCollectionSummary(getCollectionSummary(parsedCards));
             setLoading(false);
+
+            navigate("/collection");
           },
         });
       } catch {
@@ -123,7 +132,6 @@ export function useCardParser() {
         cardName: normalizedCardName,
         set: setPreference,
       });
-      console.log("scryfallCard", scryfallCard);
 
       const type = normalizeCardType(scryfallCard?.type);
       let setName = scryfallCard?.setName;
@@ -138,7 +146,7 @@ export function useCardParser() {
       }
 
       const newCard: DeckCard = {
-        imageUrl: scryfallCard?.previewUrl,
+        imageUrl: scryfallCard?.imageUrl,
         name: normalizedCardName,
         price: scryfallCard?.price && scryfallCard.price * 1.37, //To do, convert to CAD
         type,
