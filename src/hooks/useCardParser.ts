@@ -6,7 +6,9 @@ import { parseCSVToCollectionCards } from "../utils/parseCSVToCollectionCards";
 import { getCardsFromStorage } from "../utils/storage";
 import { getCollectionSummary } from "../utils/summaries";
 import { format } from "date-fns";
-import { useCallback, useState, type ChangeEvent } from "react";
+import { useCallback, useEffect, useState, type ChangeEvent } from "react";
+import { auth, db } from "../firebase";
+import { collection, doc, setDoc } from "firebase/firestore";
 
 export function useCardParser() {
   const [cards, setCards] = useState<DeckCard[]>([]);
@@ -18,6 +20,19 @@ export function useCardParser() {
     const saved = localStorage.getItem("mtg_cards_updated_at");
     return saved ? saved : null;
   });
+
+  const [collectionSummary, setCollectionSummary] = useState({
+    size: 0,
+    value: 0,
+  });
+
+  useEffect(() => {
+    const loadSummary = async () => {
+      const storedCards = await getCardsFromStorage();
+      setCollectionSummary(getCollectionSummary(storedCards));
+    };
+    loadSummary();
+  }, []);
 
   const handleError = (message: string) => {
     setLoading(false);
@@ -47,11 +62,41 @@ export function useCardParser() {
               }
             );
 
+            if (!auth.currentUser) {
+              handleError("You must be logged in to upload your collection.");
+              return;
+            }
+
+            const uid = auth.currentUser.uid;
+            const userCollectionRef = collection(db, "users", uid, "cards");
+
+            await Promise.all(
+              parsedCards.map((card) => {
+                const normalizedName = normalizeCardName(card.name);
+                const cacheKey = `${normalizedName}-${card.set}`;
+                const cardRef = doc(userCollectionRef, cacheKey);
+
+                const sanitizedCard = {
+                  ...card,
+                  price: card.price ?? null,
+                  manaTypes: card.manaTypes ?? [],
+                };
+
+                return setDoc(cardRef, sanitizedCard);
+              })
+            );
+
             const timestamp = format(new Date(), "MMMM dd yyyy,  hh:mm a");
-            localStorage.setItem("mtg_cards", JSON.stringify(parsedCards));
-            localStorage.setItem("mtg_cards_updated_at", timestamp);
+            await setDoc(
+              doc(db, "users", uid),
+              {
+                collectionUpdatedAt: timestamp,
+              },
+              { merge: true }
+            );
 
             setUploadTime(timestamp);
+            setCollectionSummary(getCollectionSummary(parsedCards));
             setLoading(false);
           },
         });
@@ -68,31 +113,33 @@ export function useCardParser() {
       quantityNeeded?: number,
       setPreference?: string
     ) => {
-      const ownedCards = getCardsFromStorage();
+      const normalizedCardName = normalizeCardName(cardName);
+      const ownedCards = await getCardsFromStorage();
       const ownedMatch = ownedCards.find(
-        (card) => normalizeCardName(card.name) === normalizeCardName(cardName)
+        (card) => normalizeCardName(card.name) === normalizedCardName
       );
 
       const scryfallCard = await getScryfallCard({
-        cardName,
+        cardName: normalizedCardName,
         set: setPreference,
       });
+      console.log("scryfallCard", scryfallCard);
 
       const type = normalizeCardType(scryfallCard?.type);
       let setName = scryfallCard?.setName;
       if (
-        cardName === "Mountain" ||
-        cardName === "Plains" ||
-        cardName == "Island" ||
-        cardName === "Swamp" ||
-        cardName === "Forest"
+        normalizedCardName === "Mountain" ||
+        normalizedCardName === "Plains" ||
+        normalizedCardName == "Island" ||
+        normalizedCardName === "Swamp" ||
+        normalizedCardName === "Forest"
       ) {
         setName = "Any";
       }
 
       const newCard: DeckCard = {
         imageUrl: scryfallCard?.previewUrl,
-        name: cardName,
+        name: normalizedCardName,
         price: scryfallCard?.price && scryfallCard.price * 1.37, //To do, convert to CAD
         type,
         set: scryfallCard?.set ?? "Any",
@@ -150,9 +197,6 @@ export function useCardParser() {
     },
     [onDeckCardAdd, handleError, setLoading]
   );
-
-  const storedCards = getCardsFromStorage();
-  const collectionSummary = getCollectionSummary(storedCards);
 
   return {
     cards,

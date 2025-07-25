@@ -53,7 +53,18 @@ export function CardPreview({
     );
   }
 
-  const ownedCards = getCardsFromStorage();
+  const [ownedCards, setOwnedCards] = useState<CollectionCard[]>([]);
+
+  useEffect(() => {
+    getCardsFromStorage()
+      .then((data) => {
+        setOwnedCards(data);
+      })
+      .catch(() => {
+        setOwnedCards([]);
+      });
+  }, []);
+
   const sourceCards = deckCards ?? collectionCards ?? [];
   const cardsWithQuantities = mergeCardQuantities(
     sourceCards,

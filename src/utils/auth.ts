@@ -33,9 +33,17 @@ export function isValidEmail(email: string): boolean {
 export const handleLogout = async () => {
   try {
     await signOut(auth);
-    console.log("User signed out successfully");
-    // Optional: redirect or update app state
   } catch (error) {
     console.error("Error signing out:", error);
   }
 };
+
+export function waitForUser(): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      unsubscribe(); // clean up listener
+      if (user?.uid) resolve(user.uid);
+      else reject(new Error("User not logged in"));
+    });
+  });
+}

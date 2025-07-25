@@ -1,18 +1,15 @@
 import { findCardByNameAndSet, loadBulkCardData } from "./cards";
-import {
-  normalizeCardName,
-  normalizeColourIdentity,
-  normalizeMana,
-} from "./normalize";
+import { normalizeCardName, normalizeMana } from "./normalize";
 import { getCachedCard, setCachedCard } from "./storage";
 
 interface ScryfallDetails {
   manaTypes?: string[];
+  name: string;
   previewUrl?: string;
   price: number;
-  type: string;
   set: string;
   setName: string;
+  type: string;
 }
 
 interface getScryfallCardProps {
@@ -31,6 +28,13 @@ export async function getScryfallCard({
   const cached = getCachedCard(cacheKey);
   if (cached) return formatScryfallDetails(cached);
 
+  await loadBulkCardData();
+  const card = findCardByNameAndSet(cardName, set);
+  if (!card) {
+    console.warn(`Card not found locally: ${cardName}`);
+    return;
+  }
+
   // Fetch with tcg player ID as a backup
   if (tcgPlayerId) {
     const url = `https://api.scryfall.com/cards/tcgplayer/${tcgPlayerId}`;
@@ -43,34 +47,24 @@ export async function getScryfallCard({
     }
   }
 
-  await loadBulkCardData();
-  const card = findCardByNameAndSet(cardName, set);
-  if (!card) {
-    console.warn(`Card not found locally: ${cardName}`);
-    return;
-  }
-
   setCachedCard(cacheKey, card);
   return formatScryfallDetails(card);
 }
 
 function formatScryfallDetails(card: any): ScryfallDetails {
-  const manaCost =
-    card.color_identity !== undefined
-      ? normalizeColourIdentity(card.color_identity)
-      : card.mana_cost;
-  card.mana_cost; //Scryfall uses American spelling and underscores
-  const { colours } = manaCost
-    ? normalizeMana(manaCost as string)
-    : { colours: undefined };
+  if (card.name === "Exdeath, Void Warlock") {
+    console.log("void", card);
+  }
+  const { colours } = normalizeMana(card.mana_cost);
 
   return {
     previewUrl:
       card.image_uris?.normal || card.card_faces?.[0]?.image_uris?.normal,
+    manaTypes: colours ?? [],
+    name: card.name,
     price: parseFloat(card.prices?.usd) || 0,
-    manaTypes: colours,
-    type: card.type_line?.split("—")[0]?.trim().split(" ")[0],
     set: card.set,
-    setName: card.set_name,
+    setName: card.set_name ?? card.set,
+    type: card.type_line?.split("—")[0]?.trim().split(" ")[0],
   };
 }

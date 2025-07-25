@@ -1,17 +1,25 @@
-import type { Deck } from "../../types/MagicTheGathering";
+import type { CardTypeSummary, Deck } from "../../types/MagicTheGathering";
 import { TypeSummary } from "../shared/TypeSummary";
 import "../styles.css";
 import { getDeckTypeSummaryWithDefaults, isDeckReady } from "../../utils/decks";
 import { ManaRow } from "./components/ManaRow";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 interface Props {
   deck: Deck;
 }
 
 export function DeckView({ deck }: Props) {
-  const summary = getDeckTypeSummaryWithDefaults(deck.cards);
   const navigate = useNavigate();
+  const [summary, setSummary] = useState<CardTypeSummary[]>([]);
+  deck.cards;
+
+  useEffect(() => {
+    getDeckTypeSummaryWithDefaults(deck.cards).then((typeSummary) => {
+      setSummary(typeSummary);
+    });
+  }, [deck.cards]);
 
   const handleClick = () => {
     navigate(`/deck/${deck.id}/`);

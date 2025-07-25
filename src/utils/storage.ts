@@ -1,19 +1,28 @@
+import { collection, getDocs } from "firebase/firestore";
 import type { CollectionCard, Deck } from "../types/MagicTheGathering";
+import { waitForUser } from "./auth";
+import { db } from "../firebase";
 
-export function getCardsFromStorage(): CollectionCard[] {
-  const rawCards = localStorage.getItem("mtg_cards");
+export async function getCardsFromStorage(): Promise<CollectionCard[]> {
+  const uid = await waitForUser();
+  if (!uid) return [];
 
-  return rawCards ? (JSON.parse(rawCards) as CollectionCard[]) : [];
+  const snapshot = await getDocs(collection(db, "users", uid, "cards"));
+
+  return snapshot.docs.map((doc) => doc.data() as CollectionCard);
 }
 
-export function getDecksFromStorage(deckId?: number): Deck[] {
-  const rawDecks = localStorage.getItem("mtg_decks");
-  const allDecks = rawDecks ? (JSON.parse(rawDecks) as Deck[]) : [];
+export async function getDecksFromStorage(deckId?: number): Promise<Deck[]> {
+  const uid = await waitForUser();
+  if (!uid) return [];
+
+  const snapshot = await getDocs(collection(db, "users", uid, "decks"));
+  const decks = snapshot.docs.map((doc) => doc.data() as Deck);
 
   if (deckId === undefined) {
-    return allDecks;
+    return decks;
   } else {
-    return allDecks.filter((d) => d.id == deckId);
+    return decks.filter((d) => d.id == deckId);
   }
 }
 

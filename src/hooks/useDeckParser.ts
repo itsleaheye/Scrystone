@@ -5,8 +5,10 @@ import {
   getDeckCost,
   getDeckManaSummary,
 } from "../utils/decks";
-import { getCardsFromStorage } from "../utils/storage";
+import { getCardsFromStorage, getDecksFromStorage } from "../utils/storage";
 import { normalizeCardName } from "../utils/normalize";
+import { auth, db } from "../firebase";
+import { deleteDoc, doc, setDoc } from "firebase/firestore";
 
 export function useDeckParser() {
   const [decks, setDecks] = React.useState<Deck[]>([]);
@@ -16,7 +18,7 @@ export function useDeckParser() {
     return ["Commander", "Standard", "Draft"].includes(value);
   };
 
-  const onDeckSave = (
+  const onDeckSave = async (
     cards: DeckCard[],
     name: string,
     format: string,
@@ -25,12 +27,8 @@ export function useDeckParser() {
   ) => {
     setLoading(true);
 
-    const existingRawDecks = localStorage.getItem("mtg_decks");
-    const existingDecks: Deck[] = existingRawDecks
-      ? JSON.parse(existingRawDecks)
-      : [];
-
-    const ownedCards = getCardsFromStorage();
+    const existingDecks = await getDecksFromStorage();
+    const ownedCards = await getCardsFromStorage();
 
     const deckCards: DeckCard[] = cards.map((card) => {
       const normalizedName = card.name ? normalizeCardName(card.name) : "";
@@ -87,26 +85,33 @@ export function useDeckParser() {
       }
     })();
 
-    localStorage.setItem("mtg_decks", JSON.stringify(updatedDecks));
+    const uid = auth.currentUser?.uid;
+    if (!uid) return;
+
+    await setDoc(doc(db, "users", uid, "decks", String(deck.id)), deck);
+
     setDecks(updatedDecks);
     setLoading(false);
 
     return deck;
   };
 
-  const onDeckDelete = (id: number) => {
+  const onDeckDelete = async (id: number) => {
     setLoading(true);
 
-    const existingRawDecks = localStorage.getItem("mtg_decks");
-    const existingDecks: Deck[] = existingRawDecks
-      ? JSON.parse(existingRawDecks)
-      : [];
+    const uid = auth.currentUser?.uid;
+    if (!uid) return;
 
-    const updatedDecks = existingDecks.filter((deck) => deck.id !== id);
+    try {
+      const deckRef = doc(db, "users", uid, "decks", id.toString());
+      await deleteDoc(deckRef);
 
-    localStorage.setItem("mtg_decks", JSON.stringify(updatedDecks));
-    setDecks(updatedDecks);
-    setLoading(false);
+      setDecks((prevDecks) => prevDecks.filter((deck) => deck.id !== id));
+    } catch (error) {
+      console.error("Error deleting card:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onDeckExport = (

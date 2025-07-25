@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { TbListSearch } from "react-icons/tb";
 import { normalizeCardName } from "../../utils/normalize";
-import type { DeckCard } from "../../types/MagicTheGathering";
+import type { CollectionCard, DeckCard } from "../../types/MagicTheGathering";
 import { FaSearch } from "react-icons/fa";
 import { getCardsFromStorage } from "../../utils/storage";
 
@@ -23,7 +23,17 @@ export function CardSearchBar({
   const deckCardNames = new Set(
     deckCards.map((c) => normalizeCardName(c.name))
   );
-  const ownedCards = getCardsFromStorage();
+
+  const [ownedCards, setOwnedCards] = useState<CollectionCard[]>([]);
+  useEffect(() => {
+    getCardsFromStorage()
+      .then((data) => {
+        setOwnedCards(data);
+      })
+      .catch(() => {
+        setOwnedCards([]);
+      });
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
