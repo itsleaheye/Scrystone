@@ -12,6 +12,6 @@ export const saveCollection = async (cards: CollectionCard[]) => {
   for (const card of cards) {
     const normalizedName = normalizeCardName(card.name);
     const cacheKey = `${normalizedName}-${card.set}`;
-    await setDoc(doc(collectionRef, cacheKey), card); // Using card name as ID, instead of set and cardname
+    await setDoc(doc(collectionRef, cacheKey), card);
   }
 };

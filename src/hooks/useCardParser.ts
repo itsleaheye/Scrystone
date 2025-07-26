@@ -129,7 +129,6 @@ export function useCardParser() {
       const ownedMatch = ownedCards.find(
         (card) => normalizeCardName(card.name) === normalizedCardName
       );
-      console.log("ownedMatch", ownedMatch);
 
       const scryfallCard = await getScryfallCard({
         cardName: normalizedCardName,
