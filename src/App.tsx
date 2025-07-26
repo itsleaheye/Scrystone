@@ -98,6 +98,10 @@ export default function App() {
                   : ""
               }`}
               onClick={() => {
+                if (!user) {
+                  alert("Please log in to view your collection.");
+                  return;
+                }
                 if (showConfirmation && window.confirm("Discard changes?")) {
                   navigate("/");
                 }
@@ -113,6 +117,10 @@ export default function App() {
                 location.pathname.startsWith("/deck") ? "isActive" : ""
               }`}
               onClick={() => {
+                if (!user) {
+                  alert("Please log in to start deck building.");
+                  return;
+                }
                 if (showConfirmation && window.confirm("Discard changes?")) {
                   navigate("/decks");
                 }
@@ -167,7 +175,7 @@ export default function App() {
             ) : (
               <LogInForm />
             )}
-            {hasCollection && (
+            {hasCollection && user && (
               <p className="subtext">Last synced {collection.updatedAt}</p>
             )}
           </div>

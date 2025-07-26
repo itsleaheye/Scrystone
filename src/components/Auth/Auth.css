@@ -44,9 +44,16 @@
   }
 }
 
-.authSecondaryButton a {
+.authSecondaryButton {
   background-color: var(--black);
-  color: var(--off-white);
+  border: none;
+  color: var(--white);
   text-decoration: none;
   text-align: center;
+
+  &:hover {
+    cursor: pointer;
+    transition: var(--ease-in);
+    opacity: 0.6;
+  }
 }

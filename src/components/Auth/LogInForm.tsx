@@ -95,14 +95,12 @@ export function LogInForm() {
             {!isSignUp && <MdLogin />}
             {isSignUp ? "Sign Up" : "Log In"}
           </button>
-          <p className="text-sm mt-4 text-center authSecondaryButton">
-            <a
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="ml-1 text-blue-600 underline"
-            >
-              {isSignUp ? "Or Log In" : "Or Sign Up"}
-            </a>
-          </p>
+          <button
+            className="text-sm mt-4 text-center authSecondaryButton"
+            onClick={() => setIsSignUp(!isSignUp)}
+          >
+            {isSignUp ? "Or Log In" : "Or Sign Up"}
+          </button>
         </div>
       </form>
     </div>
