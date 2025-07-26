@@ -28,9 +28,13 @@ export default function App() {
   const isMobile = useMediaQuery("(max-width: 650px)");
 
   const [user, setUser] = useState(() => auth.currentUser);
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, setUser);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setAuthChecked(true);
+    });
     return () => unsubscribe();
   }, []);
 
@@ -47,7 +51,7 @@ export default function App() {
   const showConfirmation =
     location.pathname.includes("/new") || location.pathname.includes("/edit");
 
-  if (user === null && location.pathname !== "/") {
+  if (user === null && location.pathname !== "/" && authChecked) {
     return <Navigate to="/" replace />;
   }
 
@@ -71,20 +75,20 @@ export default function App() {
             <button
               className={`navButton ${
                 (!user && location.pathname === "/") ||
-                location.pathname === "/how-it-works"
+                location.pathname === "/help"
                   ? "isActive"
                   : ""
               }`}
               onClick={() => {
                 if (showConfirmation && window.confirm("Discard changes?")) {
-                  navigate("/how-it-works");
+                  navigate("/help");
                 }
                 if (!showConfirmation) {
-                  navigate("/how-it-works");
+                  navigate("/help");
                 }
               }}
             >
-              <p>How it Works</p>
+              <p>Help</p>
             </button>
             <button
               className={`navButton ${
@@ -126,7 +130,7 @@ export default function App() {
               >
                 <p>
                   <MdLogin />
-                  Log Out
+                  {!isMobile && "Log Out"}
                 </p>
               </button>
             )}
@@ -185,7 +189,7 @@ export default function App() {
         <div className="loading">
           <div className="spinner"></div>
           <p className="text-center">
-            {currentProgress !== totalProgress
+            {currentProgress !== totalProgress || currentProgress === 0
               ? `Loading ${currentProgress}/${totalProgress} cards`
               : "Wrapping up some final details..."}
           </p>
@@ -207,7 +211,7 @@ export default function App() {
           <Route path="/deck/:deckId" element={<DeckPreview />} />
           <Route path="/deck/:deckId/edit" element={<DeckEdit />} />
           <Route path="/deck/new" element={<DeckEdit />} />
-          <Route path="/how-it-works" element={<Welcome />} />
+          <Route path="/help" element={<Welcome />} />
         </Routes>
       </div>
     </div>

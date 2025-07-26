@@ -11,10 +11,9 @@ export function mergeCardQuantities<T extends { name: string }>(
 
     const quantityOwned = ownedCards
       .filter(
-        (owned) =>
-          normalizeCardName(owned.name) === normalizedName &&
-          (("setName" in card && card.setName == "Any") ||
-            ("setName" in card && owned.setName === card.setName))
+        (owned) => normalizeCardName(owned.name) === normalizedName
+        // (("setName" in card && card.setName == "Any") ||
+        //   ("setName" in card && owned.setName === card.setName))
       )
       .reduce(
         (sum, match) => sum + (parseInt(match.quantityOwned as any, 10) || 0),

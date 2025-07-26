@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TbListSearch } from "react-icons/tb";
 import { normalizeCardName } from "../../utils/normalize";
 import type { CollectionCard, DeckCard } from "../../types/MagicTheGathering";
 import { FaSearch } from "react-icons/fa";
 import { getCardsFromStorage } from "../../utils/storage";
+import { ImSpinner6 } from "react-icons/im";
 
 interface CardSearchBarProps {
   onDeckCardAdd: (
@@ -20,11 +21,15 @@ export function CardSearchBar({
 }: CardSearchBarProps) {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+
   const deckCardNames = new Set(
-    deckCards.map((c) => normalizeCardName(c.name))
+    deckCards.map((card) => normalizeCardName(card.name))
   );
 
   const [ownedCards, setOwnedCards] = useState<CollectionCard[]>([]);
+
   useEffect(() => {
     getCardsFromStorage()
       .then((data) => {
@@ -36,25 +41,41 @@ export function CardSearchBar({
   }, []);
 
   useEffect(() => {
-    const controller = new AbortController();
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
 
-    if (query.length >= 3) {
+    if (query.length < 3) {
+      setSuggestions([]);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+
+    debounceTimeout.current = setTimeout(() => {
+      const controller = new AbortController();
       fetch(`https://api.scryfall.com/cards/autocomplete?q=${query}`, {
         signal: controller.signal,
       })
-        .then((response) => response.json())
+        .then((res) => res.json())
         .then((data) => {
-          // Filter out cards already in the deck
           const filtered = data.data.filter(
             (name: string) => !deckCardNames.has(normalizeCardName(name))
           );
           setSuggestions(filtered);
-        });
-    } else {
-      setSuggestions([]);
-    }
+        })
+        .catch(() => setSuggestions([]))
+        .finally(() => setLoading(false));
 
-    return () => controller.abort();
+      return () => controller.abort();
+    }, 300); // Debounce
+
+    return () => {
+      if (debounceTimeout.current) {
+        clearTimeout(debounceTimeout.current);
+      }
+    };
   }, [query]);
 
   const handleSuggestionClick = async (cardName: string) => {
@@ -63,11 +84,8 @@ export function CardSearchBar({
       (card: any) =>
         normalizeCardName(card.name) === normalizeCardName(cardName)
     );
-    if (match) {
-      await onDeckCardAdd(cardName, undefined, match.set);
-    } else {
-      await onDeckCardAdd(cardName); // If not found in collection
-    }
+    await onDeckCardAdd(cardName, undefined, match?.set);
+
     setQuery("");
     setSuggestions([]);
   };
@@ -75,7 +93,11 @@ export function CardSearchBar({
   return (
     <div className="searchContainer">
       <p className="bold">Add Card</p>
-      <FaSearch className="inlineIcon" />
+      {loading ? (
+        <ImSpinner6 className="inlineIcon searchSpinner" />
+      ) : (
+        <FaSearch className="inlineIcon" />
+      )}
       <input
         type="text"
         value={query}
@@ -91,14 +113,14 @@ export function CardSearchBar({
             </li>
           ))}
         </ul>
-      ) : query.length > 0 ? (
+      ) : query.length > 0 && !loading ? (
         <p className="italic text-center subtext">
           <TbListSearch />
-          No matching cards found
+          {query.length < 3
+            ? "Please enter atleast 3 characters"
+            : "No matching cards found"}
         </p>
-      ) : (
-        <></>
-      )}
+      ) : null}
     </div>
   );
 }

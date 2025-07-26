@@ -1,7 +1,7 @@
 import type { CardTypeSummary, Deck } from "../../types/MagicTheGathering";
 import { TypeSummary } from "../shared/TypeSummary";
 import "../styles.css";
-import { getDeckTypeSummaryWithDefaults, isDeckReady } from "../../utils/decks";
+import { getDeckTypeSummaryWithDefaults } from "../../utils/decks";
 import { ManaRow } from "./components/ManaRow";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -26,12 +26,7 @@ export function DeckView({ deck }: Props) {
   };
 
   return (
-    <div
-      className={`deck cursor-pointer ${
-        isDeckReady(deck) ? "opacity-100" : "opacity-60"
-      }`}
-      onClick={handleClick}
-    >
+    <div className={"deck cursor-pointer"} onClick={handleClick}>
       <div className="deckTop">
         <p className="emphasis">{deck.name}</p>
         {deck.description && (

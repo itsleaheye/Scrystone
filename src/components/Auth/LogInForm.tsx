@@ -82,7 +82,7 @@ export function LogInForm() {
         {isSignUp && (
           <input
             type="password"
-            placeholder="Verify password..."
+            placeholder="Verify Password"
             value={verifyPassword}
             required
             onChange={(e) => setVerifyPassword(e.target.value)}

@@ -9,7 +9,7 @@ import { format } from "date-fns";
 import { useCallback, useEffect, useState, type ChangeEvent } from "react";
 import { auth, db } from "../firebase";
 import { collection, doc, setDoc } from "firebase/firestore";
-import { getCardKey } from "../utils/cards";
+import { getCardKey, loadBulkCardData } from "../utils/cards";
 import { useNavigate } from "react-router-dom";
 
 export function useCardParser() {
@@ -106,7 +106,7 @@ export function useCardParser() {
             setCollectionSummary(getCollectionSummary(parsedCards));
             setLoading(false);
 
-            navigate("/collection");
+            navigate("/collection?reload=true");
           },
         });
       } catch {
@@ -122,11 +122,14 @@ export function useCardParser() {
       quantityNeeded?: number,
       setPreference?: string
     ) => {
+      await loadBulkCardData();
+
       const normalizedCardName = normalizeCardName(cardName);
       const ownedCards = await getCardsFromStorage();
       const ownedMatch = ownedCards.find(
         (card) => normalizeCardName(card.name) === normalizedCardName
       );
+      console.log("ownedMatch", ownedMatch);
 
       const scryfallCard = await getScryfallCard({
         cardName: normalizedCardName,

@@ -9,18 +9,31 @@ import type { Deck } from "../../types/MagicTheGathering";
 export function DeckDashboard() {
   const navigate = useNavigate();
   const [decks, setDecks] = useState<Deck[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
   useEffect(() => {
-    getDecksFromStorage()
-      .then((data) => {
-        setDecks(data);
-      })
-      .catch(() => {
-        setDecks([]);
-      });
+    const loadDecks = async () => {
+      setLoading(true);
+
+      const data = await getDecksFromStorage();
+
+      setDecks(data);
+      setLoading(false);
+    };
+
+    loadDecks();
   }, []);
 
   return (
-    <div className="contentContainer" style={{ maxWidth: "1600px" }}>
+    <div
+      className="contentContainer"
+      style={{
+        maxWidth: "1600px",
+        opacity: loading ? 0.5 : 1,
+        pointerEvents: loading ? "none" : "auto",
+        transition: "opacity 0.5s ease",
+      }}
+    >
       {/* Actions header */}
       <DeckActions
         onBack={() => {
@@ -32,7 +45,7 @@ export function DeckDashboard() {
       />
 
       {/* Decks list */}
-      {decks.length > 0 ? (
+      {decks.length > 0 && !loading ? (
         <div className="grid">
           {decks.map((deck, index) => (
             <DeckView key={index} deck={deck} />

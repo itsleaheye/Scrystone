@@ -36,6 +36,9 @@ export function DeckHeader({
   summary,
   formDetails,
 }: DeckPreviewProps): React.JSX.Element {
+  console.log("deck", deck);
+  console.log("cards", cards);
+
   const editable = formDetails !== undefined;
 
   const requiredDeckSize = useMemo(() => {
@@ -62,6 +65,7 @@ export function DeckHeader({
           ),
     [cards]
   );
+  console.log("currentDeckSize", currentDeckSize);
   const isDeckReady = currentDeckSize == requiredDeckSize;
 
   const deckColours =

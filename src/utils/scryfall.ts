@@ -1,6 +1,5 @@
-import { findCardByNameAndSet, loadBulkCardData } from "./cards";
+import { findCardByNameAndSet } from "./cards";
 import { normalizeCardName, normalizeMana } from "./normalize";
-import { getCachedCard, setCachedCard } from "./storage";
 
 interface ScryfallDetails {
   manaTypes?: string[];
@@ -24,31 +23,54 @@ export async function getScryfallCard({
   tcgPlayerId,
 }: getScryfallCardProps): Promise<ScryfallDetails | undefined> {
   const normalizedName = normalizeCardName(cardName);
-  const cacheKey = `${normalizedName}-${set}`;
-  const cached = getCachedCard(cacheKey);
-  if (cached) return formatScryfallDetails(cached);
 
-  await loadBulkCardData();
-  const card = findCardByNameAndSet(cardName, set);
-  if (!card) {
-    console.warn(`Card not found locally: ${cardName}`);
-    return;
+  const scryfallMatch = findCardByNameAndSet(normalizedName, set);
+  if (scryfallMatch) {
+    return formatScryfallDetails(scryfallMatch);
   }
 
-  // Fetch with tcg player ID as a backup
   if (tcgPlayerId) {
-    const url = `https://api.scryfall.com/cards/tcgplayer/${tcgPlayerId}`;
-    const res = await fetch(url);
-    if (res.ok) {
-      const data = await res.json();
-      setCachedCard(cacheKey, data);
-
-      return formatScryfallDetails(data);
+    try {
+      const res = await fetch(
+        `https://api.scryfall.com/cards/tcgplayer/${tcgPlayerId}`
+      );
+      if (res.ok) {
+        const data = await res.json();
+        return formatScryfallDetails(data);
+      }
+    } catch (error) {
+      console.warn("Failed TCGPlayer fallback:", error);
     }
   }
 
-  setCachedCard(cacheKey, card);
-  return formatScryfallDetails(card);
+  const encodedName = encodeURIComponent(normalizedName);
+  const fallbackUrls = [
+    `https://api.scryfall.com/cards/search?q=!${encodedName}${
+      set ? `+set:${set}` : ""
+    }`,
+    `https://api.scryfall.com/cards/search?q=${encodedName}${
+      set ? `+set:${set}` : ""
+    }`,
+    `https://api.scryfall.com/cards/named?fuzzy=${encodedName}`,
+  ];
+
+  for (const url of fallbackUrls) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) continue;
+
+      let data = await response.json();
+      data = Array.isArray(data.data) ? data.data[0] : data;
+
+      if (data) {
+        return formatScryfallDetails(data);
+      }
+    } catch (error) {
+      console.warn(`Failed to fetch from ${url}`, error);
+    }
+  }
+
+  return undefined;
 }
 
 export function formatScryfallDetails(card: any): ScryfallDetails {

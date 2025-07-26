@@ -3,11 +3,12 @@ import { getDecksFromStorage } from "../../utils/storage";
 import "../styles.css";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { DeckHeader } from "./components/DeckHeader";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { getDeckTypeSummaryWithDefaults } from "../../utils/decks";
 import { CardPreview } from "../Cards/CardPreview";
 import { DeckActions } from "./components/DeckActions";
 import type { CardTypeSummary, Deck } from "../../types/MagicTheGathering";
+import { ImSpinner6 } from "react-icons/im";
 
 export function DeckPreview() {
   const { deckId } = useParams<{ deckId: string }>();
@@ -66,15 +67,26 @@ export function DeckPreview() {
       />
 
       {/* Deck overview */}
-      <DeckHeader deck={deck} summary={summary} />
+      {deck ? (
+        <DeckHeader deck={deck} summary={summary} />
+      ) : (
+        <div className="deckOverview loadingDeckOverview">
+          <div className="flexCol">
+            <ImSpinner6 className="inlineIcon searchSpinner" />
+            <p className="text-center">Loading your deck...</p>
+          </div>
+        </div>
+      )}
 
       {/* Deck card list */}
-      <CardPreview
-        activeCardPreview={undefined}
-        deckCards={cards}
-        isDeckView={true}
-        viewPreference="List"
-      />
+      {deck && (
+        <CardPreview
+          activeCardPreview={undefined}
+          deckCards={cards}
+          isDeckView={true}
+          viewPreference="List"
+        />
+      )}
     </div>
   );
 }

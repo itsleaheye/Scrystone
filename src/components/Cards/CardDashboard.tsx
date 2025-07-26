@@ -2,22 +2,33 @@ import { useEffect, useState } from "react";
 import { getCardsFromStorage } from "../../utils/storage";
 import { CardPreview } from "./CardPreview";
 import type { CollectionCard } from "../../types/MagicTheGathering";
+import { useLocation } from "react-router-dom";
 
 export function CardDashboard() {
+  const location = useLocation();
   const [cards, setCards] = useState<CollectionCard[]>([]);
-
-  const loadCards = async () => {
-    const data = await getCardsFromStorage();
-    setCards(data);
-  };
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    const loadCards = async () => {
+      setLoading(true);
+
+      const data = await getCardsFromStorage();
+
+      setCards(data);
+      setLoading(false);
+    };
+
     loadCards();
-  }, []);
+  }, [location.search]);
 
   return (
     <div className="contentContainer" style={{ maxWidth: "1600px" }}>
-      <CardPreview collectionCards={cards} viewPreference="Grid" />
+      <CardPreview
+        collectionCards={cards}
+        viewPreference="Grid"
+        loading={loading}
+      />
     </div>
   );
 }
