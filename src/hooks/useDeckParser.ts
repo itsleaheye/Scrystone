@@ -130,7 +130,7 @@ export function useDeckParser() {
 
     // Add individual card
     sortedCards.forEach((card) => {
-      fileContent += `${card.quantityNeeded}x ${card.name} \n`;
+      fileContent += `${card.quantityNeeded} ${card.name} \n`;
     });
 
     // Seperate section for missing cards
