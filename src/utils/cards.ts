@@ -13,9 +13,8 @@ export function mergeCardQuantities<T extends { name: string }>(
       .filter(
         (owned) =>
           normalizeCardName(owned.name) === normalizedName &&
-          // (("set" in card && card.set == "Any") ||
-          "set" in card &&
-          owned.set === card.set
+          (("set" in card && card.set == "Any") ||
+            ("set" in card && owned.set === card.set))
       )
       .reduce(
         (sum, match) => sum + (parseInt(match.quantityOwned as any, 10) || 0),

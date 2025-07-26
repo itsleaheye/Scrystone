@@ -58,6 +58,7 @@ export function CardList({
       {!isMobile && (
         <div className="cardListPreview">
           {cardFocused ? (
+            // Bug here where current quantity isnt reflected until save
             <CardView
               card={cardFocused}
               editable={editable}

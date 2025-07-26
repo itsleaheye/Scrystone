@@ -161,8 +161,25 @@ export function useCardParser() {
           manaTypes: scryfallCard?.manaTypes,
         };
       } else {
+        const type = normalizeCardType(ownedMatch?.type);
+        let setName = ownedMatch?.setName;
+        let set = ownedMatch?.set;
+        if (
+          normalizedCardName === "Mountain" ||
+          normalizedCardName === "Plains" ||
+          normalizedCardName == "Island" ||
+          normalizedCardName === "Swamp" ||
+          normalizedCardName === "Forest"
+        ) {
+          setName = "Any";
+          set = "Any";
+        }
+
         newCard = {
           ...ownedMatch,
+          type: type,
+          set: set,
+          setName: setName,
           quantityNeeded: quantityNeeded ?? 1,
           quantityOwned: ownedMatch.quantityOwned,
         };
