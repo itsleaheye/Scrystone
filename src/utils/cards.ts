@@ -16,10 +16,21 @@ export function mergeCardQuantities<T extends { name: string }>(
           (("set" in card && card.set == "Any") ||
             ("set" in card && owned.set === card.set))
       )
-      .reduce(
-        (sum, match) => sum + (parseInt(match.quantityOwned as any, 10) || 0),
-        0
-      );
+      .reduce((sum, match) => {
+        let quantity = match.quantityOwned;
+
+        if (Array.isArray(quantity)) {
+          quantity = quantity
+            .map((q) => Number(q))
+            .filter((q) => Number.isFinite(q))
+            .reduce((a, b) => a + b, 0);
+        } else {
+          quantity = Number(quantity);
+          if (!Number.isFinite(quantity)) quantity = 0;
+        }
+
+        return sum + quantity;
+      }, 0);
 
     return isDeckView
       ? { ...card, quantityOwned }
