@@ -82,7 +82,7 @@ export function Welcome() {
         </div>
         {faqQuestions.map((faq) => {
           return (
-            <div className="text-center question">
+            <div className="text-center question" key={faq.question}>
               <p className="emphasis bold">{faq.question}</p>
               {faq.answer}
             </div>

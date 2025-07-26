@@ -36,8 +36,8 @@ export function useCardFiltersAndSort({
 
     if (searchTerm?.trim().length > 1) {
       const loweredSearch = searchTerm.trim().toLowerCase();
-      filtered = filtered.filter((c) =>
-        c.name?.toLowerCase().includes(loweredSearch)
+      filtered = filtered.filter((card) =>
+        card.name?.toLowerCase().includes(loweredSearch)
       );
     }
 

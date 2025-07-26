@@ -11,9 +11,11 @@ export function mergeCardQuantities<T extends { name: string }>(
 
     const quantityOwned = ownedCards
       .filter(
-        (owned) => normalizeCardName(owned.name) === normalizedName
-        // (("setName" in card && card.setName == "Any") ||
-        //   ("setName" in card && owned.setName === card.setName))
+        (owned) =>
+          normalizeCardName(owned.name) === normalizedName &&
+          // (("set" in card && card.set == "Any") ||
+          "set" in card &&
+          owned.set === card.set
       )
       .reduce(
         (sum, match) => sum + (parseInt(match.quantityOwned as any, 10) || 0),
@@ -70,12 +72,11 @@ export async function loadBulkCardData(): Promise<void> {
 
 export function findCardByNameAndSet(
   cardName: string,
-  set?: string
+  set: string
 ): any | undefined {
-  const specificKey = getCardKey(cardName, set);
-  const fallbackKey = getCardKey(cardName);
+  const cardKey = getCardKey(cardName, set);
 
-  return bulkCardDataMap.get(specificKey) ?? bulkCardDataMap.get(fallbackKey);
+  return bulkCardDataMap.get(cardKey);
 }
 
 export function getCardKey(cardName: string, set?: string): string {

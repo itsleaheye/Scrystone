@@ -24,9 +24,11 @@ export async function getScryfallCard({
 }: getScryfallCardProps): Promise<ScryfallDetails | undefined> {
   const normalizedName = normalizeCardName(cardName);
 
-  const scryfallMatch = findCardByNameAndSet(normalizedName, set);
-  if (scryfallMatch) {
-    return formatScryfallDetails(scryfallMatch);
+  if (set && set != "Any") {
+    const scryfallMatch = findCardByNameAndSet(normalizedName, set);
+    if (scryfallMatch) {
+      return formatScryfallDetails(scryfallMatch);
+    }
   }
 
   if (tcgPlayerId) {
@@ -45,9 +47,6 @@ export async function getScryfallCard({
 
   const encodedName = encodeURIComponent(normalizedName);
   const fallbackUrls = [
-    `https://api.scryfall.com/cards/search?q=!${encodedName}${
-      set ? `+set:${set}` : ""
-    }`,
     `https://api.scryfall.com/cards/search?q=${encodedName}${
       set ? `+set:${set}` : ""
     }`,
@@ -59,10 +58,18 @@ export async function getScryfallCard({
       const response = await fetch(url);
       if (!response.ok) continue;
 
-      let data = await response.json();
-      data = Array.isArray(data.data) ? data.data[0] : data;
+      const data = await response.json();
 
-      if (data) {
+      if (Array.isArray(data.data)) {
+        const matchingCard = data.data.find(
+          (card: any) => (!set || card.set === set) && !card.set
+        );
+        if (matchingCard) {
+          return formatScryfallDetails(matchingCard);
+        }
+      }
+
+      if (data && (!set || data.set === set)) {
         return formatScryfallDetails(data);
       }
     } catch (error) {

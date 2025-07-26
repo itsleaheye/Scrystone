@@ -28,7 +28,7 @@ export async function parseCSVToCollectionCards(
     try {
       const scryfallData = await getScryfallCard({
         cardName,
-        set: rawCard["Set"],
+        set: rawCard["Set Code"],
         tcgPlayerId: rawCard["Product ID"],
       });
 
@@ -37,6 +37,8 @@ export async function parseCSVToCollectionCards(
       return {
         ...scryfallData,
         quantityOwned: rawCard["Quantity"] || 1,
+        setName: rawCard["Set"],
+        set: rawCard["Set Code"],
       };
     } catch (error) {
       console.warn(`Failed to fetch card: ${cardName}`, error);

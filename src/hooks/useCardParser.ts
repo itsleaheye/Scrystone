@@ -130,34 +130,43 @@ export function useCardParser() {
         (card) => normalizeCardName(card.name) === normalizedCardName
       );
 
-      const scryfallCard = await getScryfallCard({
-        cardName: normalizedCardName,
-        set: setPreference,
-      });
+      let newCard: DeckCard;
+      if (!ownedMatch) {
+        const scryfallCard = await getScryfallCard({
+          cardName: normalizedCardName,
+          set: setPreference,
+        });
 
-      const type = normalizeCardType(scryfallCard?.type);
-      let setName = scryfallCard?.setName;
-      if (
-        normalizedCardName === "Mountain" ||
-        normalizedCardName === "Plains" ||
-        normalizedCardName == "Island" ||
-        normalizedCardName === "Swamp" ||
-        normalizedCardName === "Forest"
-      ) {
-        setName = "Any";
+        const type = normalizeCardType(scryfallCard?.type);
+        let setName = scryfallCard?.setName;
+        if (
+          normalizedCardName === "Mountain" ||
+          normalizedCardName === "Plains" ||
+          normalizedCardName == "Island" ||
+          normalizedCardName === "Swamp" ||
+          normalizedCardName === "Forest"
+        ) {
+          setName = "Any";
+        }
+
+        newCard = {
+          imageUrl: scryfallCard?.imageUrl,
+          name: normalizedCardName,
+          price: scryfallCard?.price && scryfallCard.price * 1.37, //To do, convert to CAD
+          type,
+          set: scryfallCard?.set ?? "Any",
+          setName: setName ?? "Any",
+          quantityNeeded: quantityNeeded ?? 1,
+          quantityOwned: 0,
+          manaTypes: scryfallCard?.manaTypes,
+        };
+      } else {
+        newCard = {
+          ...ownedMatch,
+          quantityNeeded: quantityNeeded ?? 1,
+          quantityOwned: ownedMatch.quantityOwned,
+        };
       }
-
-      const newCard: DeckCard = {
-        imageUrl: scryfallCard?.imageUrl,
-        name: normalizedCardName,
-        price: scryfallCard?.price && scryfallCard.price * 1.37, //To do, convert to CAD
-        type,
-        set: scryfallCard?.set ?? "Any",
-        setName: setName ?? "Any",
-        quantityNeeded: quantityNeeded ?? 1,
-        quantityOwned: ownedMatch?.quantityOwned ?? 0,
-        manaTypes: scryfallCard?.manaTypes,
-      };
 
       setCards((prevCards) => [...prevCards, newCard]);
     },
