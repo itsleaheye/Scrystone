@@ -1,18 +1,14 @@
-import { findCardByNameAndSet, loadBulkCardData } from "./cards";
-import {
-  normalizeCardName,
-  normalizeColourIdentity,
-  normalizeMana,
-} from "./normalize";
-import { getCachedCard, setCachedCard } from "./storage";
+import { findCardByNameAndSet } from "./cards";
+import { normalizeCardName, normalizeMana } from "./normalize";
 
 interface ScryfallDetails {
   manaTypes?: string[];
-  previewUrl?: string;
+  name: string;
+  imageUrl?: string;
   price: number;
-  type: string;
   set: string;
   setName: string;
+  type: string;
 }
 
 interface getScryfallCardProps {
@@ -27,50 +23,67 @@ export async function getScryfallCard({
   tcgPlayerId,
 }: getScryfallCardProps): Promise<ScryfallDetails | undefined> {
   const normalizedName = normalizeCardName(cardName);
-  const cacheKey = `${normalizedName}-${set}`;
-  const cached = getCachedCard(cacheKey);
-  if (cached) return formatScryfallDetails(cached);
 
-  // Fetch with tcg player ID as a backup
+  const scryfallMatch = findCardByNameAndSet(normalizedName, set);
+  if (scryfallMatch) {
+    return formatScryfallDetails(scryfallMatch);
+  }
+
   if (tcgPlayerId) {
-    const url = `https://api.scryfall.com/cards/tcgplayer/${tcgPlayerId}`;
-    const res = await fetch(url);
-    if (res.ok) {
-      const data = await res.json();
-      setCachedCard(cacheKey, data);
-
-      return formatScryfallDetails(data);
+    try {
+      const res = await fetch(
+        `https://api.scryfall.com/cards/tcgplayer/${tcgPlayerId}`
+      );
+      if (res.ok) {
+        const data = await res.json();
+        return formatScryfallDetails(data);
+      }
+    } catch (error) {
+      console.warn("Failed TCGPlayer fallback:", error);
     }
   }
 
-  await loadBulkCardData();
-  const card = findCardByNameAndSet(cardName, set);
-  if (!card) {
-    console.warn(`Card not found locally: ${cardName}`);
-    return;
+  const encodedName = encodeURIComponent(normalizedName);
+  const fallbackUrls = [
+    `https://api.scryfall.com/cards/search?q=!${encodedName}${
+      set ? `+set:${set}` : ""
+    }`,
+    `https://api.scryfall.com/cards/search?q=${encodedName}${
+      set ? `+set:${set}` : ""
+    }`,
+    `https://api.scryfall.com/cards/named?fuzzy=${encodedName}`,
+  ];
+
+  for (const url of fallbackUrls) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) continue;
+
+      let data = await response.json();
+      data = Array.isArray(data.data) ? data.data[0] : data;
+
+      if (data) {
+        return formatScryfallDetails(data);
+      }
+    } catch (error) {
+      console.warn(`Failed to fetch from ${url}`, error);
+    }
   }
 
-  setCachedCard(cacheKey, card);
-  return formatScryfallDetails(card);
+  return undefined;
 }
 
-function formatScryfallDetails(card: any): ScryfallDetails {
-  const manaCost =
-    card.color_identity !== undefined
-      ? normalizeColourIdentity(card.color_identity)
-      : card.mana_cost;
-  card.mana_cost; //Scryfall uses American spelling and underscores
-  const { colours } = manaCost
-    ? normalizeMana(manaCost as string)
-    : { colours: undefined };
+export function formatScryfallDetails(card: any): ScryfallDetails {
+  const { colours } = normalizeMana(card.mana_cost);
 
   return {
-    previewUrl:
+    imageUrl:
       card.image_uris?.normal || card.card_faces?.[0]?.image_uris?.normal,
+    manaTypes: colours ?? [],
+    name: card.name,
     price: parseFloat(card.prices?.usd) || 0,
-    manaTypes: colours,
-    type: card.type_line?.split("—")[0]?.trim().split(" ")[0],
     set: card.set,
-    setName: card.set_name,
+    setName: card.set_name ?? card.set,
+    type: card.type_line?.split("—")[0]?.trim().split(" ")[0],
   };
 }

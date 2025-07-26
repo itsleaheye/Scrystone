@@ -1,5 +1,6 @@
 import type { CollectionCard } from "../types/MagicTheGathering";
-import { normalizeCardName, normalizeCardType } from "./normalize";
+import { loadBulkCardData } from "./cards";
+import { normalizeCardName } from "./normalize";
 import { getScryfallCard } from "./scryfall";
 
 const REQUEST_DELAY_MS = 100;
@@ -8,47 +9,38 @@ export async function parseCSVToCollectionCards(
   rawCards: any[],
   onProgress?: (processed: number, total: number) => void
 ): Promise<CollectionCard[]> {
+  await loadBulkCardData();
+
   let completedCards = 0;
   const total = rawCards.length;
 
   const processCard = async (rawCard: any): Promise<CollectionCard | null> => {
-    const name = normalizeCardName(rawCard.Name);
+    const cardName = normalizeCardName(rawCard.Name);
     if (
-      !name ||
-      name.toLowerCase().includes("token") ||
-      name.toLowerCase().includes("checklist")
+      !cardName ||
+      cardName.toLowerCase().includes("token") ||
+      cardName.toLowerCase().includes("checklist") ||
+      cardName.toLowerCase().includes("art card")
     ) {
       return null;
     }
 
     try {
-      const scryfallDetails = await getScryfallCard({
-        cardName: name,
+      const scryfallData = await getScryfallCard({
+        cardName,
         set: rawCard["Set"],
         tcgPlayerId: rawCard["Product ID"],
       });
-      if (!scryfallDetails) {
-        console.warn(`No Scryfall data found for: ${name}`);
-        return null;
-      }
 
-      const type = normalizeCardType(scryfallDetails.type);
+      if (!scryfallData) return null;
 
       return {
-        name,
-        manaTypes: scryfallDetails.manaTypes,
-        number: rawCard["Card Number"],
-        price: scryfallDetails.price ? scryfallDetails.price * 1.37 : undefined,
-        rarity: rawCard["Rarity"],
-        set: rawCard["Set"],
-        setName: scryfallDetails.setName,
-        type,
-        tcgPlayerId: rawCard["Product ID"],
-        imageUrl: scryfallDetails.previewUrl,
+        ...scryfallData,
         quantityOwned: rawCard["Quantity"] || 1,
       };
     } catch (error) {
-      console.warn(`Failed to fetch Scryfall data for ${name}:`, error);
+      console.warn(`Failed to fetch card: ${cardName}`, error);
+
       return null;
     }
   };

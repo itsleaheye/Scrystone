@@ -40,8 +40,8 @@ export function generateUniqueDeckId() {
   return Number(`${Date.now()}${Math.floor(Math.random() * 1000)}`);
 }
 
-export function getDeckTypeSummary(cards: DeckCard[]) {
-  const ownedCards: CollectionCard[] = getCardsFromStorage();
+export async function getDeckTypeSummary(cards: DeckCard[]) {
+  const ownedCards: CollectionCard[] = await getCardsFromStorage();
 
   const totalQuantityByName = new Map<string, number>();
   ownedCards.forEach((card) => {
@@ -114,10 +114,10 @@ const DEFAULT_TYPES = [
   "Sorcery",
 ];
 
-export function getDeckTypeSummaryWithDefaults(
+export async function getDeckTypeSummaryWithDefaults(
   cards: DeckCard[]
-): CardTypeSummary[] {
-  const summary = getDeckTypeSummary(cards);
+): Promise<CardTypeSummary[]> {
+  const summary = await getDeckTypeSummary(cards);
   const summaries = new Map(summary.map((item) => [item.type, item]));
 
   return DEFAULT_TYPES.map(

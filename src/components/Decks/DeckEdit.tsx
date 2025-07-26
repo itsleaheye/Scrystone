@@ -1,12 +1,12 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { DeckActions } from "./components/DeckActions";
-import type { Deck } from "../../types/MagicTheGathering";
+import type { CardTypeSummary, Deck } from "../../types/MagicTheGathering";
 import { useDeckParser } from "../../hooks/useDeckParser";
 import { useDeckFormState } from "../../hooks/useDeckFormState";
 import { useCardParser } from "../../hooks/useCardParser";
 import { DeckHeader } from "./components/DeckHeader";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { getDeckTypeSummaryWithDefaults } from "../../utils/decks";
 import { CardPreview } from "../Cards/CardPreview";
 import { ViewStyleFilter } from "../shared/ViewStyleFilter";
@@ -16,26 +16,35 @@ import "../styles.css";
 
 export function DeckEdit() {
   const { deckId } = useParams<{ deckId: string }>();
+  const { cards, onDeckCardAdd, setCards, onCardsImport, loading } =
+    useCardParser();
+
   const [deck, setDeck] = useState<Deck | undefined>();
   const [viewStyle, setViewStyle] = useState<string>("List");
 
   useEffect(() => {
-    if (deckId !== undefined) {
-      const foundDeck = getDecksFromStorage(Number(deckId))[0];
+    if (deckId == undefined) return;
 
-      if (!foundDeck) {
-        navigate("/decks", { replace: true });
-        return;
+    async function loadDeck() {
+      try {
+        const decks = await getDecksFromStorage(Number(deckId));
+        const foundDeck = decks[0];
+        setDeck(foundDeck);
+
+        if (foundDeck) {
+          setCards(foundDeck.cards);
+        }
+      } catch (error) {
+        console.error("Failed to load deck:", error);
+
+        setDeck(undefined);
       }
-
-      setDeck(foundDeck);
-      setCards(foundDeck.cards);
     }
-  }, [deckId]);
+
+    loadDeck();
+  }, [deckId, setCards]);
 
   const editable = deck !== undefined;
-  const { cards, onDeckCardAdd, setCards, onCardsImport, loading } =
-    useCardParser();
 
   useEffect(() => {
     if (deck && deck.cards) {
@@ -50,7 +59,14 @@ export function DeckEdit() {
   const { name, setName, description, setDescription, format, setFormat } =
     useDeckFormState(deck);
 
-  const summary = useMemo(() => getDeckTypeSummaryWithDefaults(cards), [cards]);
+  const [summary, setSummary] = useState<CardTypeSummary[]>([]);
+  useEffect(() => {
+    async function loadSummary() {
+      let summaryResult = await getDeckTypeSummaryWithDefaults(cards);
+      setSummary(summaryResult);
+    }
+    loadSummary();
+  }, [cards, editable, deck]);
 
   return (
     <div className="contentContainer" style={{ maxWidth: "1600px" }}>
@@ -64,15 +80,20 @@ export function DeckEdit() {
             navigate(editable ? `/deck/${deck.id}` : "/decks");
           }
         }}
-        onPrimary={() => {
-          const savedDeck = onDeckSave(
+        onPrimary={async () => {
+          const savedDeck = await onDeckSave(
             cards,
             name,
             format,
             deck?.id,
             description
           );
-          navigate(`/deck/${savedDeck.id}`);
+
+          if (savedDeck) {
+            navigate(`/deck/${savedDeck.id}`);
+          } else {
+            console.error("Failed to save. Try again.");
+          }
         }}
         onCardsImport={onCardsImport}
         loading={loading}

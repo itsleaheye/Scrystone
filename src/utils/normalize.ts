@@ -17,6 +17,8 @@ export function normalizeDeckName(name: string): string {
 export function normalizeMana(manaCostStr: string): {
   colours?: string[];
 } {
+  if (!manaCostStr || typeof manaCostStr !== "string") return {}; // Catches double faced cards which struggle with scryfall
+
   // manaCostStr comes from Scryfall as '{2}{B}' or '{2}{W}{W}'
   const manaTokens = manaCostStr
     .match(/{([^}]+)}/g)

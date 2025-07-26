@@ -24,6 +24,7 @@ interface CardPreviewProps {
   deckCards?: DeckCard[];
   editable?: boolean;
   isDeckView?: boolean;
+  loading?: boolean;
   setCards?: React.Dispatch<React.SetStateAction<DeckCard[]>>;
   viewPreference?: string;
 }
@@ -33,6 +34,7 @@ export function CardPreview({
   deckCards,
   editable = false,
   isDeckView = false,
+  loading = false,
   setCards,
   viewPreference,
 }: CardPreviewProps) {
@@ -40,20 +42,19 @@ export function CardPreview({
   const hasCards =
     (collectionCards && collectionCards.length > 0) ||
     (deckCards && deckCards.length > 0);
-  if (!hasCards) {
-    return (
-      <EmptyView
-        description={
-          isDeckView
-            ? "Search for a card name in the above search bar to add it to your deck"
-            : "Upload your collection to start previewing cards"
-        }
-        title="No cards yet"
-      />
-    );
-  }
 
-  const ownedCards = getCardsFromStorage();
+  const [ownedCards, setOwnedCards] = useState<CollectionCard[]>([]);
+
+  useEffect(() => {
+    getCardsFromStorage()
+      .then((data) => {
+        setOwnedCards(data);
+      })
+      .catch(() => {
+        setOwnedCards([]);
+      });
+  }, []);
+
   const sourceCards = deckCards ?? collectionCards ?? [];
   const cardsWithQuantities = mergeCardQuantities(
     sourceCards,
@@ -177,7 +178,14 @@ export function CardPreview({
     <>
       {!editable && (
         <>
-          <div className="centred filtersRow">
+          <div
+            className="centred filtersRow"
+            style={{
+              opacity: loading ? 0.5 : 1,
+              pointerEvents: loading ? "none" : "auto",
+              transition: "opacity 0.5s ease",
+            }}
+          >
             <ViewStyleFilter
               isMobile={isMobile}
               viewStyle={viewStyle}
@@ -255,42 +263,65 @@ export function CardPreview({
               </select>
             </div>
           </div>
-          <div className="cardFoundTotal">
-            <p>
-              {filteredAndSortedCards.length} unique card
-              {filteredAndSortedCards.length > 1 && "s"}{" "}
-              {(filterColour.length > 0 ||
-                filterType.length > 0 ||
-                searchTerm.length > 1) &&
-                "found"}
-            </p>
-          </div>
+          {!loading && (
+            <div className="cardFoundTotal">
+              <p>
+                {filteredAndSortedCards.length} unique card
+                {(filteredAndSortedCards.length > 1 ||
+                  filteredAndSortedCards.length == 0) &&
+                  "s"}{" "}
+                {(filterColour.length > 0 ||
+                  filterType.length > 0 ||
+                  searchTerm.length > 1) &&
+                  "found"}
+              </p>
+            </div>
+          )}
         </>
       )}
 
-      {viewStyle == "Grid" ? (
-        <div className="grid">
-          {filteredAndSortedCards.map((card, index) => {
-            return (
-              <CardView
-                key={index}
-                card={card}
-                editable={editable}
-                isDeckView={isDeckView}
-                onChangeQuantity={onChangeQuantity}
-              />
-            );
-          })}
+      {loading ? (
+        <div className="loading">
+          <div className="spinner"></div>
+          <p className="text-center">Loading cards...</p>
         </div>
+      ) : hasCards ? (
+        viewStyle == "Grid" ? (
+          <div className="grid">
+            {filteredAndSortedCards.map((card, index) => {
+              return (
+                <CardView
+                  key={index}
+                  card={card}
+                  editable={editable}
+                  isDeckView={isDeckView}
+                  onChangeQuantity={onChangeQuantity}
+                />
+              );
+            })}
+          </div>
+        ) : (
+          <CardList
+            cardFocused={cardFocused}
+            editable={editable}
+            filteredAndSortedCards={filteredAndSortedCards}
+            isDeckView={isDeckView}
+            onChangeQuantity={onChangeQuantity}
+            setCardFocused={setCardFocused}
+            hasCards={hasCards}
+          />
+        )
       ) : (
-        <CardList
-          cardFocused={cardFocused}
-          editable={editable}
-          filteredAndSortedCards={filteredAndSortedCards}
-          isDeckView={isDeckView}
-          onChangeQuantity={onChangeQuantity}
-          setCardFocused={setCardFocused}
-          hasCards={hasCards}
+        <EmptyView
+          description={
+            location.pathname.includes("edit") ||
+            location.pathname.includes("new")
+              ? "Search for a card name in the above search bar to add it to your deck"
+              : isDeckView
+              ? "No cards added to this deck"
+              : "Upload your collection to start previewing card"
+          }
+          title="No cards yet"
         />
       )}
     </>

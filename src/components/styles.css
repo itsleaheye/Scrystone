@@ -47,7 +47,7 @@
   background: url("../assets/heroLong.png");
   background-size: cover;
   background-position: top;
-  height: 550px;
+  padding-bottom: var(--pad-md);
 }
 
 .summaryContainer {
@@ -190,7 +190,7 @@
 }
 
 .searchResults {
-  margin-top: 0;
+  margin-top: -3px !important;
   overflow-y: scroll;
   list-style: none;
   max-height: 200px;
@@ -210,7 +210,7 @@
     width: 12px;
   }
   &::-webkit-scrollbar-track {
-    background: var(--black);
+    background: var(--darker-gray);
   }
   &::-webkit-scrollbar-thumb {
     background: var(--blue);
@@ -458,6 +458,19 @@
   }
 }
 
+.loadingDeckOverview {
+  height: 225px;
+
+  .flexCol {
+    font-weight: bold;
+    margin: 0 auto;
+  }
+
+  svg {
+    fill: var(--blackest);
+  }
+}
+
 .deckOverview {
   display: flex;
   flex-direction: column;
@@ -529,8 +542,6 @@
 
   p {
     margin-top: var(--pad-xxs);
-    padding-bottom: var(--pad-sm);
-    border-bottom: 2px solid var(--dark-gray);
   }
 
   .spinner {
@@ -565,11 +576,40 @@
   border: none;
 }
 
+.navAuthButton {
+  color: var(--gray);
+  border: 2px solid var(--gray);
+  border-radius: var(--border-radius-base);
+
+  &:hover {
+    opacity: 1;
+    color: var(--white);
+    border: 2px solid var(--white);
+    transition: var(--ease-in);
+
+    p {
+      opacity: 1;
+    }
+  }
+
+  p {
+    padding: 0 3px 0 1px;
+    display: flex;
+    align-items: center;
+    gap: var(--pad-xxs);
+  }
+}
+
 .deckCardActions {
   display: flex;
   flex-direction: column;
   gap: var(--pad-xxs);
   margin-bottom: var(--pad-xs);
+}
+
+.searchSpinner {
+  animation: slowFastSlowSpin 1.5s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  transform-origin: center;
 }
 
 /* === Media Queries (Responsive) === */
@@ -580,8 +620,6 @@
   }
 
   .headingContainer {
-    height: 450px;
-
     .pageTitle {
       flex-direction: row;
       justify-content: space-between;
@@ -611,7 +649,6 @@
     min-width: 100px;
   }
   .summaryContainer {
-    margin: 0 auto 2rem auto;
     max-width: 500px;
 
     .flexCol {

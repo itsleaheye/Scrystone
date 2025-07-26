@@ -1,4 +1,10 @@
-import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import {
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import "./reset.css";
 import { DeckDashboard } from "./components/Decks/DeckDashboard";
 import { DeckEdit } from "./components/Decks/DeckEdit";
@@ -9,11 +15,28 @@ import { FaUpload } from "react-icons/fa";
 import { TbCards } from "react-icons/tb";
 import { useMediaQuery } from "./hooks/useMediaQuery";
 import { Welcome } from "./components/Welcome/Welcome";
+import { useEffect, useState } from "react";
+import { auth } from "./firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { LogInForm } from "./components/Auth/LogInForm";
+import { MdLogin } from "react-icons/md";
+import { handleLogout } from "./utils/auth";
 
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useMediaQuery("(max-width: 650px)");
+
+  const [user, setUser] = useState(() => auth.currentUser);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setAuthChecked(true);
+    });
+    return () => unsubscribe();
+  }, []);
 
   const {
     currentProgress,
@@ -28,6 +51,19 @@ export default function App() {
   const showConfirmation =
     location.pathname.includes("/new") || location.pathname.includes("/edit");
 
+  if (user === null && location.pathname !== "/" && authChecked) {
+    return <Navigate to="/" replace />;
+  }
+
+  let summaryDescription = hasCollection
+    ? "Your cards are in. Start building decks and see exactly what you own, and what you’ll need."
+    : "Upload your card collection and start brewing with our MTG deck building tools.";
+
+  if (!user) {
+    summaryDescription =
+      "Log in to start building decks and to access your collection anywhere.";
+  }
+
   return (
     <div className="container">
       <div className="headingContainer">
@@ -38,22 +74,28 @@ export default function App() {
           <div className="flexRow">
             <button
               className={`navButton ${
-                location.pathname === "/how-it-works" ? "isActive" : ""
+                (!user && location.pathname === "/") ||
+                location.pathname === "/help"
+                  ? "isActive"
+                  : ""
               }`}
               onClick={() => {
                 if (showConfirmation && window.confirm("Discard changes?")) {
-                  navigate("/how-it-works");
+                  navigate("/help");
                 }
                 if (!showConfirmation) {
-                  navigate("/how-it-works");
+                  navigate("/help");
                 }
               }}
             >
-              <p>How it Works</p>
+              <p>Help</p>
             </button>
             <button
               className={`navButton ${
-                location.pathname === "/" ? "isActive" : ""
+                location.pathname === "/collection" ||
+                (user && location.pathname === "/")
+                  ? "isActive"
+                  : ""
               }`}
               onClick={() => {
                 if (showConfirmation && window.confirm("Discard changes?")) {
@@ -81,6 +123,17 @@ export default function App() {
             >
               <p>Decks</p>
             </button>
+            {user && (
+              <button
+                className="navButton navAuthButton"
+                onClick={() => handleLogout()}
+              >
+                <p>
+                  <MdLogin />
+                  {!isMobile && "Log Out"}
+                </p>
+              </button>
+            )}
           </div>
         </div>
         <div className="summaryContainer flexRow">
@@ -90,26 +143,30 @@ export default function App() {
                 <TbCards />
               </div>
             )}
-            <h2>Build Powerful Decks From Your Collection</h2>
-            <p>
-              {hasCollection
-                ? "Your cards are in. Start building decks and see exactly what you own, and what you’ll need."
-                : "Upload your card collection and start brewing with our MTG deck building tools."}
-            </p>
-            <div className="uploadContainer">
-              <input
-                className="hidden"
-                id="fileInput"
-                type="file"
-                accept=".csv"
-                onChange={onCollectionUpload}
-                disabled={loading}
-              />
-              <label htmlFor="fileInput">
-                <FaUpload className="uploadIcon" />
-                {hasCollection ? "Sync Cards" : "Upload Collection"}
-              </label>
-            </div>
+            <h2>
+              {user
+                ? "Build Powerful Decks From Your Collection"
+                : "Getting Started"}
+            </h2>
+            <p>{summaryDescription}</p>
+            {user ? (
+              <div className="uploadContainer">
+                <input
+                  className="hidden"
+                  id="fileInput"
+                  type="file"
+                  accept=".csv"
+                  onChange={onCollectionUpload}
+                  disabled={loading}
+                />
+                <label htmlFor="fileInput">
+                  <FaUpload className="uploadIcon" />
+                  {hasCollection ? "Sync Cards" : "Upload Cards"}
+                </label>
+              </div>
+            ) : (
+              <LogInForm />
+            )}
             {hasCollection && (
               <p className="subtext">Last synced {collection.updatedAt}</p>
             )}
@@ -132,7 +189,9 @@ export default function App() {
         <div className="loading">
           <div className="spinner"></div>
           <p className="text-center">
-            Loading {currentProgress}/{totalProgress} cards
+            {currentProgress !== totalProgress || currentProgress === 0
+              ? `Loading ${currentProgress}/${totalProgress} cards`
+              : "Wrapping up some final details..."}
           </p>
         </div>
       )}
@@ -146,12 +205,13 @@ export default function App() {
         }}
       >
         <Routes>
-          <Route path="/" element={<CardDashboard />} />
+          <Route path="/" element={user ? <CardDashboard /> : <Welcome />} />
+          <Route path="/collection" element={<CardDashboard />} />
           <Route path="/decks" element={<DeckDashboard />} />
           <Route path="/deck/:deckId" element={<DeckPreview />} />
           <Route path="/deck/:deckId/edit" element={<DeckEdit />} />
           <Route path="/deck/new" element={<DeckEdit />} />
-          <Route path="/how-it-works" element={<Welcome />} />
+          <Route path="/help" element={<Welcome />} />
         </Routes>
       </div>
     </div>
