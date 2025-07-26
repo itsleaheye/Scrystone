@@ -79,6 +79,12 @@ export function findCardByNameAndSet(
   return bulkCardDataMap.get(cardKey);
 }
 
+export function findCardByName(cardName: string): any | undefined {
+  const cardKey = getCardKey(cardName);
+
+  return bulkCardDataMap.get(cardKey);
+}
+
 export function getCardKey(cardName: string, set?: string): string {
   const normalizedName = normalizeCardName(cardName);
   return set ? `${normalizedName}-${set}` : normalizedName;

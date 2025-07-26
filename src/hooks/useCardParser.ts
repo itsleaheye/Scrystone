@@ -138,7 +138,7 @@ export function useCardParser() {
         });
 
         const type = normalizeCardType(scryfallCard?.type);
-        let setName = scryfallCard?.setName;
+        let setName = scryfallCard?.setName; // To do: Fix this to use scryfall set name, currently not exposed
         if (
           normalizedCardName === "Mountain" ||
           normalizedCardName === "Plains" ||
@@ -205,7 +205,7 @@ export function useCardParser() {
           const name = match[2].trim();
 
           // Call your existing card adding logic
-          await onDeckCardAdd(name, quantity);
+          await onDeckCardAdd(name, quantity, undefined);
         }
       } catch (error) {
         console.error(error);

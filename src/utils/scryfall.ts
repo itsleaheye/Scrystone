@@ -1,4 +1,4 @@
-import { findCardByNameAndSet } from "./cards";
+import { findCardByName, findCardByNameAndSet } from "./cards";
 import { normalizeCardName, normalizeMana } from "./normalize";
 
 interface ScryfallDetails {
@@ -26,6 +26,13 @@ export async function getScryfallCard({
 
   if (set && set != "Any") {
     const scryfallMatch = findCardByNameAndSet(normalizedName, set);
+    if (scryfallMatch) {
+      return formatScryfallDetails(scryfallMatch);
+    }
+  }
+
+  if (!set) {
+    const scryfallMatch = findCardByName(normalizedName);
     if (scryfallMatch) {
       return formatScryfallDetails(scryfallMatch);
     }
