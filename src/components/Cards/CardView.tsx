@@ -3,6 +3,7 @@ import { CardFooter } from "./CardFooter";
 import "./Card.css";
 import { CardHeader } from "./CardHeader";
 import cardDefault from "../../assets/cardBackDefault.jpg";
+import React from "react";
 
 interface CardViewProps {
   card:
@@ -14,7 +15,7 @@ interface CardViewProps {
   onChangeQuantity: (cardName: string, amount: number) => void;
 }
 
-export function CardView({
+export const CardView = React.memo(function CardView({
   card,
   editable,
   isDeckView,
@@ -24,6 +25,7 @@ export function CardView({
   return (
     <div className={`${editable ? "editableCard card" : "card"}`}>
       <img
+        loading="lazy"
         alt={card.name}
         className={`cardArt ${
           isDeckView && card.quantityOwned < (card.quantityNeeded ?? 0)
@@ -50,4 +52,4 @@ export function CardView({
       />
     </div>
   );
-}
+});

@@ -8,7 +8,7 @@ import { getCollectionSummary } from "../utils/summaries";
 import { format } from "date-fns";
 import { useCallback, useEffect, useState, type ChangeEvent } from "react";
 import { auth, db } from "../firebase";
-import { collection, doc, setDoc } from "firebase/firestore";
+import { collection, doc, getDocs, setDoc } from "firebase/firestore";
 import { getCardKey, loadBulkCardData } from "../utils/cards";
 import { useNavigate } from "react-router-dom";
 
@@ -62,7 +62,19 @@ export function useCardParser() {
               return;
             }
 
+            const uid = auth.currentUser.uid;
+            const userCollectionRef = collection(db, "users", uid, "cards");
             const rawCards = results.data as any[];
+
+            // Load existing cards from the db
+            const existingCardsMap = new Map<string, number>();
+            const snapshot = await getDocs(userCollectionRef);
+            snapshot.forEach((doc) => {
+              const data = doc.data();
+              const key = getCardKey(data.name, data.set);
+              existingCardsMap.set(key, data.quantityOwned ?? 0);
+            });
+
             const parsedCards = await parseCSVToCollectionCards(
               rawCards,
               (processed, total) => {
@@ -71,25 +83,33 @@ export function useCardParser() {
               }
             );
 
-            const uid = auth.currentUser.uid;
-            const userCollectionRef = collection(db, "users", uid, "cards");
-
             await Promise.all(
-              parsedCards.map((card) => {
+              parsedCards.map(async (card) => {
                 const cacheKey = getCardKey(card.name, card.set);
                 const cardRef = doc(userCollectionRef, cacheKey);
 
-                const sanitizedCard = {
-                  ...card,
-                  price: card.price ?? null,
-                  manaTypes: card.manaTypes ?? [],
-                  set: card.set ?? null,
-                  setName: card.setName ?? null,
-                  type: card.type ?? null,
-                  quantityOwned: card.quantityOwned ?? 1,
-                };
-
-                return setDoc(cardRef, sanitizedCard);
+                // If already in Firebase db, we only update the quantity
+                if (existingCardsMap.has(cacheKey)) {
+                  const newQty =
+                    (existingCardsMap.get(cacheKey) ?? 0) +
+                    (card.quantityOwned ?? 1);
+                  await setDoc(
+                    cardRef,
+                    { quantityOwned: newQty },
+                    { merge: true }
+                  );
+                } else {
+                  const sanitizedCard = {
+                    ...card,
+                    price: card.price ?? null,
+                    manaTypes: card.manaTypes ?? [],
+                    set: card.set ?? null,
+                    setName: card.setName ?? null,
+                    type: card.type ?? null,
+                    quantityOwned: card.quantityOwned ?? 1,
+                  };
+                  await setDoc(cardRef, sanitizedCard);
+                }
               })
             );
 

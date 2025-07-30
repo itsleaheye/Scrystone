@@ -24,18 +24,10 @@ export async function getScryfallCard({
 }: getScryfallCardProps): Promise<ScryfallDetails | undefined> {
   const normalizedName = normalizeCardName(cardName);
 
-  if (set && set != "Any") {
-    const scryfallMatch = findCardByNameAndSet(normalizedName, set);
-    if (scryfallMatch) {
-      return formatScryfallDetails(scryfallMatch);
-    }
-  }
-
-  if (!set) {
-    const scryfallMatch = findCardByName(normalizedName);
-    if (scryfallMatch) {
-      return formatScryfallDetails(scryfallMatch);
-    }
+  const localMatch =
+    (set && findCardByNameAndSet(cardName, set)) || findCardByName(cardName);
+  if (localMatch) {
+    return formatScryfallDetails(localMatch);
   }
 
   if (tcgPlayerId) {

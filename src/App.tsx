@@ -21,6 +21,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { LogInForm } from "./components/Auth/LogInForm";
 import { MdLogin } from "react-icons/md";
 import { handleLogout } from "./utils/auth";
+import { loadBulkCardData } from "./utils/cards";
 
 export default function App() {
   const navigate = useNavigate();
@@ -36,6 +37,10 @@ export default function App() {
       setAuthChecked(true);
     });
     return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    loadBulkCardData(); // Preloads our indexed json into bulkCardDataMap
   }, []);
 
   const {
