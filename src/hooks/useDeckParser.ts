@@ -1,5 +1,10 @@
 import React from "react";
-import type { Deck, DeckCard, DeckFormat } from "../types/MagicTheGathering";
+import type {
+  CollectionCard,
+  Deck,
+  DeckCard,
+  DeckFormat,
+} from "../types/MagicTheGathering";
 import {
   generateUniqueDeckId,
   getDeckCost,
@@ -175,4 +180,32 @@ export function useDeckParser() {
     onDeckSave,
     setDecks,
   };
+}
+
+export async function updateDecksQuantities(
+  userId: string,
+  updatedCollection: CollectionCard[]
+) {
+  const decks = await getDecksFromStorage();
+  for (const deck of decks) {
+    deck.cards = deck.cards.map((deckCard) => {
+      const collectionCard = updatedCollection.find(
+        (card) => card.name === deckCard.name
+      );
+
+      return {
+        ...deckCard,
+        quantityOwned: collectionCard ? collectionCard.quantityOwned : 0,
+      };
+    });
+
+    await saveDeckToDB(userId, deck);
+  }
+}
+
+export async function saveDeckToDB(userId: string, deck: Deck) {
+  await setDoc(doc(db, "users", userId, "decks", String(deck.id)), {
+    ...deck,
+    quantityOwnedUpdatedAt: new Date().toISOString(),
+  });
 }

@@ -12,6 +12,7 @@ import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { getCardKey, loadBulkCardData } from "../utils/cards";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
+import { updateDecksQuantities } from "./useDeckParser";
 
 export function useCardParser() {
   const navigate = useNavigate();
@@ -104,12 +105,9 @@ export function useCardParser() {
 
                 // If already in Firebase db, we only update the quantity
                 if (existingCardsMap.has(cacheKey)) {
-                  const newQty =
-                    (existingCardsMap.get(cacheKey) ?? 0) +
-                    (card.quantityOwned ?? 1);
                   await setDoc(
                     cardRef,
-                    { quantityOwned: newQty },
+                    { quantityOwned: Number(card.quantityOwned ?? 1) },
                     { merge: true }
                   );
                 } else {
@@ -140,6 +138,9 @@ export function useCardParser() {
 
             setUploadTime(timestamp);
             setCollectionSummary(getCollectionSummary(parsedCards));
+
+            await updateDecksQuantities(uid, parsedCards);
+
             setLoading(false);
 
             navigate("/collection?reload=true");
