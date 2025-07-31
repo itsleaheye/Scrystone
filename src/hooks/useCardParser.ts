@@ -8,9 +8,10 @@ import { getCollectionSummary } from "../utils/summaries";
 import { format } from "date-fns";
 import { useCallback, useEffect, useState, type ChangeEvent } from "react";
 import { auth, db } from "../firebase";
-import { collection, doc, getDocs, setDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { getCardKey, loadBulkCardData } from "../utils/cards";
 import { useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
 
 export function useCardParser() {
   const navigate = useNavigate();
@@ -20,10 +21,7 @@ export function useCardParser() {
   const [error, setError] = useState<string | null>(null);
   const [currentProgress, setCurrentProgress] = useState<number>(0);
   const [totalProgress, setTotalProgress] = useState<number>(0);
-  const [uploadTime, setUploadTime] = useState<string | null>(() => {
-    const saved = localStorage.getItem("mtg_cards_updated_at");
-    return saved ? saved : null;
-  });
+  const [uploadTime, setUploadTime] = useState<string | null>(null);
 
   const [collectionSummary, setCollectionSummary] = useState({
     size: 0,
@@ -36,6 +34,22 @@ export function useCardParser() {
       setCollectionSummary(getCollectionSummary(storedCards));
     };
     loadSummary();
+
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) return;
+
+      const uid = user.uid;
+      const userDocRef = doc(db, "users", uid);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (userDocSnap.exists()) {
+        const data = userDocSnap.data();
+        if (data.collectionUpdatedAt) {
+          setUploadTime(data.collectionUpdatedAt);
+        }
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
   const handleError = (message: string) => {
