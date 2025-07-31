@@ -99,13 +99,15 @@ export function useCardParser() {
                     { merge: true }
                   );
                 } else {
+                  const type = normalizeCardType(card.type);
+
                   const sanitizedCard = {
                     ...card,
                     price: card.price ?? null,
                     manaTypes: card.manaTypes ?? [],
                     set: card.set ?? null,
                     setName: card.setName ?? null,
-                    type: card.type ?? null,
+                    type,
                     quantityOwned: card.quantityOwned ?? 1,
                   };
                   await setDoc(cardRef, sanitizedCard);
@@ -158,7 +160,8 @@ export function useCardParser() {
         });
 
         const type = normalizeCardType(scryfallCard?.type);
-        let setName = scryfallCard?.setName; // To do: Fix this to use scryfall set name, currently not exposed
+
+        let setName = scryfallCard?.setName;
         if (
           normalizedCardName === "Mountain" ||
           normalizedCardName === "Plains" ||

@@ -1,5 +1,5 @@
 import { findCardByName, findCardByNameAndSet } from "./cards";
-import { normalizeCardName, normalizeMana } from "./normalize";
+import { normalizeCardName, normalizeMana, normalizeSet } from "./normalize";
 
 interface ScryfallDetails {
   manaTypes?: string[];
@@ -89,7 +89,7 @@ export function formatScryfallDetails(card: any): ScryfallDetails {
     name: card.name,
     price: parseFloat(card.prices?.usd) || 0,
     set: card.set,
-    setName: card.set_name ?? card.set,
-    type: card.type_line?.split("—")[0]?.trim().split(" ")[0],
+    setName: normalizeSet(card.set),
+    type: card.type_line?.split("—")[0].trim(),
   };
 }

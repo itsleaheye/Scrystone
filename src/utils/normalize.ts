@@ -41,7 +41,8 @@ export function normalizeColourIdentity(colorIdentity: string[]): string {
 export function normalizeCardType(type?: string) {
   if (!type) return undefined;
 
-  if (type === "Legendary") return "Creature";
+  if (type.includes("Artifact")) return "Artifact";
+  if (type.includes("Creature")) return "Creature";
   if (type === "Instant") return "Sorcery";
   if (
     ([
@@ -62,4 +63,19 @@ export function normalizeCardType(type?: string) {
   }
 
   return type;
+}
+
+export function normalizeSet(setName: string) {
+  switch (setName) {
+    case "who":
+      return "Doctor Who";
+    case "blb":
+      return "Bloomburrow";
+    case "fin":
+      return "Final Fantasy";
+    case "pfin":
+      return "Final Fantasy Promo";
+    default:
+      return setName;
+  }
 }
