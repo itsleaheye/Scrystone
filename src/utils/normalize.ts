@@ -41,7 +41,8 @@ export function normalizeColourIdentity(colorIdentity: string[]): string {
 export function normalizeCardType(type?: string) {
   if (!type) return undefined;
 
-  if (type === "Legendary") return "Creature";
+  if (type.includes("Artifact")) return "Artifact";
+  if (type.includes("Creature")) return "Creature";
   if (type === "Instant") return "Sorcery";
   if (
     ([
@@ -62,4 +63,38 @@ export function normalizeCardType(type?: string) {
   }
 
   return type;
+}
+
+export type SetMap = Record<string, string>;
+let scryfallSetMap: SetMap = {};
+
+export async function fetchScryfallSetMap(): Promise<SetMap> {
+  const cacheKey = "scryfallSetMap";
+
+  const cached = localStorage.getItem(cacheKey);
+  if (cached) {
+    try {
+      scryfallSetMap = JSON.parse(cached);
+      return scryfallSetMap;
+    } catch (err) {
+      console.warn("Invalid cache. Fetching from Scryfall...");
+    }
+  }
+
+  const response = await fetch("https://api.scryfall.com/sets");
+  if (!response.ok) throw new Error("Failed to fetch sets from Scryfall");
+
+  const data = await response.json();
+
+  scryfallSetMap = {};
+  for (const set of data.data) {
+    scryfallSetMap[set.code.toLowerCase()] = set.name;
+  }
+
+  localStorage.setItem(cacheKey, JSON.stringify(scryfallSetMap));
+  return scryfallSetMap;
+}
+
+export function normalizeSet(setCode: string): string {
+  return scryfallSetMap[setCode.toLowerCase()] ?? setCode;
 }

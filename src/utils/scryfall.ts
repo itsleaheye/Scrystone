@@ -1,5 +1,5 @@
 import { findCardByName, findCardByNameAndSet } from "./cards";
-import { normalizeCardName, normalizeMana } from "./normalize";
+import { normalizeCardName, normalizeMana, normalizeSet } from "./normalize";
 
 interface ScryfallDetails {
   manaTypes?: string[];
@@ -24,18 +24,10 @@ export async function getScryfallCard({
 }: getScryfallCardProps): Promise<ScryfallDetails | undefined> {
   const normalizedName = normalizeCardName(cardName);
 
-  if (set && set != "Any") {
-    const scryfallMatch = findCardByNameAndSet(normalizedName, set);
-    if (scryfallMatch) {
-      return formatScryfallDetails(scryfallMatch);
-    }
-  }
-
-  if (!set) {
-    const scryfallMatch = findCardByName(normalizedName);
-    if (scryfallMatch) {
-      return formatScryfallDetails(scryfallMatch);
-    }
+  const localMatch =
+    (set && findCardByNameAndSet(cardName, set)) || findCardByName(cardName);
+  if (localMatch) {
+    return formatScryfallDetails(localMatch);
   }
 
   if (tcgPlayerId) {
@@ -97,7 +89,7 @@ export function formatScryfallDetails(card: any): ScryfallDetails {
     name: card.name,
     price: parseFloat(card.prices?.usd) || 0,
     set: card.set,
-    setName: card.set_name ?? card.set,
-    type: card.type_line?.split("—")[0]?.trim().split(" ")[0],
+    setName: normalizeSet(card.set),
+    type: card.type_line?.split("—")[0].trim(),
   };
 }

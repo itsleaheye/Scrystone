@@ -64,11 +64,12 @@ export async function loadBulkCardData(): Promise<void> {
 
     const json = await res.json();
 
-    for (const card of json) {
+    const cardIndex = json as Record<string, any>;
+
+    for (const card of Object.values(cardIndex)) {
       const nameKey = getCardKey(card.name);
       const setKey = getCardKey(card.name, card.set);
 
-      // Fall back
       if (!bulkCardDataMap.has(nameKey)) {
         bulkCardDataMap.set(nameKey, card);
       }
@@ -97,5 +98,6 @@ export function findCardByName(cardName: string): any | undefined {
 
 export function getCardKey(cardName: string, set?: string): string {
   const normalizedName = normalizeCardName(cardName);
-  return set ? `${normalizedName}-${set}` : normalizedName;
+  const safeName = normalizedName.replace(/\//g, "-"); //Firestore treats the '/' as a separator, creating another segment. We need to prevent this
+  return set ? `${safeName}-${set.toLowerCase()}` : safeName;
 }

@@ -3,7 +3,7 @@ import { getCardsFromStorage } from "../../utils/storage";
 import { normalizeCardName } from "../../utils/normalize";
 import { CardView } from "./CardView";
 import { mergeCardQuantities } from "../../utils/cards";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import React from "react";
 import { EmptyView } from "../shared/EmptyView";
 import { useCardFiltersAndSort } from "../../hooks/useCardFiltersAndSort";
@@ -17,6 +17,7 @@ import Select from "react-select";
 import { ViewStyleFilter } from "../shared/ViewStyleFilter";
 import { CardList } from "./CardList";
 import { FaSearch } from "react-icons/fa";
+import { ImSpinner6 } from "react-icons/im";
 
 interface CardPreviewProps {
   activeCardPreview?: DeckCard;
@@ -56,10 +57,9 @@ export function CardPreview({
   }, []);
 
   const sourceCards = deckCards ?? collectionCards ?? [];
-  const cardsWithQuantities = mergeCardQuantities(
-    sourceCards,
-    ownedCards,
-    isDeckView
+  const cardsWithQuantities = useMemo(
+    () => mergeCardQuantities(sourceCards, ownedCards, isDeckView),
+    [sourceCards, ownedCards, isDeckView]
   );
 
   function onChangeQuantity(cardName: string, amount: number) {
@@ -133,7 +133,35 @@ export function CardPreview({
   const [filterColour, setFilterColour] = useState<string[]>([]);
   const [filterType, setFilterType] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [rawSearchTerm, setRawSearchTerm] = useState<string>("");
   const [sortBy, setSortBy] = useState<string>("Name");
+  const [filterLoading, setFilterLoading] = useState<boolean>(false);
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    if (rawSearchTerm.length < 3) {
+      setSearchTerm("");
+      setFilterLoading(false);
+      return;
+    }
+
+    setFilterLoading(true);
+
+    debounceTimeout.current = setTimeout(() => {
+      setSearchTerm(rawSearchTerm);
+      setFilterLoading(false);
+    }, 300);
+
+    return () => {
+      if (debounceTimeout.current) {
+        clearTimeout(debounceTimeout.current);
+      }
+    };
+  }, [rawSearchTerm]);
 
   useEffect(() => {
     if (isMobile) {
@@ -194,18 +222,18 @@ export function CardPreview({
             {!editable && (
               <div className="flexCol">
                 <p>Search</p>
-                <FaSearch className="inlineIcon" />
+                {filterLoading ? (
+                  <ImSpinner6 className="inlineIcon searchSpinner" />
+                ) : (
+                  <FaSearch className="inlineIcon" />
+                )}
                 <input
                   type="text"
                   className="searchInput"
                   placeholder="Card name..."
-                  onChange={(term) => {
-                    if (term.target.value.length > 1) {
-                      setCardFocused(undefined);
-                      setSearchTerm(term.target.value);
-                    } else {
-                      setSearchTerm("");
-                    }
+                  onChange={(e) => {
+                    setCardFocused(undefined);
+                    setRawSearchTerm(e.target.value);
                   }}
                 />
               </div>
