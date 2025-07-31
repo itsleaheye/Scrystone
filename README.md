@@ -20,12 +20,13 @@ A 'Magic the Gathering' web app built with React, Tailwind CSS, and the Scryfall
 - **Scryfall API Integration** – Fetch real-time card details like art, price, and rarities
 
 - **Local Storage** – All data is stored in-browser; no sign-up or accounts necessary
+
   - _Firebase prototype in the `/firebase` branch_
 
 - **Responsive UI** – A clean, fast, and mobile-friendly design, aided by Tailwind
 
 - **FTUX and Help page** - A page to help orient first-time users getting started
- 
+
 ---
 
 ### 🛠 Tech Stack
@@ -51,7 +52,8 @@ A 'Magic the Gathering' web app built with React, Tailwind CSS, and the Scryfall
 
 ### 🚧 Plan for V2
 
-- [x] Improve collection download speeds
+- [x] Improve collection download speeds V1
+- [] Performance overhaul V2 (upload speeds, collection search & view, etc.)
 - [x] Routing integration
 - [x] Card search bar added to card action row | [Design](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=1-3&t=YXOAXnY0SHo6VljJ-4)
 - [x] Card collection set distinguishment
@@ -64,7 +66,6 @@ A 'Magic the Gathering' web app built with React, Tailwind CSS, and the Scryfall
 - [ ] Deck view [CSS update](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=1-597&t=YXOAXnY0SHo6VljJ-4)
 - [ ] Hover card summary for breakdown of missing cards | [Design](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=2-185&t=YXOAXnY0SHo6VljJ-4)
 
-
 ## Stills of the feature:
 
 <img width="750" alt="image" src="https://github.com/user-attachments/assets/b546a82a-269a-4dc9-9928-4bbda3cdb654" />
@@ -74,5 +75,5 @@ A 'Magic the Gathering' web app built with React, Tailwind CSS, and the Scryfall
 <img width="750" alt="image" src="https://github.com/user-attachments/assets/a1507162-9c4e-4dca-900e-33d2e2c064ce" />
 
 ### V1 stills
-<img src="https://github.com/user-attachments/assets/735e172c-8334-4427-828a-fd83f9e6cbbd" width="750" >
 
+<img src="https://github.com/user-attachments/assets/735e172c-8334-4427-828a-fd83f9e6cbbd" width="750" >
