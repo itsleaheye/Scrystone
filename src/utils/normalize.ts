@@ -65,17 +65,36 @@ export function normalizeCardType(type?: string) {
   return type;
 }
 
-export function normalizeSet(setName: string) {
-  switch (setName) {
-    case "who":
-      return "Doctor Who";
-    case "blb":
-      return "Bloomburrow";
-    case "fin":
-      return "Final Fantasy";
-    case "pfin":
-      return "Final Fantasy Promo";
-    default:
-      return setName;
+export type SetMap = Record<string, string>;
+let scryfallSetMap: SetMap = {};
+
+export async function fetchScryfallSetMap(): Promise<SetMap> {
+  const cacheKey = "scryfallSetMap";
+
+  const cached = localStorage.getItem(cacheKey);
+  if (cached) {
+    try {
+      scryfallSetMap = JSON.parse(cached);
+      return scryfallSetMap;
+    } catch (err) {
+      console.warn("Invalid cache. Fetching from Scryfall...");
+    }
   }
+
+  const response = await fetch("https://api.scryfall.com/sets");
+  if (!response.ok) throw new Error("Failed to fetch sets from Scryfall");
+
+  const data = await response.json();
+
+  scryfallSetMap = {};
+  for (const set of data.data) {
+    scryfallSetMap[set.code.toLowerCase()] = set.name;
+  }
+
+  localStorage.setItem(cacheKey, JSON.stringify(scryfallSetMap));
+  return scryfallSetMap;
+}
+
+export function normalizeSet(setCode: string): string {
+  return scryfallSetMap[setCode.toLowerCase()] ?? setCode;
 }

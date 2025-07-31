@@ -22,6 +22,7 @@ import { LogInForm } from "./components/Auth/LogInForm";
 import { MdLogin } from "react-icons/md";
 import { handleLogout } from "./utils/auth";
 import { loadBulkCardData } from "./utils/cards";
+import { fetchScryfallSetMap } from "./utils/normalize";
 
 export default function App() {
   const navigate = useNavigate();
@@ -41,6 +42,7 @@ export default function App() {
 
   useEffect(() => {
     loadBulkCardData(); // Preloads our indexed json into bulkCardDataMap
+    fetchScryfallSetMap();
   }, []);
 
   const {
