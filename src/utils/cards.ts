@@ -8,33 +8,54 @@ export function mergeCardQuantities<T extends { name: string }>(
 ): (T & { quantityOwned: number; quantityNeeded?: number })[] {
   return cards.map((card) => {
     const normalizedName = normalizeCardName(card.name);
+    let quantityOwned = 0;
 
-    const quantityOwned = ownedCards
-      .filter(
-        (owned) =>
-          normalizeCardName(owned.name) === normalizedName &&
-          (("set" in card && card.set == "Any") ||
-            ("set" in card && owned.set === card.set))
-      )
-      .reduce((sum, match) => {
-        let quantity = match.quantityOwned;
+    if (isDeckView) {
+      quantityOwned = ownedCards
+        .filter((owned) => normalizeCardName(owned.name) === normalizedName)
+        .reduce((sum, match) => {
+          let quantity = match.quantityOwned;
 
-        if (Array.isArray(quantity)) {
-          quantity = quantity
-            .map((q) => Number(q))
-            .filter((q) => Number.isFinite(q))
-            .reduce((a, b) => a + b, 0);
-        } else {
-          quantity = Number(quantity);
-          if (!Number.isFinite(quantity)) quantity = 0;
-        }
+          if (Array.isArray(quantity)) {
+            quantity = quantity
+              .map((q) => Number(q))
+              .filter((q) => Number.isFinite(q))
+              .reduce((a, b) => a + b, 0);
+          } else {
+            quantity = Number(quantity);
+            if (!Number.isFinite(quantity)) quantity = 0;
+          }
 
-        return sum + quantity;
-      }, 0);
+          return sum + quantity;
+        }, 0);
 
-    return isDeckView
-      ? { ...card, quantityOwned }
-      : { ...card, quantityNeeded: 0, quantityOwned };
+      return { ...card, quantityOwned };
+    } else {
+      quantityOwned = ownedCards
+        .filter(
+          (owned) =>
+            normalizeCardName(owned.name) === normalizedName &&
+            (("set" in card && card.set == "Any") ||
+              ("set" in card && owned.set === card.set))
+        )
+        .reduce((sum, match) => {
+          let quantity = match.quantityOwned;
+
+          if (Array.isArray(quantity)) {
+            quantity = quantity
+              .map((q) => Number(q))
+              .filter((q) => Number.isFinite(q))
+              .reduce((a, b) => a + b, 0);
+          } else {
+            quantity = Number(quantity);
+            if (!Number.isFinite(quantity)) quantity = 0;
+          }
+
+          return sum + quantity;
+        }, 0);
+
+      return { ...card, quantityNeeded: 0, quantityOwned };
+    }
   });
 }
 

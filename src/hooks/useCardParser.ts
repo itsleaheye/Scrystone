@@ -237,7 +237,6 @@ export function useCardParser() {
         return;
       }
 
-      console.log("valid file", file);
       setLoading?.(true);
 
       try {
