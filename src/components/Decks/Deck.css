@@ -3,11 +3,18 @@
   flex-direction: column;
   justify-content: space-between;
   gap: var(--pad-xxs);
+  height: 325px;
 
   .manaRow {
     margin-top: 0;
     margin-bottom: 0;
     justify-content: center;
+  }
+
+  .searchSpinner {
+    width: 1.5em;
+    height: 1.5em;
+    margin: var(--pad-sm) auto;
   }
 }
 
