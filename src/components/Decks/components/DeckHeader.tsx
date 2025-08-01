@@ -14,6 +14,7 @@ import { useMemo } from "react";
 import { RiCheckboxCircleFill, RiErrorWarningFill } from "react-icons/ri";
 import { getColoursFromCards } from "../../../utils/cards";
 import "../../styles.css";
+import { TbCardsFilled } from "react-icons/tb";
 
 interface DeckPreviewProps {
   deck?: Deck;
@@ -62,7 +63,22 @@ export function DeckHeader({
           ),
     [cards]
   );
-  const isDeckReady = currentDeckSize == requiredDeckSize;
+
+  const isDeckReady = useMemo(() => {
+    const cardList = cards ?? deck?.cards ?? [];
+    return cardList.every(
+      (card) => (card.quantityOwned ?? 0) >= (card.quantityNeeded ?? 0)
+    );
+  }, [cards, deck?.cards]);
+
+  const totalMissingCards = useMemo(() => {
+    const cardList = cards ?? deck?.cards ?? [];
+    return cardList.reduce((sum, card) => {
+      const needed = card.quantityNeeded ?? 0;
+      const owned = card.quantityOwned ?? 0;
+      return sum + Math.max(0, needed - owned);
+    }, 0);
+  }, [cards, deck?.cards]);
 
   const deckColours =
     cards && cards.length > 0 ? getColoursFromCards(cards) : deck?.colours;
@@ -116,10 +132,10 @@ export function DeckHeader({
             <p>{deck?.description}</p>
           )}
         </div>
-
-        {/* Overview col 2  */}
-        <TypeSummary summary={summary} hasBorder={true} />
       </div>
+
+      {/* Overview col 2  */}
+      <TypeSummary summary={summary} hasBorder={true} />
 
       {/* Overview col 3 */}
       <div className="deckBreakdown flexSwapInverse">
@@ -135,12 +151,23 @@ export function DeckHeader({
           }
         />
         <IconItem
+          icon={<TbCardsFilled />}
+          text={
+            <>
+              <p>Total Cards</p>
+              <p className="subtext">
+                {currentDeckSize}/{requiredDeckSize}
+              </p>
+            </>
+          }
+        />
+        <IconItem
           icon={isDeckReady ? <RiCheckboxCircleFill /> : <RiErrorWarningFill />}
           text={
             <>
-              <p>{isDeckReady ? "Deck is ready" : "Deck not ready"}</p>
+              <p>{isDeckReady ? "Deck is ready" : "Status"}</p>
               <p className="subtext">
-                {currentDeckSize}/{requiredDeckSize} Cards
+                {isDeckReady ? " " : `${totalMissingCards} Missing`}{" "}
               </p>
             </>
           }

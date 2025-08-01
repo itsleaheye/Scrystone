@@ -5,7 +5,6 @@ import { getDeckTypeSummaryWithDefaults } from "../../utils/decks";
 import { ManaRow } from "./components/ManaRow";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { ImSpinner6 } from "react-icons/im";
 
 interface Props {
   deck: Deck;

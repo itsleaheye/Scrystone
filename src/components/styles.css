@@ -472,15 +472,16 @@
 }
 
 .deckOverview {
-  display: flex;
+  display: grid;
   flex-direction: column;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--pad-xs);
   margin-bottom: var(--pad-sm);
   background: var(--white);
   border-radius: var(--border-radius-base);
   padding: var(--pad-xs);
-  align-items: center;
-  overflow: hidden;
-
   p {
     margin-top: var(--pad-xxs);
     color: var(--blackest);
@@ -518,15 +519,13 @@
     flex-direction: row;
   }
   .deckOverview .deckCol1 {
-    max-width: 100%;
-
     .deckFields {
       display: flex;
       flex-direction: column;
     }
   }
   .deckBreakdown {
-    justify-content: space-around;
+    justify-content: space-between;
     border-top: 2px solid var(--off-white);
     padding-top: var(--pad-xxs);
   }
@@ -613,6 +612,12 @@
 }
 
 /* === Media Queries (Responsive) === */
+@media only screen and (min-width: 400px) {
+  .deckOverview .deckBreakdown {
+    justify-content: space-evenly;
+  }
+}
+
 @media only screen and (min-width: 650px) {
   .contentContainer {
     padding: var(--pad-sm);
@@ -657,19 +662,17 @@
     }
   }
   .deckOverview {
-    flex-direction: row;
     justify-content: space-between;
-    padding: var(--pad-xs);
+    padding: var(--pad-sm);
+
     p {
       text-align: left;
     }
     .flexSwap {
       width: auto;
-      flex-direction: row;
+      /* flex-direction: row; */
     }
-    .flexSwapInverse {
-      flex-direction: column;
-    }
+
     .staticDeckCol1 {
       .deckFields {
         flex-direction: row !important;
@@ -677,30 +680,27 @@
       }
     }
     .deckCol1 {
-      padding-right: var(--pad-xs);
-      justify-content: center;
-      flex-direction: column;
-      display: flex;
-      max-width: 300px;
+      /* border-bottom: 2px solid var(--off-white); */
 
       .deckFields {
         flex-direction: column;
+        justify-content: start;
         align-items: center;
         display: flex;
       }
     }
     textarea {
-      width: 284px;
-      height: 75px;
+      height: 100px;
     }
     .deckBreakdown {
-      justify-content: end;
-      max-width: 125px;
+      /* border-left: 2px solid var(--off-white); */
+      justify-content: center;
+      gap: var(--pad-xs);
       border-top: none;
-      padding-top: 0;
+      align-items: center;
 
       .iconItem svg {
-        margin: var(--pad-xs) 0 0;
+        margin: 0 var(--pad-xs);
       }
     }
   }
@@ -742,22 +742,23 @@
   }
   .deckOverview {
     padding: var(--pad-sm);
+    grid-template-columns: 37% 23% 40%;
 
     .deckBreakdown {
-      max-width: 100%;
-      gap: var(--pad-xxs);
+      border-left: 2px solid var(--off-white);
+      padding-top: 0;
+      gap: 0;
+      padding-left: var(--pad-xs);
     }
     .flexSwapInverse {
       flex-direction: row;
     }
 
     textarea {
-      width: 358px;
+      width: 100%;
     }
 
     .deckCol1 {
-      min-width: 375px;
-
       .deckFields {
         gap: var(--pad-xs);
         flex-direction: row;
@@ -765,15 +766,6 @@
         select {
           min-width: 150px;
         }
-      }
-    }
-
-    .staticDeckCol1 {
-      min-width: 375px;
-
-      .deckFields {
-        justify-content: space-between;
-        flex-direction: row;
       }
     }
   }
@@ -784,6 +776,15 @@
     .searchContainer {
       margin: 0;
       width: 350px;
+    }
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  .deckOverview {
+    grid-template-columns: 50% 15% 25%;
+    .deckCol1 {
+      max-width: 500px;
     }
   }
 }

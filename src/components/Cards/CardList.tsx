@@ -42,7 +42,7 @@ export function CardList({
 
   return (
     <div className="cardListContainer">
-      <div>
+      <div className="listScrollView">
         {filteredAndSortedCards.map((card, index) => {
           return (
             <CardListItem

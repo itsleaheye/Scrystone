@@ -13,25 +13,29 @@ export function TypeSummary({ summary, hasBorder = false }: TypeSummaryProps) {
       <ul className={hasBorder ? "" : "centredList"}>
         {summary.map(({ type, quantityNeeded, quantityOwned }) => {
           let typeLabel = type;
-          if (type === "Sorcery") {
-            typeLabel = "Sorcerie";
-          } else if (type === "Instant") {
+          if (type === "Sorcery" || type === "Instant") {
             typeLabel = "Sorcerie";
           }
 
+          const showWarning = (quantityOwned ?? 0) < (quantityNeeded ?? 1);
+
           return (
-            <li
-              key={type}
-              className={
-                quantityNeeded !== quantityOwned &&
-                quantityNeeded !== 0 &&
-                hasBorder
-                  ? "bold"
-                  : undefined
-              }
-            >
+            <li key={type}>
+              {/* <span className={showWarning ? "redText" : ""}> */}
               {getTypeIcon(type)}
-              {typeLabel}s {quantityOwned}/{quantityNeeded}
+              {/* </span> */}
+              {typeLabel}s
+              <span
+                className={`${
+                  quantityNeeded !== quantityOwned &&
+                  quantityNeeded !== 0 &&
+                  hasBorder
+                    ? "bold"
+                    : undefined
+                } ${showWarning ? "redText bold" : ""}`}
+              >
+                &nbsp;&nbsp;{quantityOwned}/{quantityNeeded}
+              </span>
             </li>
           );
         })}

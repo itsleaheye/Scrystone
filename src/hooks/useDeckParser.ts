@@ -152,7 +152,7 @@ export function useDeckParser() {
         const stillNeeds =
           (card.quantityNeeded ?? 0) - (card.quantityOwned ?? 0);
 
-        fileContent += `${stillNeeds}x ${card.name} \n`;
+        fileContent += `${stillNeeds} ${card.name} \n`;
       });
     }
 

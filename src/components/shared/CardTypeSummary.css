@@ -22,6 +22,10 @@
   }
 }
 
+.redText {
+  color: var(--red) !important;
+}
+
 .noBorder {
   border-top: 2px solid var(--off-white);
   padding-top: var(--pad-xs);
@@ -34,20 +38,25 @@
   align-items: center;
   display: flex;
   border: none;
-  text-align: center;
-  margin: var(--pad-xxs) auto 0 auto;
   width: 100%;
   border-top: 2px solid var(--off-white);
-  padding: var(--pad-xs) 0;
+  padding-top: var(--pad-xs);
   justify-content: center;
 }
 
 @media only screen and (min-width: 650px) {
   .hasBorder {
+    padding-bottom: var(--pad-xs);
+    border-bottom: 2px var(--off-white) solid;
+  }
+}
+
+@media only screen and (min-width: 900px) {
+  .hasBorder {
     border-top: none;
+    padding-top: 0;
+    border-bottom: none;
     border-left: 2px var(--off-white) solid;
-    padding-left: var(--pad-xs);
-    text-align: left;
-    justify-content: start;
+    padding-bottom: 0;
   }
 }

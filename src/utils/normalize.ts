@@ -61,8 +61,9 @@ export function normalizeCardType(type?: string) {
       type == "Instant") ||
     type == "Basic"
   ) {
-    type = "Land";
+    return (type = "Land");
   }
+  if (type == "Basic Land") return "Land";
   if (type.includes("Planeswalker")) return "Creature";
 
   // Default

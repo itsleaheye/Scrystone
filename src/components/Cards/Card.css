@@ -146,7 +146,6 @@
 
 .cardListRow {
   justify-content: space-between;
-  max-width: 650px;
   margin: var(--pad-xxs) 0;
   padding: 0 var(--pad-xxxs);
 
@@ -208,10 +207,9 @@
 .cardListContainer {
   margin: 0 auto;
   max-width: 1200px;
-  display: flex;
-  flex-direction: row;
-  gap: var(--pad-sm);
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 100%;
+  gap: var(--pad-xs);
 }
 
 .cardFoundTotal {
@@ -275,14 +273,34 @@
 
 @media only screen and (min-width: 600px) {
   .cardListRow {
-    max-width: 600px;
-
     .setDetails {
       width: 100px;
     }
 
     .primaryDetails {
       width: 200px;
+    }
+  }
+  .cardListContainer {
+    grid-template-columns: 1fr minmax(0, 275px);
+    justify-content: space-between;
+
+    .listScrollView {
+      max-height: 610px;
+      overflow-y: auto;
+      padding-right: var(--pad-xxs);
+
+      &::-webkit-scrollbar {
+        width: 12px;
+      }
+      &::-webkit-scrollbar-track {
+        background: var(--darker-gray);
+        border-radius: var(--border-radius-base);
+      }
+      &::-webkit-scrollbar-thumb {
+        background: var(--blue);
+        border-radius: var(--border-radius-base);
+      }
     }
   }
 
@@ -296,8 +314,6 @@
 
 @media only screen and (min-width: 900px) {
   .cardListRow {
-    max-width: 700px;
-
     .setDetails {
       width: 250px;
     }
