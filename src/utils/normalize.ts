@@ -43,7 +43,9 @@ export function normalizeCardType(type?: string) {
 
   if (type.includes("Artifact")) return "Artifact";
   if (type.includes("Creature")) return "Creature";
+  if (type.includes("Sorcery")) return "Sorcery";
   if (type === "Instant") return "Sorcery";
+  if (type.includes("Land")) return "Land";
   if (
     ([
       "Swamp",
@@ -61,7 +63,9 @@ export function normalizeCardType(type?: string) {
   ) {
     type = "Land";
   }
+  if (type.includes("Planeswalker")) return "Creature";
 
+  // Default
   return type;
 }
 

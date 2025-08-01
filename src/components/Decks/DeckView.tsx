@@ -5,6 +5,7 @@ import { getDeckTypeSummaryWithDefaults } from "../../utils/decks";
 import { ManaRow } from "./components/ManaRow";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { ImSpinner6 } from "react-icons/im";
 
 interface Props {
   deck: Deck;
@@ -36,7 +37,9 @@ export function DeckView({ deck }: Props) {
       {deck.colours && deck.colours.length > 0 && (
         <ManaRow colours={deck.colours} />
       )}
+
       <TypeSummary summary={summary} />
+
       <div className="formatTag">
         <p>{deck.format}</p>
       </div>

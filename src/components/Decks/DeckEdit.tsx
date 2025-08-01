@@ -16,7 +16,7 @@ import "../styles.css";
 
 export function DeckEdit() {
   const { deckId } = useParams<{ deckId: string }>();
-  const { cards, onDeckCardAdd, setCards, onCardsImport, loading } =
+  const { cards, onDeckCardAdd, setCards, onCardsImport, loading, error } =
     useCardParser();
 
   const [deck, setDeck] = useState<Deck | undefined>();
@@ -98,6 +98,11 @@ export function DeckEdit() {
         onCardsImport={onCardsImport}
         loading={loading}
       />
+      {error && (
+        <div className="bannerError">
+          Error parsing cards. Refresh the page and try again.
+        </div>
+      )}
 
       {/* Deck overview */}
       <DeckHeader

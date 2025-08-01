@@ -54,6 +54,7 @@ export function useCardParser() {
   }, []);
 
   const handleError = (message: string) => {
+    console.error("[!] Error ", message);
     setLoading(false);
     setError(message);
   };
@@ -236,6 +237,7 @@ export function useCardParser() {
         return;
       }
 
+      console.log("valid file", file);
       setLoading?.(true);
 
       try {
@@ -244,22 +246,21 @@ export function useCardParser() {
         let readingDeck = true;
 
         for (const line of lines) {
-          if (
-            line.trim().startsWith("**The Following Cards Are Still Needed")
-          ) {
+          const trimmed = line.trim();
+
+          if (trimmed.startsWith("**The Following Cards Are Still Needed")) {
             readingDeck = false;
             break;
           }
 
-          if (!readingDeck || !line.trim()) continue;
+          if (!readingDeck || !trimmed) continue;
 
-          const match = line.match(/^\s*(\d+)[xX]?\s+(.+)$/); // Supports `1x name`, `1 name`, `1 x name`, and `1X name`
+          const match = trimmed.match(/^\s*(\d+)[xX]?\s+(.+)$/); // Supports `1x name`, `1 name`, `1 x name`, and `1X name`
           if (!match) continue;
 
           const quantity = parseInt(match[1], 10);
           const name = match[2].trim();
 
-          // Call your existing card adding logic
           await onDeckCardAdd(name, quantity, undefined);
         }
       } catch (error) {

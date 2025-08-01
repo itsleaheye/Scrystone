@@ -25,24 +25,32 @@ export function DeckDashboard() {
   }, []);
 
   return (
-    <div
-      className="contentContainer"
-      style={{
-        maxWidth: "1600px",
-        opacity: loading ? 0.5 : 1,
-        pointerEvents: loading ? "none" : "auto",
-        transition: "opacity 0.5s ease",
-      }}
-    >
+    <div className="contentContainer">
       {/* Actions header */}
-      <DeckActions
-        onBack={() => {
-          navigate("/");
+      <span
+        style={{
+          maxWidth: "1600px",
+          opacity: loading ? 0.5 : 1,
+          pointerEvents: loading ? "none" : "auto",
+          transition: "opacity 0.5s ease",
         }}
-        onPrimary={() => {
-          navigate(`/deck/new`);
-        }}
-      />
+      >
+        <DeckActions
+          onBack={() => {
+            navigate("/");
+          }}
+          onPrimary={() => {
+            navigate(`/deck/new`);
+          }}
+        />
+      </span>
+
+      {loading && (
+        <div className="loading">
+          <div className="spinner"></div>
+          <p className="text-center">Loading decks...</p>
+        </div>
+      )}
 
       {/* Decks list */}
       {decks.length > 0 && !loading ? (
@@ -52,10 +60,12 @@ export function DeckDashboard() {
           ))}
         </div>
       ) : (
-        <EmptyView
-          description="Click on '+ New Deck' to start building..."
-          title="No decks found"
-        />
+        !loading && (
+          <EmptyView
+            description="Click on '+ New Deck' to start building..."
+            title="No decks found"
+          />
+        )
       )}
     </div>
   );
