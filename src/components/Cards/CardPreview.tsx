@@ -125,6 +125,7 @@ export function CardPreview({
     { value: "Enchantment", label: "Enchantment" },
     { value: "Land", label: "Land" },
     { value: "Sorcery", label: "Sorcery" },
+    { value: "Instant", label: "Instant" },
   ];
 
   const isMobile = useMediaQuery("(max-width: 650px)");

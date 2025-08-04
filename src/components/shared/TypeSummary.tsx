@@ -13,7 +13,7 @@ export function TypeSummary({ summary, hasBorder = false }: TypeSummaryProps) {
       <ul className={hasBorder ? "" : "centredList"}>
         {summary.map(({ type, quantityNeeded, quantityOwned }) => {
           let typeLabel = type;
-          if (type === "Sorcery" || type === "Instant") {
+          if (type === "Sorcery") {
             typeLabel = "Sorcerie";
           }
 
