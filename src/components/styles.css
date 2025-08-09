@@ -652,6 +652,16 @@
     }
 
     .staticDeckCol1 {
+      margin: 0 auto;
+
+      .manaRow {
+        justify-content: center;
+      }
+
+      p {
+        text-align: center;
+      }
+
       .deckFields {
         flex-direction: row !important;
         gap: var(--pad-xs);
@@ -721,6 +731,18 @@
   .deckOverview {
     padding: var(--pad-sm);
     grid-template-columns: 37% 23% 40%;
+
+    .staticDeckCol1 {
+      margin: 0;
+
+      .manaRow {
+        justify-content: start;
+      }
+
+      p {
+        text-align: left;
+      }
+    }
 
     .deckBreakdown {
       border-left: 2px solid var(--off-white);

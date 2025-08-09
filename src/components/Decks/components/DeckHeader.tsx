@@ -15,6 +15,7 @@ import { RiCheckboxCircleFill, RiErrorWarningFill } from "react-icons/ri";
 import { getColoursFromCards } from "../../../utils/cards";
 import "../../styles.css";
 import { TbCardsFilled } from "react-icons/tb";
+import { useMediaQuery } from "../../../hooks/useMediaQuery";
 
 interface DeckPreviewProps {
   deck?: Deck;
@@ -38,6 +39,7 @@ export function DeckHeader({
   formDetails,
 }: DeckPreviewProps): React.JSX.Element {
   const editable = formDetails !== undefined;
+  const isMobile = useMediaQuery("(max-width: 900px)");
 
   const requiredDeckSize = useMemo(() => {
     const currentFormat = editable ? formDetails.format : deck?.format;
@@ -87,16 +89,17 @@ export function DeckHeader({
     <div
       className="deckOverview"
       style={{
-        backgroundImage: deck?.featureImageUrl
-          ? `linear-gradient(
+        backgroundImage:
+          !isMobile && deck?.featureImageUrl
+            ? `linear-gradient(
           to right,
-          rgba(245, 245, 245, 0.5) 0%,
+          rgba(245, 245, 245, 0.6) 0%,
           rgba(245, 245, 245, 0.85) 10%,
           rgba(245, 245, 245, 1) 30%,
           rgba(245, 245, 245, 1) 100%
         ), url(${deck.featureImageUrl})`
-          : "",
-        backgroundPosition: "-40px -100px",
+            : "",
+        backgroundPosition: "center center,-40px -100px",
         backgroundRepeat: "repeat-y",
       }}
     >
