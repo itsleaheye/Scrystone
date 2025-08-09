@@ -10,12 +10,14 @@ import { TypeSummary } from "../../shared/TypeSummary";
 import { IconItem } from "../../shared/IconItem";
 import { GiCash } from "react-icons/gi";
 import { getDeckCost } from "../../../utils/decks";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { RiCheckboxCircleFill, RiErrorWarningFill } from "react-icons/ri";
 import { getColoursFromCards } from "../../../utils/cards";
 import "../../styles.css";
 import { TbCardsFilled } from "react-icons/tb";
 import { useMediaQuery } from "../../../hooks/useMediaQuery";
+import { FaEdit } from "react-icons/fa";
+import { FeatureModal } from "./FeatureModal";
 
 interface DeckPreviewProps {
   deck?: Deck;
@@ -29,6 +31,8 @@ interface DeckPreviewProps {
     format: DeckFormat;
     setFormat: (format: DeckFormat) => void;
     isValidFormat: (value: any) => value is DeckFormat;
+    featureCard: DeckCard | null;
+    setFeatureCard: (card: DeckCard | null) => void;
   };
 }
 
@@ -40,6 +44,7 @@ export function DeckHeader({
 }: DeckPreviewProps): React.JSX.Element {
   const editable = formDetails !== undefined;
   const isMobile = useMediaQuery("(max-width: 900px)");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const requiredDeckSize = useMemo(() => {
     const currentFormat = editable ? formDetails.format : deck?.format;
@@ -85,72 +90,116 @@ export function DeckHeader({
   const deckColours =
     cards && cards.length > 0 ? getColoursFromCards(cards) : deck?.colours;
 
+  const [featureEditable, setFeatureEditable] = useState<boolean>(
+    (editable &&
+      ((deck?.cards && deck.cards.length > 0) ||
+        (cards && cards.length > 0))) ??
+      false
+  );
+  useEffect(() => {
+    const hasCards =
+      (deck?.cards && deck.cards.length > 0) || (cards && cards.length > 0);
+    if (editable && hasCards) {
+      setFeatureEditable(true);
+    } else {
+      setFeatureEditable(false);
+    }
+  }, [deck?.cards, editable, cards]);
+
+  const activeFeatureCard = formDetails?.featureCard ?? deck?.featureCard;
+
   return (
     <div
       className="deckOverview"
       style={{
         backgroundImage:
-          !isMobile && deck?.featureImageUrl
+          !isMobile && activeFeatureCard?.imageUrl
             ? `linear-gradient(
           to right,
           rgba(245, 245, 245, 0.6) 0%,
           rgba(245, 245, 245, 0.85) 10%,
           rgba(245, 245, 245, 1) 30%,
           rgba(245, 245, 245, 1) 100%
-        ), url(${deck.featureImageUrl})`
+        ), url(${activeFeatureCard.imageUrl})`
             : "",
         backgroundPosition: "center center,-40px -100px",
         backgroundRepeat: "repeat-y",
       }}
     >
-      <div className="flexSwap">
-        {/* Overview col 1 */}
-        <div className={`deckCol1 ${!editable ? "staticDeckCol1" : ""}`}>
-          <ManaRow colours={deckColours} />
+      {isModalOpen && formDetails ? (
+        <FeatureModal
+          setIsModalOpen={setIsModalOpen}
+          setFeatureCard={formDetails.setFeatureCard}
+          featureCard={activeFeatureCard ?? null}
+          cards={cards ?? deck?.cards}
+        />
+      ) : (
+        <div className="flexSwap">
+          {/* Overview col 1 */}
+          <div className={`deckCol1 ${!editable ? "staticDeckCol1" : ""}`}>
+            <div className={"flexRow manaAndCoverRow"}>
+              <ManaRow colours={deckColours} />
 
-          <div className="deckFields">
-            {editable ? (
-              <>
-                <DeckField
-                  onChange={formDetails.setName}
-                  placeholder="Deck name..."
-                  value={formDetails.name}
-                />
-                <DeckField
-                  onChange={(value) => {
-                    const validFormat: DeckFormat = formDetails.isValidFormat(
-                      value
-                    )
-                      ? value
-                      : "Commander";
-                    formDetails.setFormat(validFormat);
+              {featureEditable && (
+                <button
+                  className={"actionButton"}
+                  style={{
+                    marginBottom: "var(--pad-xs)",
                   }}
-                  placeholder=""
-                  type="select"
-                  value={formDetails.format}
-                />
-              </>
+                  onClick={() => {
+                    setIsModalOpen(true);
+                  }}
+                >
+                  Change Cover
+                  <FaEdit />
+                </button>
+              )}
+            </div>
+
+            <div className="deckFields">
+              {editable ? (
+                <>
+                  <DeckField
+                    onChange={formDetails.setName}
+                    placeholder="Deck name..."
+                    value={formDetails.name}
+                  />
+                  <DeckField
+                    onChange={(value) => {
+                      const validFormat: DeckFormat = formDetails.isValidFormat(
+                        value
+                      )
+                        ? value
+                        : "Commander";
+                      formDetails.setFormat(validFormat);
+                    }}
+                    placeholder=""
+                    type="select"
+                    value={formDetails.format}
+                  />
+                </>
+              ) : (
+                <>
+                  <p className="bold deckName overflowElipse">{deck?.name}</p>
+                  <div className="formatTag">
+                    <p>{deck?.format}</p>
+                  </div>
+                </>
+              )}
+            </div>
+            {editable ? (
+              <DeckField
+                onChange={formDetails.setDescription}
+                placeholder="Deck description..."
+                type="textarea"
+                value={formDetails.description || ""}
+              />
             ) : (
-              <>
-                <p className="bold deckName overflowElipse">{deck?.name}</p>
-                <div className="formatTag">
-                  <p>{deck?.format}</p>
-                </div>
-              </>
+              <p>{deck?.description}</p>
             )}
           </div>
-          {editable ? (
-            <DeckField
-              onChange={formDetails.setDescription}
-              placeholder="Deck description..."
-              type="textarea"
-              value={formDetails.description || ""}
-            />
-          ) : (
-            <p>{deck?.description}</p>
-          )}
         </div>
-      </div>
+      )}
 
       {/* Overview col 2  */}
       <TypeSummary summary={summary} hasBorder={true} />

@@ -9,6 +9,7 @@ import { CardPreview } from "../Cards/CardPreview";
 import { DeckActions } from "./components/DeckActions";
 import type { CardTypeSummary, Deck } from "../../types/MagicTheGathering";
 import { ImSpinner6 } from "react-icons/im";
+import { DeckHeaderLoading } from "./components/DeckHeaderLoading";
 
 export function DeckPreview() {
   const { deckId } = useParams<{ deckId: string }>();
@@ -44,6 +45,7 @@ export function DeckPreview() {
 
   const cards = deck?.cards || [];
   const [summary, setSummary] = useState<CardTypeSummary[]>([]);
+
   useEffect(() => {
     async function loadSummary() {
       let summaryResult = await getDeckTypeSummaryWithDefaults(cards);
@@ -70,12 +72,7 @@ export function DeckPreview() {
       {deck ? (
         <DeckHeader deck={deck} summary={summary} />
       ) : (
-        <div className="deckOverview loadingDeckOverview">
-          <div className="flexCol">
-            <ImSpinner6 className="inlineIcon searchSpinner" />
-            <p className="text-center">Loading your deck...</p>
-          </div>
-        </div>
+        <DeckHeaderLoading />
       )}
 
       {/* Deck card list */}

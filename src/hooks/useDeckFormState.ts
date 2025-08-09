@@ -7,14 +7,27 @@ export function useDeckFormState(initialDeck?: Deck) {
     initialDeck?.description ?? ""
   );
   const [format, setFormat] = useState(initialDeck?.format ?? "Commander");
+  const [featureCard, setFeatureCard] = useState(
+    initialDeck?.featureCard ?? null
+  );
 
   useEffect(() => {
     if (initialDeck) {
       setName(initialDeck.name);
       setDescription(initialDeck.description ?? "");
       setFormat(initialDeck.format);
+      setFeatureCard(initialDeck.featureCard ?? null);
     }
   }, [initialDeck]);
 
-  return { name, setName, description, setDescription, format, setFormat };
+  return {
+    name,
+    setName,
+    description,
+    setDescription,
+    format,
+    setFormat,
+    featureCard,
+    setFeatureCard,
+  };
 }

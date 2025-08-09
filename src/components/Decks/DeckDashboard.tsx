@@ -36,9 +36,7 @@ export function DeckDashboard() {
         }}
       >
         <DeckActions
-          onBack={() => {
-            navigate("/");
-          }}
+          onBack={() => navigate("/")}
           onPrimary={() => {
             navigate(`/deck/new`);
           }}

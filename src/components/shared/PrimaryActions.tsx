@@ -1,6 +1,7 @@
 import "../styles.css";
 
 interface ActionButtonProps {
+  disabled?: boolean;
   hideLabel?: boolean;
   icon: React.ReactNode;
   label: string;
@@ -9,6 +10,7 @@ interface ActionButtonProps {
 }
 
 export function ActionButton({
+  disabled = false,
   hideLabel = false,
   icon,
   label,
@@ -17,6 +19,7 @@ export function ActionButton({
 }: ActionButtonProps): React.JSX.Element {
   return (
     <button
+      disabled={disabled}
       className={`${variation}Button ${
         hideLabel ? "smallActionButton" : "actionButton"
       }`}

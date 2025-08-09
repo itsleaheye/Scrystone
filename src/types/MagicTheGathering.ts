@@ -26,7 +26,7 @@ export interface Deck {
   cards: DeckCard[];
   colours?: string[];
   description?: string;
-  featureImageUrl?: string;
+  featureCard?: DeckCard;
   format: DeckFormat;
   id: number;
   isFavorite?: boolean;

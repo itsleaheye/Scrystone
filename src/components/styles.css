@@ -1,5 +1,10 @@
 /* === Core Layout & Components === */
 
+button:hover {
+  cursor: pointer;
+  transition: var(--ease-in);
+}
+
 .pageTitle {
   background-color: var(--blackest);
   display: flex;
@@ -85,7 +90,8 @@
   }
 
   .uploadContainer {
-    margin-top: var(--pad-xxs);
+    margin-top: var(--pad-xs);
+
     label {
       font-size: 16px;
       display: flex;
@@ -438,6 +444,8 @@
 
 .loadingDeckOverview {
   height: 225px;
+  grid-template-columns: 1fr !important;
+  align-items: center;
 
   .flexCol {
     font-weight: bold;
@@ -446,20 +454,24 @@
 
   svg {
     fill: var(--blackest);
+    margin-bottom: var(--pad-xs);
+    height: 2rem;
+    width: 2rem;
   }
 }
 
 .deckOverview {
-  display: grid;
-  flex-direction: column;
-  overflow: hidden;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--pad-xs);
-  margin-bottom: var(--pad-sm);
   background: var(--white);
   border-radius: var(--border-radius-base);
+  display: grid;
+  display: grid;
+  flex-direction: column;
+  gap: var(--pad-xs);
+  grid-template-columns: 1fr;
+  margin-bottom: var(--pad-sm);
+  overflow: hidden;
   padding: var(--pad-xs);
+
   p {
     margin-top: var(--pad-xxs);
     color: var(--blackest);
@@ -506,6 +518,21 @@
     justify-content: space-between;
     border-top: 2px solid var(--off-white);
     padding-top: var(--pad-xxs);
+  }
+}
+
+.manaAndCoverRow {
+  justify-content: space-between;
+
+  button {
+    border: none;
+    background: none;
+    padding-right: 0;
+
+    &:hover {
+      cursor: pointer;
+      transition: var(--ease-in);
+    }
   }
 }
 
@@ -668,8 +695,6 @@
       }
     }
     .deckCol1 {
-      /* border-bottom: 2px solid var(--off-white); */
-
       .deckFields {
         flex-direction: column;
         justify-content: start;
@@ -681,7 +706,6 @@
       height: 100px;
     }
     .deckBreakdown {
-      /* border-left: 2px solid var(--off-white); */
       justify-content: center;
       gap: var(--pad-xs);
       border-top: none;
@@ -731,6 +755,7 @@
   .deckOverview {
     padding: var(--pad-sm);
     grid-template-columns: 37% 23% 40%;
+    height: 275px;
 
     .staticDeckCol1 {
       margin: 0;
@@ -783,9 +808,6 @@
 @media only screen and (min-width: 1200px) {
   .deckOverview {
     grid-template-columns: 50% 15% 25%;
-    .deckCol1 {
-      max-width: 500px;
-    }
   }
 }
 

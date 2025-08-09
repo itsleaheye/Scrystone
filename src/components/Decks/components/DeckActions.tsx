@@ -98,6 +98,7 @@ export const DeckActions = ({
           />
         ) : editable ? (
           <ActionButton
+            disabled={loading}
             icon={<FaSave />}
             label={"Save"}
             onClick={onPrimary}

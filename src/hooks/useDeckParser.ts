@@ -28,7 +28,8 @@ export function useDeckParser() {
     name: string,
     format: string,
     id?: number,
-    description?: string
+    description?: string,
+    featureCard?: DeckCard
   ) => {
     setLoading(true);
 
@@ -75,7 +76,7 @@ export function useDeckParser() {
       cards: deckCards,
       size: cards.length,
       price: deckPrice,
-      featureImageUrl: deckCards[0]?.imageUrl, // Use the first card's image as the feature image until editing is supported
+      featureCard: featureCard ?? deckCards[0] ?? null,
     };
 
     const updatedDecks = (() => {

@@ -13,6 +13,7 @@ import { ViewStyleFilter } from "../shared/ViewStyleFilter";
 import { CardSearchBar } from "../shared/CardSearchBar";
 import { getDecksFromStorage } from "../../utils/storage";
 import "../styles.css";
+import { DeckHeaderLoading } from "./components/DeckHeaderLoading";
 
 export function DeckEdit() {
   const { deckId } = useParams<{ deckId: string }>();
@@ -56,8 +57,16 @@ export function DeckEdit() {
   const navigate = useNavigate();
 
   const { onDeckSave, isValidFormat } = useDeckParser();
-  const { name, setName, description, setDescription, format, setFormat } =
-    useDeckFormState(deck);
+  const {
+    name,
+    setName,
+    description,
+    setDescription,
+    format,
+    setFormat,
+    featureCard,
+    setFeatureCard,
+  } = useDeckFormState(deck);
 
   const [summary, setSummary] = useState<CardTypeSummary[]>([]);
   useEffect(() => {
@@ -73,7 +82,7 @@ export function DeckEdit() {
       {/* Actions header */}
       <DeckActions
         deck={deck}
-        editable={editable || location.pathname.includes("/deck/new")}
+        editable={true}
         isMobile={isMobile}
         onBack={() => {
           if (window.confirm("Discard changes and go back?")) {
@@ -86,7 +95,8 @@ export function DeckEdit() {
             name,
             format,
             deck?.id,
-            description
+            description,
+            featureCard ?? undefined
           );
 
           if (savedDeck) {
@@ -105,20 +115,26 @@ export function DeckEdit() {
       )}
 
       {/* Deck overview */}
-      <DeckHeader
-        deck={deck}
-        formDetails={{
-          name,
-          setName,
-          description,
-          setDescription,
-          format,
-          setFormat,
-          isValidFormat,
-        }}
-        cards={cards}
-        summary={summary}
-      />
+      {!deck && location.pathname.includes("edit") ? (
+        <DeckHeaderLoading />
+      ) : (
+        <DeckHeader
+          deck={deck}
+          formDetails={{
+            name,
+            setName,
+            description,
+            setDescription,
+            format,
+            setFormat,
+            isValidFormat,
+            featureCard,
+            setFeatureCard,
+          }}
+          cards={cards}
+          summary={summary}
+        />
+      )}
 
       {/* Search bar and results */}
       <div

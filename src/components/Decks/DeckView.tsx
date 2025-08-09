@@ -29,13 +29,13 @@ export function DeckView({ deck }: Props) {
       className={"deck cursor-pointer"}
       onClick={handleClick}
       style={{
-        backgroundImage: deck.featureImageUrl
+        backgroundImage: deck?.featureCard?.imageUrl
           ? `linear-gradient(
         to bottom, 
         rgba(0, 0, 0, 0.5) 0%, 
         rgba(0, 0, 0, 0.45) 50%, 
         rgba(0, 0, 0, 0.75) 100%
-      ), url(${deck.featureImageUrl})`
+      ), url(${deck.featureCard.imageUrl})`
           : "",
         backgroundPosition: "center -100px",
       }}
@@ -46,8 +46,6 @@ export function DeckView({ deck }: Props) {
       {deck.colours && deck.colours.length > 0 && (
         <ManaRow colours={deck.colours} />
       )}
-
-      {/* <TypeSummary summary={summary} /> */}
 
       <div className="formatTag">
         {!isDeckReady && <PiWarningCircleBold />}
