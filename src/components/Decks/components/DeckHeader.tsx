@@ -137,7 +137,13 @@ export function DeckHeader({
         <div className="flexSwap">
           {/* Overview col 1 */}
           <div className={`deckCol1 ${!editable ? "staticDeckCol1" : ""}`}>
-            <div className={"flexRow manaAndCoverRow"}>
+            <div
+              className={"flexRow manaAndCoverRow"}
+              style={{
+                justifyContent:
+                  editable || !isMobile ? "space-between" : "center",
+              }}
+            >
               <ManaRow colours={deckColours} />
 
               {featureEditable && (
