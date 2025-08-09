@@ -2,7 +2,7 @@ import { FaBookOpen, FaGem } from "react-icons/fa";
 import { BsStars } from "react-icons/bs";
 import { HiQuestionMarkCircle } from "react-icons/hi";
 import { GiTripleClaws } from "react-icons/gi";
-import { FaMountainSun } from "react-icons/fa6";
+import { FaBoltLightning, FaMountainSun } from "react-icons/fa6";
 
 export function getTypeIcon(type?: string) {
   if (!type) return;
@@ -14,10 +14,8 @@ export function getTypeIcon(type?: string) {
       return <FaBookOpen />;
     case "Sorcery":
       return <BsStars />;
-    case "Sorcerie":
-      return <BsStars />;
     case "Instant":
-      return <BsStars />;
+      return <FaBoltLightning />;
     case "Artifact":
       return <FaGem />;
     case "Basic Land":

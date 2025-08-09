@@ -112,6 +112,7 @@ const DEFAULT_TYPES = [
   "Enchantment",
   "Land",
   "Sorcery",
+  "Instant",
 ];
 
 export async function getDeckTypeSummaryWithDefaults(

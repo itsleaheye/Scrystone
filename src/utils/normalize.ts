@@ -34,18 +34,12 @@ export function normalizeMana(manaCostStr: string): {
   };
 }
 
-export function normalizeColourIdentity(colorIdentity: string[]): string {
-  return colorIdentity.map((color) => `{${color}}`).join("");
-}
-
 export function normalizeCardType(type?: string) {
   if (!type) return undefined;
 
-  if (type.includes("Artifact")) return "Artifact";
   if (type.includes("Creature")) return "Creature";
   if (type.includes("Sorcery")) return "Sorcery";
-  if (type === "Instant") return "Sorcery";
-  if (type.includes("Land")) return "Land";
+  if (type.includes("Instant")) return "Instant";
   if (
     ([
       "Swamp",
@@ -59,12 +53,14 @@ export function normalizeCardType(type?: string) {
       "Orchard",
     ].includes(type ?? "") &&
       type == "Instant") ||
-    type == "Basic"
+    type == "Basic" ||
+    type.includes("Land") ||
+    type == "Basic Land"
   ) {
     return (type = "Land");
   }
-  if (type == "Basic Land") return "Land";
   if (type.includes("Planeswalker")) return "Creature";
+  if (type.includes("Artifact")) return "Artifact";
 
   // Default
   return type;
