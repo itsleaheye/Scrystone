@@ -75,6 +75,7 @@ export function useDeckParser() {
       cards: deckCards,
       size: cards.length,
       price: deckPrice,
+      featureImageUrl: deckCards[0]?.imageUrl, // Use the first card's image as the feature image until editing is supported
     };
 
     const updatedDecks = (() => {

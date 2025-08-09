@@ -84,7 +84,22 @@ export function DeckHeader({
     cards && cards.length > 0 ? getColoursFromCards(cards) : deck?.colours;
 
   return (
-    <div className="deckOverview">
+    <div
+      className="deckOverview"
+      style={{
+        backgroundImage: deck?.featureImageUrl
+          ? `linear-gradient(
+          to right,
+          rgba(245, 245, 245, 0.5) 0%,
+          rgba(245, 245, 245, 0.85) 10%,
+          rgba(245, 245, 245, 1) 30%,
+          rgba(245, 245, 245, 1) 100%
+        ), url(${deck.featureImageUrl})`
+          : "",
+        backgroundPosition: "-40px -100px",
+        backgroundRepeat: "repeat-y",
+      }}
+    >
       <div className="flexSwap">
         {/* Overview col 1 */}
         <div className={`deckCol1 ${!editable ? "staticDeckCol1" : ""}`}>

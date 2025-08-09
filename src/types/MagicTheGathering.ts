@@ -23,15 +23,16 @@ export interface DeckCard extends Card {
 export type DeckFormat = "Commander" | "Standard" | "Draft";
 
 export interface Deck {
-  id: number;
   cards: DeckCard[];
   colours?: string[];
   description?: string;
+  featureImageUrl?: string;
+  format: DeckFormat;
+  id: number;
   isFavorite?: boolean;
   name: string;
-  format: DeckFormat;
-  size: number;
   price?: number;
+  size: number;
 }
 
 export interface CardTypeSummary {

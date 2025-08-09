@@ -1,10 +1,9 @@
-import type { CardTypeSummary, Deck } from "../../types/MagicTheGathering";
-import { TypeSummary } from "../shared/TypeSummary";
+import type { Deck } from "../../types/MagicTheGathering";
 import "../styles.css";
-import { getDeckTypeSummaryWithDefaults } from "../../utils/decks";
 import { ManaRow } from "./components/ManaRow";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
+import { PiWarningCircleBold } from "react-icons/pi";
 
 interface Props {
   deck: Deck;
@@ -12,34 +11,47 @@ interface Props {
 
 export function DeckView({ deck }: Props) {
   const navigate = useNavigate();
-  const [summary, setSummary] = useState<CardTypeSummary[]>([]);
-  deck.cards;
-
-  useEffect(() => {
-    getDeckTypeSummaryWithDefaults(deck.cards).then((typeSummary) => {
-      setSummary(typeSummary);
-    });
-  }, [deck.cards]);
 
   const handleClick = () => {
     navigate(`/deck/${deck.id}/`);
   };
 
+  const isDeckReady = useMemo(() => {
+    return deck.cards.every((card) => {
+      const owned = Number(card.quantityOwned) ?? 0;
+      const needed = Number(card.quantityNeeded) ?? 0;
+      return owned >= needed;
+    });
+  }, [deck.cards]);
+
   return (
-    <div className={"deck cursor-pointer"} onClick={handleClick}>
+    <div
+      className={"deck cursor-pointer"}
+      onClick={handleClick}
+      style={{
+        backgroundImage: deck.featureImageUrl
+          ? `linear-gradient(
+        to bottom, 
+        rgba(0, 0, 0, 0.5) 0%, 
+        rgba(0, 0, 0, 0.45) 50%, 
+        rgba(0, 0, 0, 0.75) 100%
+      ), url(${deck.featureImageUrl})`
+          : "",
+        backgroundPosition: "center -100px",
+      }}
+    >
       <div className="deckTop">
         <p className="emphasis">{deck.name}</p>
-        {deck.description && (
-          <p className="truncate w-40">{deck.description}</p>
-        )}
       </div>
       {deck.colours && deck.colours.length > 0 && (
         <ManaRow colours={deck.colours} />
       )}
 
-      <TypeSummary summary={summary} />
+      {/* <TypeSummary summary={summary} /> */}
 
       <div className="formatTag">
+        {!isDeckReady && <PiWarningCircleBold />}
+
         <p>{deck.format}</p>
       </div>
     </div>
