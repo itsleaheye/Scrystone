@@ -53,18 +53,19 @@ A 'Magic the Gathering' web app built with React, Tailwind CSS, and the Scryfall
 ### 🚧 Plan for V2
 
 - [x] Improve collection download speeds V1
-- [] Performance overhaul V2 (upload speeds, collection search & view, etc.)
+- [x] Performance overhaul V2 (upload speeds, collection search & view, etc.)
 - [x] Routing integration
 - [x] Card search bar added to card action row | [Design](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=1-3&t=YXOAXnY0SHo6VljJ-4)
 - [x] Card collection set distinguishment
-- [ ] Deck building set control
 - [x] Design V2 (new nav, FTUX, theming)
 - [x] Render the art preview that matches the card (i.e. borderless card renders borderless art)
 - [ ] OnClick in collection view, flip animation and show value, set, quantity, and if it's in a deck
 - [x] Ability to import decks
 - [x] Render mana symbols instead of placeholder solid colours
-- [ ] Deck view [CSS update](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=1-597&t=YXOAXnY0SHo6VljJ-4)
+- [x] Deck view [CSS update](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=1-597&t=YXOAXnY0SHo6VljJ-4)
 - [ ] Hover card summary for breakdown of missing cards | [Design](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=2-185&t=YXOAXnY0SHo6VljJ-4)
+- [ ] Deck feature image customization
+- [ ] Deck dashboard filtering
 
 ## Stills of the feature:
 
