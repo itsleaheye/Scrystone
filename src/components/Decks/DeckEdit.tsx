@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
-import { DeckActions } from "./components/DeckActions";
+import { DeckActions } from "./components/Actions";
 import type { CardTypeSummary, Deck } from "../../types/MagicTheGathering";
 import { useDeckParser } from "../../hooks/useDeckParser";
 import { useDeckFormState } from "../../hooks/useDeckFormState";

@@ -376,21 +376,6 @@ button:hover {
         color: var(--off);
       }
     }
-    select {
-      background: var(--darkest-gray);
-      border-radius: var(--border-radius-base);
-      border: 2px solid var(--darker-gray);
-      color: var(--white);
-      font-size: var(--font-size-base);
-      margin-bottom: var(--pad-xxs);
-      padding: var(--pad-xxxs) var(--pad-xxs);
-      width: 100%;
-      height: 40px;
-
-      &:focus {
-        outline: none;
-      }
-    }
     .selectMulti__control {
       background: var(--darkest-gray);
       border-radius: var(--border-radius-base);
@@ -400,9 +385,15 @@ button:hover {
     .selectMulti {
       width: 100%;
       margin-bottom: var(--pad-xxs);
+      color: var(--white);
+    }
+    .selectMulti__single-value {
+      color: var(--white);
+      padding-left: var(--pad-xxs);
     }
     .selectMulti__menu {
       background: var(--darkest-gray);
+      color: var(--white);
     }
     .selectMulti__option {
       color: var(--white);

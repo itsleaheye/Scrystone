@@ -1,5 +1,5 @@
 import { FaArrowRight } from "react-icons/fa";
-import type { Deck, DeckCard } from "../../../types/MagicTheGathering";
+import type { DeckCard } from "../../../types/MagicTheGathering";
 
 interface ChangeCoverModalProps {
   featureCard: DeckCard | null;

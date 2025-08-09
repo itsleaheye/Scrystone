@@ -282,14 +282,23 @@ export function CardPreview({
                 {getSortIcon()}
                 Sort By
               </p>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-              >
-                <option value="Name">Name</option>
-                <option value="Price">Price</option>
-                <option value="Type">Type</option>
-              </select>
+              <Select
+                className="selectMulti"
+                classNamePrefix="selectMulti"
+                options={[
+                  { value: "Name", label: "Name" },
+                  { value: "Price", label: "Price" },
+                  { value: "Type", label: "Type" },
+                ]}
+                placeholder="Name"
+                isSearchable={false}
+                value={{ value: sortBy, label: sortBy }}
+                onChange={(selected) => {
+                  if (selected) {
+                    setSortBy(selected.value);
+                  }
+                }}
+              />
             </div>
           </div>
           {!loading && (

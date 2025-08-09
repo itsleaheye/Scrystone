@@ -6,9 +6,8 @@ import { DeckHeader } from "./components/DeckHeader";
 import { useEffect, useState } from "react";
 import { getDeckTypeSummaryWithDefaults } from "../../utils/decks";
 import { CardPreview } from "../Cards/CardPreview";
-import { DeckActions } from "./components/DeckActions";
+import { DeckActions } from "./components/Actions";
 import type { CardTypeSummary, Deck } from "../../types/MagicTheGathering";
-import { ImSpinner6 } from "react-icons/im";
 import { DeckHeaderLoading } from "./components/DeckHeaderLoading";
 
 export function DeckPreview() {

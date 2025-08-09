@@ -1,13 +1,12 @@
 import { DeckView } from "./DeckView";
 import { getDecksFromStorage } from "../../utils/storage";
 import { EmptyView } from "../shared/EmptyView";
-import { DeckActions } from "./components/DeckActions";
-import { useNavigate } from "react-router-dom";
+import { DashboardActions } from "./components/Actions";
 import { useEffect, useState } from "react";
 import type { Deck } from "../../types/MagicTheGathering";
+import { useDeckFiltersAndSort } from "../../hooks/useDeckFiltersAndSort";
 
 export function DeckDashboard() {
-  const navigate = useNavigate();
   const [decks, setDecks] = useState<Deck[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -24,6 +23,9 @@ export function DeckDashboard() {
     loadDecks();
   }, []);
 
+  const { filteredAndSortedDecks, filters, setFilters } =
+    useDeckFiltersAndSort(decks);
+
   return (
     <div className="contentContainer">
       {/* Actions header */}
@@ -35,12 +37,7 @@ export function DeckDashboard() {
           transition: "opacity 0.5s ease",
         }}
       >
-        <DeckActions
-          onBack={() => navigate("/")}
-          onPrimary={() => {
-            navigate(`/deck/new`);
-          }}
-        />
+        <DashboardActions filters={filters} setFilters={setFilters} />
       </span>
 
       {loading && (
@@ -51,9 +48,9 @@ export function DeckDashboard() {
       )}
 
       {/* Decks list */}
-      {decks.length > 0 && !loading ? (
+      {filteredAndSortedDecks.length > 0 && !loading ? (
         <div className="grid">
-          {decks.map((deck, index) => (
+          {filteredAndSortedDecks.map((deck, index) => (
             <DeckView key={index} deck={deck} />
           ))}
         </div>
