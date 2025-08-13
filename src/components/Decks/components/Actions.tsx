@@ -150,6 +150,8 @@ export function DashboardActions({
   filters,
   setFilters,
 }: DashboardActionsProps) {
+  const navigate = useNavigate();
+
   const getSortIcon = () => {
     switch (filters.sort) {
       case "nameAsc":
@@ -244,6 +246,15 @@ export function DashboardActions({
           }
         />
       </div>
+
+      <ActionButton
+        icon={<FaPlus />}
+        label={"New Deck"}
+        onClick={() => {
+          navigate("/deck/new");
+        }}
+        variation="primary"
+      />
     </div>
   );
 }

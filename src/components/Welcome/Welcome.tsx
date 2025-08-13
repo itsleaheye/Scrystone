@@ -8,14 +8,14 @@ const faqQuestions = [
     question: "I bought some new cards. How do I update my collection?",
     answer: (
       <p>
-        Grab your most up to date .csv of your cards and press the ‘Sync Cards’
-        button. Scrystone will go through your collection checking for any cards
-        that were added or removed, or even have a new quantity, and update your
-        collection accordingly.
+        Grab your most up to date .csv or .txt of your cards and press the ‘Sync
+        Cards’ button. Scrystone will go through your collection checking for
+        any cards that were added or removed, or even have a new quantity, and
+        update your collection accordingly.
         <br />
         <br />
-        Your decks will also automatically check against the most recent .csv
-        uploaded.
+        Your decks will also automatically check against the most recent
+        collection uploaded.
       </p>
     ),
   },
@@ -63,7 +63,7 @@ export function Welcome() {
         <div className="flexSwap">
           <div className="step">
             <FaFileCsv />
-            <p>Download your card list as a .csv</p>
+            <p>Download your card collection</p>
           </div>
           <div className="step step2">
             <FaUpload />

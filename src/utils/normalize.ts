@@ -68,17 +68,22 @@ export function normalizeCardType(type?: string) {
 
 export type SetMap = Record<string, string>;
 let scryfallSetMap: SetMap = {};
+let setCodeToNameMap: Record<string, string> = {};
+let setNameToCodeMap: Record<string, string> = {};
 
-export async function fetchScryfallSetMap(): Promise<SetMap> {
+export async function fetchScryfallSetMaps() {
   const cacheKey = "scryfallSetMap";
 
   const cached = localStorage.getItem(cacheKey);
   if (cached) {
     try {
-      scryfallSetMap = JSON.parse(cached);
-      return scryfallSetMap;
-    } catch (err) {
-      console.warn("Invalid cache. Fetching from Scryfall...");
+      const parsed = JSON.parse(cached);
+      setCodeToNameMap = parsed.setCodeToNameMap;
+      setNameToCodeMap = parsed.setNameToCodeMap;
+
+      return { setCodeToNameMap, setNameToCodeMap };
+    } catch (error) {
+      console.warn("Invalid cache with:", error);
     }
   }
 
@@ -87,13 +92,20 @@ export async function fetchScryfallSetMap(): Promise<SetMap> {
 
   const data = await response.json();
 
-  scryfallSetMap = {};
+  setCodeToNameMap = {};
+  setNameToCodeMap = {};
+
   for (const set of data.data) {
-    scryfallSetMap[set.code.toLowerCase()] = set.name;
+    setCodeToNameMap[set.code.toLowerCase()] = set.name.toLowerCase();
+    setNameToCodeMap[set.name.toLowerCase()] = set.code.toLowerCase();
   }
 
-  localStorage.setItem(cacheKey, JSON.stringify(scryfallSetMap));
-  return scryfallSetMap;
+  localStorage.setItem(
+    cacheKey,
+    JSON.stringify({ setCodeToNameMap, setNameToCodeMap })
+  );
+
+  return { setCodeToNameMap, setNameToCodeMap };
 }
 
 export function normalizeSet(setCode: string): string {

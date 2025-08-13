@@ -340,6 +340,7 @@ button:hover {
   display: flex;
   flex-direction: column;
   margin-bottom: var(--pad-xs);
+  align-items: end;
 
   .flexCol {
     align-items: start;
@@ -366,7 +367,6 @@ button:hover {
       padding: var(--pad-xxxs) var(--pad-xxs) var(--pad-xxxs) var(--pad-sm);
       color: var(--white);
       width: 100%;
-      margin-bottom: var(--pad-xxs);
 
       &:focus {
         outline: none;
@@ -384,7 +384,6 @@ button:hover {
     }
     .selectMulti {
       width: 100%;
-      margin-bottom: var(--pad-xxs);
       color: var(--white);
     }
     .selectMulti__single-value {

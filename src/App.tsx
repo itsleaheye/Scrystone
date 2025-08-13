@@ -22,7 +22,7 @@ import { LogInForm } from "./components/Auth/LogInForm";
 import { MdLogin } from "react-icons/md";
 import { handleLogout } from "./utils/auth";
 import { loadBulkCardData } from "./utils/cards";
-import { fetchScryfallSetMap } from "./utils/normalize";
+import { fetchScryfallSetMaps } from "./utils/normalize";
 
 export default function App() {
   const navigate = useNavigate();
@@ -42,7 +42,7 @@ export default function App() {
 
   useEffect(() => {
     loadBulkCardData(); // Preloads our indexed json into bulkCardDataMap
-    fetchScryfallSetMap();
+    fetchScryfallSetMaps();
   }, []);
 
   const {
@@ -170,7 +170,7 @@ export default function App() {
                   className="hidden"
                   id="fileInput"
                   type="file"
-                  accept=".csv"
+                  accept=".csv, .txt"
                   onChange={onCollectionUpload}
                   disabled={loading}
                 />

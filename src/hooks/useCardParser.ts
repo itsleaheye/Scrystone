@@ -2,7 +2,7 @@ import type { DeckCard } from "../types/MagicTheGathering";
 import Papa from "papaparse";
 import { getScryfallCard } from "../utils/scryfall";
 import { normalizeCardName, normalizeCardType } from "../utils/normalize";
-import { parseCSVToCollectionCards } from "../utils/parseCSVToCollectionCards";
+import { parseCsvToCollection } from "../utils/parseCsvToCollection";
 import { getCardsFromStorage } from "../utils/storage";
 import { getCollectionSummary } from "../utils/summaries";
 import { format } from "date-fns";
@@ -54,7 +54,6 @@ export function useCardParser() {
   }, []);
 
   const handleError = (message: string) => {
-    console.error("[!] Error ", message);
     setLoading(false);
     setError(message);
   };
@@ -62,14 +61,21 @@ export function useCardParser() {
   const onCollectionUpload = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
-      if (!file) return handleError("Please select a .csv file to upload");
+      if (!file)
+        return handleError(
+          "Unsupported file type. Please upload a .csv or .txt file"
+        );
 
       setLoading(true);
       setCurrentProgress(0);
       setTotalProgress(0);
 
       try {
-        Papa.parse(file, {
+        const collectionFile = file.name.toLowerCase().endsWith(".txt")
+          ? await file.text()
+          : file;
+
+        Papa.parse(collectionFile, {
           header: true,
           skipEmptyLines: true,
           complete: async (results) => {
@@ -91,7 +97,7 @@ export function useCardParser() {
               existingCardsMap.set(key, data.quantityOwned ?? 0);
             });
 
-            const parsedCards = await parseCSVToCollectionCards(
+            const parsedCards = await parseCsvToCollection(
               rawCards,
               (processed, total) => {
                 setCurrentProgress(processed);
