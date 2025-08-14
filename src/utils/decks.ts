@@ -70,18 +70,12 @@ export async function getDeckTypeSummary(cards: DeckCard[]) {
   const quantityNeededByType = new Map<string, number>();
   const quantityOwnedByType = new Map<string, number>();
 
-  deckCountByName.forEach(({ type, quantityNeeded, setName }, cardName) => {
+  deckCountByName.forEach(({ type, quantityNeeded }, cardName) => {
     let quantityOwned = 0;
 
-    // if (setName === "Any") {
-    //   // Sum quantity of all cards with this name
-    //   quantityOwned = totalQuantityByName.get(cardName) ?? 0;
-    // } else {
-    // Match by both name and set
     quantityOwned = ownedCards
       .filter((card) => normalizeCardName(card.name) === cardName)
       .reduce((sum, card) => sum + (card.quantityOwned ?? 0), 0);
-    // }
 
     quantityNeededByType.set(
       type,

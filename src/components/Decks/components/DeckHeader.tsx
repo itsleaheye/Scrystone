@@ -79,13 +79,12 @@ export function DeckHeader({
   }, [cards, deck?.cards]);
 
   const totalMissingCards = useMemo(() => {
-    const cardList = cards ?? deck?.cards ?? [];
-    return cardList.reduce((sum, card) => {
-      const needed = card.quantityNeeded ?? 0;
-      const owned = card.quantityOwned ?? 0;
-      return sum + Math.max(0, needed - owned);
-    }, 0);
-  }, [cards, deck?.cards]);
+    return summary.reduce(
+      (sum, { quantityNeeded, quantityOwned }) =>
+        sum + Math.max(0, quantityNeeded - quantityOwned),
+      0
+    );
+  }, [summary]);
 
   const deckColours =
     cards && cards.length > 0 ? getColoursFromCards(cards) : deck?.colours;
