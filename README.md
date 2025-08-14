@@ -13,15 +13,13 @@ A 'Magic the Gathering' web app built with React, Tailwind CSS, and the Scryfall
 
 - **Card Collection Tracker** – Upload your card collection and automatically match it to your deck needs
 
-- **Filtering and sorting** - Search for cards by type, colour, and sort by price, type or card names
+- **Filtering and sorting** - Search for cards and decks by formats, types, colours, and sort by price, type or card names
 
 - **Deck Exporting** - Export your deck list to see what cards you're missing or to share with friends
 
 - **Scryfall API Integration** – Fetch real-time card details like art, price, and rarities
 
-- **Local Storage** – All data is stored in-browser; no sign-up or accounts necessary
-
-  - _Firebase prototype in the `/firebase` branch_
+- **Firebase Integration** – All data is stored securely with Firebase
 
 - **Responsive UI** – A clean, fast, and mobile-friendly design, aided by Tailwind
 
@@ -48,31 +46,13 @@ A 'Magic the Gathering' web app built with React, Tailwind CSS, and the Scryfall
 4. Start the development server `npm run dev`
 5. Open a browser and go to `http://localhost:5173`
 
----
-
-### 🚧 Plan for V2
-
-- [x] Improve collection download speeds V1
-- [x] Performance overhaul V2 (upload speeds, collection search & view, etc.)
-- [x] Routing integration
-- [x] Card search bar added to card action row | [Design](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=1-3&t=YXOAXnY0SHo6VljJ-4)
-- [x] Card collection set distinguishment
-- [x] Design V2 (new nav, FTUX, theming)
-- [x] Render the art preview that matches the card (i.e. borderless card renders borderless art)
-- [ ] OnClick in collection view, flip animation and show value, set, quantity, and if it's in a deck
-- [x] Ability to import decks
-- [x] Render mana symbols instead of placeholder solid colours
-- [x] Deck view [CSS update](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=1-597&t=YXOAXnY0SHo6VljJ-4)
-- [ ] Hover card summary for breakdown of missing cards | [Design](https://www.figma.com/design/K4yFBl1FcD3B8TdgK76oQl/Scrystone?node-id=2-185&t=YXOAXnY0SHo6VljJ-4)
-- [ ] Deck feature image customization
-- [ ] Deck dashboard filtering
-
 ## Stills of the feature:
 
 <img width="750" alt="image" src="https://github.com/user-attachments/assets/b546a82a-269a-4dc9-9928-4bbda3cdb654" />
 <img width="750" alt="image" src="https://github.com/user-attachments/assets/fe55edcb-aa15-46d1-be8b-4b818c6c783b" />
-<img width="750" alt="image" src="https://github.com/user-attachments/assets/fa656b76-c20b-4f5e-abe8-44f252125202" />
-<img width="750" alt="image" src="https://github.com/user-attachments/assets/b991831a-f9ac-4a3b-9538-1a04834cad3f" />
+<img width="750" alt="image" src="https://github.com/user-attachments/assets/e4e2aa20-4df8-408b-b998-1395c8d0cc44" />
+<img width="750" alt="image" src="https://github.com/user-attachments/assets/fc65313f-b2f4-4513-88c5-ff72f420b030" />
+<img width="750" alt="image" src="https://github.com/user-attachments/assets/e98e3ec3-e46d-439d-8426-64fa24487b18" />
 <img width="750" alt="image" src="https://github.com/user-attachments/assets/a1507162-9c4e-4dca-900e-33d2e2c064ce" />
 
 ### V1 stills
