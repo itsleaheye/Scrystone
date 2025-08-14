@@ -67,7 +67,6 @@ export function normalizeCardType(type?: string) {
 }
 
 export type SetMap = Record<string, string>;
-let scryfallSetMap: SetMap = {};
 let setCodeToNameMap: Record<string, string> = {};
 let setNameToCodeMap: Record<string, string> = {};
 
