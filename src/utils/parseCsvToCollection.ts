@@ -27,31 +27,36 @@ export async function parseCsvToCollection(
       return null;
     }
 
-    // TCGPlayer has a bug that SetCodes are not being exported. This patches it for my case.
+    // TCGPlayer has a bug that SetCodes are not being exported. This patches it for my case
     const { setCodeToNameMap, setNameToCodeMap } = await fetchScryfallSetMaps();
-    const resolveSetCode = (rawCard: any): string | undefined => {
-      const rawSetCode = (rawCard["Set Code"] ?? "").toLowerCase();
-      const rawSetName = (rawCard["Set"] ?? "").toLowerCase();
 
-      // If rawCard["Set Code"] is a valid set name map to a set code
-      if (rawSetCode && setNameToCodeMap[rawSetCode]) {
-        return setNameToCodeMap[rawSetCode];
+    const resolveSetCode = (
+      rawSetCode?: string,
+      rawSetName?: string
+    ): string | undefined => {
+      const code =
+        rawSetCode != null ? String(rawSetCode).trim().toLowerCase() : "";
+      const name = rawSetName != null ? String(rawSetName).toLowerCase() : "";
+
+      // If the name is valid > map to code
+      if (name && setNameToCodeMap[name]) {
+        return setNameToCodeMap[name];
       }
 
-      // If rawCard["Set Code"] is a valid set code return it
-      if (rawSetCode && setCodeToNameMap[rawSetCode]) {
-        return rawSetCode;
+      // If the code is valid > return as is
+      if (code && setCodeToNameMap[code]) {
+        return code;
       }
 
-      // Fallback try rawCard["Set"] (name) mapped to code
-      if (rawSetName && setNameToCodeMap[rawSetName]) {
-        return setNameToCodeMap[rawSetName];
+      // If the code is actually a name > map to code
+      if (code && setNameToCodeMap[code]) {
+        return setNameToCodeMap[code];
       }
 
       return undefined;
     };
 
-    const setCode = resolveSetCode(rawCard);
+    const setCode = resolveSetCode(rawCard["Set Code"], rawCard["Set"]);
 
     try {
       const scryfallData = await getScryfallCard({

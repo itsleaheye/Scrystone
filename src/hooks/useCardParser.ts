@@ -146,7 +146,7 @@ export function useCardParser() {
             setUploadTime(timestamp);
             setCollectionSummary(getCollectionSummary(parsedCards));
 
-            await updateDecksQuantities(uid, parsedCards);
+            // await updateDecksQuantities(uid, parsedCards);
 
             setLoading(false);
 

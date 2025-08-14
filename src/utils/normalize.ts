@@ -109,5 +109,5 @@ export async function fetchScryfallSetMaps() {
 }
 
 export function normalizeSet(setCode: string): string {
-  return scryfallSetMap[setCode.toLowerCase()] ?? setCode;
+  return setCodeToNameMap[setCode.toLowerCase()] ?? setCode;
 }

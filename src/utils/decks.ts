@@ -73,17 +73,15 @@ export async function getDeckTypeSummary(cards: DeckCard[]) {
   deckCountByName.forEach(({ type, quantityNeeded, setName }, cardName) => {
     let quantityOwned = 0;
 
-    if (setName === "Any") {
-      // Sum quantity of all cards with this name
-      quantityOwned = totalQuantityByName.get(cardName) ?? 0;
-    } else {
-      // Match by both name and set
-      const match = ownedCards.find(
-        (card) =>
-          normalizeCardName(card.name) === cardName && card.setName === setName
-      );
-      quantityOwned = match?.quantityOwned ?? 0;
-    }
+    // if (setName === "Any") {
+    //   // Sum quantity of all cards with this name
+    //   quantityOwned = totalQuantityByName.get(cardName) ?? 0;
+    // } else {
+    // Match by both name and set
+    quantityOwned = ownedCards
+      .filter((card) => normalizeCardName(card.name) === cardName)
+      .reduce((sum, card) => sum + (card.quantityOwned ?? 0), 0);
+    // }
 
     quantityNeededByType.set(
       type,
@@ -100,8 +98,8 @@ export async function getDeckTypeSummary(cards: DeckCard[]) {
   return Array.from(quantityNeededByType.entries()).map(
     ([type, quantityNeeded]) => ({
       type,
-      quantityNeeded,
-      quantityOwned: quantityOwnedByType.get(type) ?? 0,
+      quantityNeeded: Number(quantityNeeded),
+      quantityOwned: Number(quantityOwnedByType.get(type) ?? 0),
     })
   );
 }
