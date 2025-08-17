@@ -338,9 +338,9 @@ button:hover {
 
 .filtersRow {
   display: flex;
+  gap: var(--pad-xxs);
   flex-direction: column;
   margin-bottom: var(--pad-xs);
-  align-items: end;
 
   .flexCol {
     align-items: start;
@@ -359,6 +359,12 @@ button:hover {
     p {
       font-weight: bold;
     }
+
+    .actionButton {
+      margin-top: var(--pad-xxs);
+      width: 100%;
+    }
+
     .searchInput {
       background: var(--darkest-gray);
       border-radius: var(--border-radius-base);
@@ -632,8 +638,9 @@ button:hover {
   }
   .filtersRow {
     flex-direction: row;
-    gap: var(--pad-xxs);
+    gap: var(--pad-xs);
     justify-content: center;
+    align-items: end;
 
     .flexCol {
       .searchInput {

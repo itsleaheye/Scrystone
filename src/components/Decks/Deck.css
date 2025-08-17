@@ -101,4 +101,8 @@
   .manaRow {
     justify-content: start;
   }
+
+  .deckActions .flexCol {
+    min-width: 125px;
+  }
 }

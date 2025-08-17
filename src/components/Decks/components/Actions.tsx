@@ -189,7 +189,7 @@ export function DashboardActions({
   ];
 
   return (
-    <div className="centred filtersRow">
+    <div className="centred filtersRow deckActions">
       <div className="flexCol">
         <p className="filterIconAndText">Format</p>
         <Select
@@ -246,15 +246,16 @@ export function DashboardActions({
           }
         />
       </div>
-
-      <ActionButton
-        icon={<FaPlus />}
-        label={"New Deck"}
-        onClick={() => {
-          navigate("/deck/new");
-        }}
-        variation="primary"
-      />
+      <div className="flexCol">
+        <ActionButton
+          icon={<FaPlus />}
+          label={"New Deck"}
+          onClick={() => {
+            navigate("/deck/new");
+          }}
+          variation="primary"
+        />
+      </div>
     </div>
   );
 }

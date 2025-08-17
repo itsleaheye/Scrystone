@@ -144,35 +144,45 @@
   }
 }
 
+.deckUsageModal {
+  background-color: var(--darker-gray);
+  border-radius: var(--border-radius-base);
+  color: var(--off-white);
+  padding: var(--pad-xs) var(--pad-sm);
+  position: absolute;
+  z-index: 100;
+  box-shadow: 0 5px 5px rgba(37, 40, 53, 0.25),
+    0 -5px 5px rgba(37, 40, 53, 0.25);
+
+  h3 {
+    margin-bottom: var(--pad-xxs);
+    border-bottom: 1px solid var(--gray);
+  }
+}
+
 .cardListRow {
-  justify-content: space-between;
-  margin: var(--pad-xxs) 0;
-  padding: 0 var(--pad-xxxs);
+  display: grid;
+  padding: var(--pad-xxs);
+  gap: var(--pad-xs);
+  grid-template-columns: 52% 18% 20% 10%;
+  align-items: center;
+  overflow-x: hidden;
 
-  .primaryDetails {
-    align-items: center;
+  div:first-child,
+  div:nth-child(2),
+  div:nth-child(3) {
     display: flex;
-    width: 150px;
-    text-align: left;
+    align-items: center;
+    text-overflow: ellipsis;
+  }
 
+  div:nth-child(2) {
+    color: var(--green);
     svg {
-      width: 1rem;
-      height: 1rem;
+      height: 0.75rem;
+      width: 0.75rem;
+      margin-right: var(--pad-xxs);
     }
-  }
-
-  .primaryExtended {
-    width: 250px;
-  }
-
-  .setDetails {
-    width: 100px;
-    text-align: right;
-  }
-
-  .priceDetails {
-    width: 50px;
-    text-align: right;
   }
 
   svg {
@@ -272,7 +282,7 @@
 }
 
 @media only screen and (min-width: 600px) {
-  .cardListRow {
+  /* .cardListRow {
     .setDetails {
       width: 100px;
     }
@@ -280,7 +290,7 @@
     .primaryDetails {
       width: 200px;
     }
-  }
+  } */
   .cardListContainer {
     grid-template-columns: 1fr minmax(0, 275px);
     justify-content: space-between;
@@ -313,7 +323,7 @@
 }
 
 @media only screen and (min-width: 900px) {
-  .cardListRow {
+  /* .cardListRow {
     .setDetails {
       width: 250px;
     }
@@ -321,7 +331,7 @@
     .primaryDetails {
       width: 400px;
     }
-  }
+  } */
 
   .cardListPreview {
     .emptyInfo {

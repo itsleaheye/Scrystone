@@ -6,7 +6,7 @@ import type {
   DeckCard,
 } from "../types/MagicTheGathering";
 import { normalizeCardName } from "./normalize";
-import { getCardsFromStorage } from "./storage";
+import { getCardsFromStorage, getDecksFromStorage } from "./storage";
 
 export function getDeckManaSummary(cards: DeckCard[]) {
   const allSymbols: string[] = [];
@@ -141,4 +141,38 @@ export function isDeckReady(deck: Deck): boolean {
   }
 
   return deckSize == requiredSize;
+}
+
+interface isCardInOtherDecksProps {
+  card: DeckCard;
+  currentDeckId: number;
+}
+
+export async function isCardInOtherDecks({
+  card,
+  currentDeckId,
+}: isCardInOtherDecksProps) {
+  const decks = await getDecksFromStorage();
+  if (!decks || decks.length === 0 || !card.name || card.type === "Land")
+    return { inOtherDecks: [], count: 0 };
+
+  const otherDecks = decks.filter(
+    (deck) =>
+      deck.id !== currentDeckId && // Exclude the current deck
+      deck.cards.some(
+        (deckCard) =>
+          normalizeCardName(deckCard.name) === normalizeCardName(card.name)
+      )
+  );
+
+  const otherDecksMap = otherDecks.map((deck) => ({
+    id: deck.id,
+    name: deck.name,
+  }));
+  const count = otherDecksMap.length;
+
+  return {
+    inOtherDecks: otherDecksMap,
+    count,
+  };
 }
