@@ -19,15 +19,13 @@ import { useEffect, useState } from "react";
 import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { LogInForm } from "./components/Auth/LogInForm";
-import { MdLogin } from "react-icons/md";
-import { handleLogout } from "./utils/auth";
+
 import { loadBulkCardData } from "./utils/cards";
 import { fetchScryfallSetMaps } from "./utils/normalize";
 import { NavButton } from "./components/shared/NavButton";
 import { ErrorBanner } from "./components/shared/ErrorBanner";
 
 export default function App() {
-  const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useMediaQuery("(max-width: 650px)");
 
@@ -74,8 +72,6 @@ export default function App() {
     return "Upload your card collection and start brewing with our MTG deck building tools.";
   };
 
-  const hi = true;
-
   return (
     <div className="container">
       <div className="headingContainer">
@@ -107,17 +103,7 @@ export default function App() {
               requireLogin={true}
               loginMsg="Please log in to access your decks."
             />
-            {user && (
-              <button
-                className="navButton navAuthButton"
-                onClick={() => handleLogout()}
-              >
-                <p>
-                  <MdLogin />
-                  {!isMobile && "Log Out"}
-                </p>
-              </button>
-            )}
+            {user && <NavButton label={"Log Out"} />}
           </div>
         </div>
         <div className="summaryContainer flexRow">

@@ -1,16 +1,18 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../utils/auth";
+import { handleLogout, useAuth } from "../../utils/auth";
+import { MdLogin } from "react-icons/md";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 
 interface NavButtonProps {
-  isActive: boolean;
+  isActive?: boolean;
   label: string;
   loginMsg?: string;
-  path: string;
+  path?: string;
   requireLogin?: boolean;
 }
 
 export function NavButton({
-  isActive,
+  isActive = false,
   label,
   loginMsg,
   path,
@@ -19,12 +21,13 @@ export function NavButton({
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
+  const isMobile = useMediaQuery("(max-width: 650px)");
 
   const showConfirmation =
     location.pathname.includes("/new") || location.pathname.includes("/edit");
 
   const navigateWithConfirm = (
-    path: string,
+    path?: string,
     requireLogin = false,
     loginMsg?: string
   ) => {
@@ -33,15 +36,28 @@ export function NavButton({
       return;
     }
     if (showConfirmation && !window.confirm("Discard changes?")) return;
+
+    if (!path) return;
     navigate(path);
   };
 
+  const isAuthButton = label === "Log Out";
+
   return (
     <button
-      className={`navButton ${isActive ? "isActive" : ""}`}
-      onClick={() => navigateWithConfirm(path, requireLogin ?? false, loginMsg)}
+      className={`navButton ${isActive && "isActive"} ${
+        isAuthButton && "navAuthButton"
+      }`}
+      onClick={() =>
+        isAuthButton
+          ? handleLogout()
+          : navigateWithConfirm(path, requireLogin ?? false, loginMsg)
+      }
     >
-      <p>{label}</p>
+      <p>
+        {isAuthButton && <MdLogin />}
+        {(isAuthButton && !isMobile) || !isAuthButton ? label : ""}
+      </p>
     </button>
   );
 }
