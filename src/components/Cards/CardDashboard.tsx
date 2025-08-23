@@ -23,7 +23,7 @@ export function CardDashboard() {
   }, [location.search]);
 
   return (
-    <div className="contentContainer" style={{ maxWidth: "1600px" }}>
+    <div className="contentContainer">
       <CardPreview
         collectionCards={cards}
         viewPreference="Grid"

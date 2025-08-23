@@ -23,6 +23,8 @@ import { MdLogin } from "react-icons/md";
 import { handleLogout } from "./utils/auth";
 import { loadBulkCardData } from "./utils/cards";
 import { fetchScryfallSetMaps } from "./utils/normalize";
+import { NavButton } from "./components/shared/NavButton";
+import { ErrorBanner } from "./components/shared/ErrorBanner";
 
 export default function App() {
   const navigate = useNavigate();
@@ -40,9 +42,10 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
+  // Preload
   useEffect(() => {
-    loadBulkCardData(); // Preloads indexed json into bulkCardDataMap
-    fetchScryfallSetMaps(); // Preloads set code/name maps
+    loadBulkCardData();
+    fetchScryfallSetMaps();
   }, []);
 
   const {
@@ -55,21 +58,23 @@ export default function App() {
   } = useCardParser();
 
   const hasCollection = collection.size > 0;
-  const showConfirmation =
-    location.pathname.includes("/new") || location.pathname.includes("/edit");
 
   if (user === null && location.pathname !== "/" && authChecked) {
     return <Navigate to="/" replace />;
   }
 
-  let summaryDescription = hasCollection
-    ? "Your cards are in. Start building decks and see exactly what you own, and what you’ll need."
-    : "Upload your card collection and start brewing with our MTG deck building tools.";
+  const getSummaryDescription = () => {
+    if (!user) {
+      return "Log in to start building decks and to access your collection anywhere.";
+    }
+    if (hasCollection) {
+      return "Your cards are in. Start building decks and see exactly what you own, and what you’ll need.";
+    }
 
-  if (!user) {
-    summaryDescription =
-      "Log in to start building decks and to access your collection anywhere.";
-  }
+    return "Upload your card collection and start brewing with our MTG deck building tools.";
+  };
+
+  const hi = true;
 
   return (
     <div className="container">
@@ -79,65 +84,29 @@ export default function App() {
             <h1>SCRYSTONE</h1>
           </div>
           <div className="flexRow">
-            <button
-              className={`navButton ${
-                (!user && location.pathname === "/") ||
-                location.pathname === "/help"
-                  ? "isActive"
-                  : ""
-              }`}
-              onClick={() => {
-                if (showConfirmation && window.confirm("Discard changes?")) {
-                  navigate("/help");
-                }
-                if (!showConfirmation) {
-                  navigate("/help");
-                }
-              }}
-            >
-              <p>Help</p>
-            </button>
-            <button
-              className={`navButton ${
-                location.pathname === "/collection" ||
-                (user && location.pathname === "/")
-                  ? "isActive"
-                  : ""
-              }`}
-              onClick={() => {
-                if (!user) {
-                  alert("Please log in to view your collection.");
-                  return;
-                }
-                if (showConfirmation && window.confirm("Discard changes?")) {
-                  navigate("/");
-                }
-                if (!showConfirmation) {
-                  navigate("/");
-                }
-              }}
-            >
-              <p>Collection</p>
-            </button>
-            <button
-              className={`navButton ${
-                location.pathname.startsWith("/deck") ? "isActive" : ""
-              }`}
-              onClick={() => {
-                if (!user) {
-                  alert("Please log in to start deck building.");
-                  return;
-                }
-                if (showConfirmation && window.confirm("Discard changes?")) {
-                  navigate("/decks");
-                }
-                if (!showConfirmation) {
-                  navigate("/decks");
-                }
-              }}
-            >
-              <p>Decks</p>
-            </button>
+            <NavButton
+              isActive={location.pathname === "/help"}
+              label="Help"
+              path="/help"
+            />
+            <NavButton
+              isActive={
+                (location.pathname === "/collection" ||
+                  (user && location.pathname === "/")) ??
+                false
+              }
+              label="Collection"
+              path="/"
+              requireLogin={true}
+              loginMsg="Please log in to access your collection."
+            />
+            <NavButton
+              isActive={location.pathname.startsWith("/deck")}
+              label="Decks"
+              path="/decks"
+              requireLogin={true}
+              loginMsg="Please log in to access your decks."
+            />
             {user && (
               <button
                 className="navButton navAuthButton"
@@ -163,7 +132,7 @@ export default function App() {
                 ? "Build Powerful Decks From Your Collection"
                 : "Getting Started"}
             </h2>
-            <p>{summaryDescription}</p>
+            <p>{getSummaryDescription()}</p>
             {user ? (
               <div className="uploadContainer">
                 <input
@@ -195,9 +164,7 @@ export default function App() {
       </div>
 
       {error && (
-        <div>
-          <p>Error loading cards: Try uploading your .csv file again</p>
-        </div>
+        <ErrorBanner message="Error loading cards: Try uploading your .csv file again" />
       )}
 
       {loading && (

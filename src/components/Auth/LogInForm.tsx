@@ -4,6 +4,7 @@ import { useState } from "react";
 import { loginUser, registerUser } from "../../firebaseAuth";
 import "./Auth.css";
 import { MdLogin } from "react-icons/md";
+import { ErrorBanner } from "../shared/ErrorBanner";
 
 export function LogInForm() {
   const navigate = useNavigate();
@@ -57,9 +58,7 @@ export function LogInForm() {
   return (
     <div className="text-center authForm">
       <form onSubmit={handleSubmit}>
-        {error && (
-          <p className="text-red-600 text-sm mb-4 text-center">{error}</p>
-        )}
+        {error && <ErrorBanner message={error} />}
 
         <input
           type="email"

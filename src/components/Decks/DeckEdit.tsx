@@ -14,6 +14,7 @@ import { CardSearchBar } from "../shared/CardSearchBar";
 import { getDecksFromStorage } from "../../utils/storage";
 import "../styles.css";
 import { DeckHeaderLoading } from "./components/DeckHeaderLoading";
+import { ErrorBanner } from "../shared/ErrorBanner";
 
 export function DeckEdit() {
   const { deckId } = useParams<{ deckId: string }>();
@@ -109,9 +110,7 @@ export function DeckEdit() {
         loading={loading}
       />
       {error && (
-        <div className="bannerError">
-          Error parsing cards. Refresh the page and try again.
-        </div>
+        <ErrorBanner message="Error parsing cards. Refresh the page and try again." />
       )}
 
       {/* Deck overview */}

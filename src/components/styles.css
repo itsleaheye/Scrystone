@@ -1,5 +1,22 @@
 /* === Core Layout & Components === */
 
+.errorBanner {
+  background-color: var(--red);
+  color: var(--white);
+  border-radius: var(--border-radius-base);
+  padding: var(--pad-xs);
+  text-align: center;
+  font-weight: bold;
+  margin: var(--pad-sm) auto;
+  max-width: 1535px;
+
+  svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    vertical-align: middle;
+  }
+}
+
 button:hover {
   cursor: pointer;
   transition: var(--ease-in);
@@ -623,6 +640,7 @@ button:hover {
   .contentContainer {
     padding: var(--pad-sm);
     margin: 0 auto;
+    max-width: 1600px;
   }
 
   .headingContainer {
