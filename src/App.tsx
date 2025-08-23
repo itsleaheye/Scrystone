@@ -41,8 +41,8 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    loadBulkCardData(); // Preloads our indexed json into bulkCardDataMap
-    fetchScryfallSetMaps();
+    loadBulkCardData(); // Preloads indexed json into bulkCardDataMap
+    fetchScryfallSetMaps(); // Preloads set code/name maps
   }, []);
 
   const {
