@@ -9,7 +9,7 @@ export async function parseCsvToCollection(
   rawCards: any[],
   onProgress?: (processed: number, total: number) => void
 ): Promise<CollectionCard[]> {
-  await loadBulkCardData();
+  await loadBulkCardData(); // Preload bulk JSON if not done already
 
   let completedCards = 0;
   const total = rawCards.length;
@@ -17,7 +17,7 @@ export async function parseCsvToCollection(
   const processCard = async (rawCard: any): Promise<CollectionCard | null> => {
     const cardName = normalizeCardName(rawCard.Name);
 
-    // Skips unwanted card types
+    // Skip unplayable cards
     if (
       !cardName ||
       cardName.toLowerCase().includes("token") ||
@@ -27,9 +27,8 @@ export async function parseCsvToCollection(
       return null;
     }
 
-    // TCGPlayer has a bug that SetCodes are not being exported. This patches it for my case
+    // TCGPlayer has a bug that SetCodes are not being exported. This works around their bug:
     const { setCodeToNameMap, setNameToCodeMap } = await fetchScryfallSetMaps();
-
     const resolveSetCode = (
       rawSetCode?: string,
       rawSetName?: string
@@ -42,12 +41,10 @@ export async function parseCsvToCollection(
       if (name && setNameToCodeMap[name]) {
         return setNameToCodeMap[name];
       }
-
       // If the code is valid > return as is
       if (code && setCodeToNameMap[code]) {
         return code;
       }
-
       // If the code is actually a name > map to code
       if (code && setNameToCodeMap[code]) {
         return setNameToCodeMap[code];
@@ -68,18 +65,17 @@ export async function parseCsvToCollection(
 
       return {
         ...scryfallData,
-        quantityOwned: rawCard["Quantity"] || 1,
-        setName: rawCard["Set"],
         set: setCode ?? "Any",
+        setName: rawCard["Set"],
+        quantityOwned: rawCard["Quantity"] || 1,
       };
     } catch (error) {
       console.warn(`Failed to fetch card: ${cardName}`, error);
-
       return null;
     }
   };
 
-  // Fetch all cards in parallel, staggered
+  // Fetch all cards in parallel, but staggered to avoid CORS header policy breakage
   const parsedCards = await Promise.all(
     rawCards.map(
       (rawCard, i) =>
@@ -99,17 +95,13 @@ export async function parseCsvToCollection(
 
   // Remove failed or skipped cards
   const cleanedCards = parsedCards.filter(
-    (c): c is CollectionCard => c !== null
+    (card): card is CollectionCard => card !== null
   );
-
-  // Deduplicate existing cards using the name and set
+  // Deduplicate existing cards using the map
   const dedupedMap = new Map<string, CollectionCard>();
-
   for (const card of cleanedCards) {
-    const normalizedName = normalizeCardName(card.name);
-    const key = `${normalizedName}-${card.setName}`;
+    const key = `${normalizeCardName(card.name)}-${card.setName}`;
     const existing = dedupedMap.get(key);
-
     if (existing) {
       existing.quantityOwned =
         Number(existing.quantityOwned) + Number(card.quantityOwned);

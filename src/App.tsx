@@ -1,29 +1,22 @@
-import {
-  Navigate,
-  Route,
-  Routes,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import "./reset.css";
+import { auth } from "./firebase";
+import { CardDashboard } from "./components/Cards/CardDashboard";
 import { DeckDashboard } from "./components/Decks/DeckDashboard";
 import { DeckEdit } from "./components/Decks/DeckEdit";
 import { DeckPreview } from "./components/Decks/DeckPreview";
-import { useCardParser } from "./hooks/useCardParser";
-import { CardDashboard } from "./components/Cards/CardDashboard";
+import { ErrorBanner } from "./components/shared/ErrorBanner";
 import { FaUpload } from "react-icons/fa";
+import { fetchScryfallSetMaps } from "./utils/normalize";
+import { loadBulkCardData } from "./utils/cards";
+import { LogInForm } from "./components/Auth/LogInForm";
+import { NavButton } from "./components/shared/NavButton";
+import { onAuthStateChanged, type User } from "firebase/auth";
 import { TbCards } from "react-icons/tb";
+import { useCardParser } from "./hooks/useCardParser";
+import { useEffect, useMemo, useState } from "react";
 import { useMediaQuery } from "./hooks/useMediaQuery";
 import { Welcome } from "./components/Welcome/Welcome";
-import { useEffect, useState } from "react";
-import { auth } from "./firebase";
-import { onAuthStateChanged } from "firebase/auth";
-import { LogInForm } from "./components/Auth/LogInForm";
-
-import { loadBulkCardData } from "./utils/cards";
-import { fetchScryfallSetMaps } from "./utils/normalize";
-import { NavButton } from "./components/shared/NavButton";
-import { ErrorBanner } from "./components/shared/ErrorBanner";
 
 export default function App() {
   const location = useLocation();
@@ -57,20 +50,34 @@ export default function App() {
 
   const hasCollection = collection.size > 0;
 
+  const summaryDescription = useMemo(() => {
+    if (!user)
+      return "Log in to start building decks and to access your collection anywhere.";
+    if (hasCollection)
+      return "Your cards are in. Start building decks and see exactly what you own, and what you’ll need.";
+    return "Upload your card collection and start brewing with our MTG deck building tools.";
+  }, [user, hasCollection]);
+
   if (user === null && location.pathname !== "/" && authChecked) {
     return <Navigate to="/" replace />;
   }
 
-  const getSummaryDescription = () => {
-    if (!user) {
-      return "Log in to start building decks and to access your collection anywhere.";
-    }
-    if (hasCollection) {
-      return "Your cards are in. Start building decks and see exactly what you own, and what you’ll need.";
-    }
-
-    return "Upload your card collection and start brewing with our MTG deck building tools.";
-  };
+  const navItems = [
+    {
+      label: "Help",
+      path: "/help",
+    },
+    {
+      label: "Collection",
+      path: "/",
+      requireLogin: true,
+    },
+    {
+      label: "Decks",
+      path: "/decks",
+      requireLogin: true,
+    },
+  ];
 
   return (
     <div className="container">
@@ -80,29 +87,20 @@ export default function App() {
             <h1>SCRYSTONE</h1>
           </div>
           <div className="flexRow">
-            <NavButton
-              isActive={location.pathname === "/help"}
-              label="Help"
-              path="/help"
-            />
-            <NavButton
-              isActive={
-                (location.pathname === "/collection" ||
-                  (user && location.pathname === "/")) ??
-                false
-              }
-              label="Collection"
-              path="/"
-              requireLogin={true}
-              loginMsg="Please log in to access your collection."
-            />
-            <NavButton
-              isActive={location.pathname.startsWith("/deck")}
-              label="Decks"
-              path="/decks"
-              requireLogin={true}
-              loginMsg="Please log in to access your decks."
-            />
+            {navItems.map((navItem) => {
+              return (
+                <NavButton
+                  isActive={
+                    navItem.path === "/"
+                      ? location.pathname === "/"
+                      : location.pathname.startsWith(navItem.path)
+                  }
+                  label={navItem.label}
+                  path={navItem.path}
+                  requireLogin={navItem.requireLogin}
+                />
+              );
+            })}
             {user && <NavButton label={"Log Out"} />}
           </div>
         </div>
@@ -118,7 +116,7 @@ export default function App() {
                 ? "Build Powerful Decks From Your Collection"
                 : "Getting Started"}
             </h2>
-            <p>{getSummaryDescription()}</p>
+            <p>{summaryDescription}</p>
             {user ? (
               <div className="uploadContainer">
                 <input
@@ -165,23 +163,36 @@ export default function App() {
       )}
 
       <div
-        className="dataContainer"
-        style={{
-          opacity: loading ? 0.5 : 1,
-          pointerEvents: loading ? "none" : "auto",
-          transition: "opacity 0.5s ease",
-        }}
+        className={`dataContainer transition-opacity duration-500 ${
+          loading ? "opacity-50 pointer-events-none" : "opacity-100"
+        }`}
       >
-        <Routes>
-          <Route path="/" element={user ? <CardDashboard /> : <Welcome />} />
-          <Route path="/collection" element={<CardDashboard />} />
-          <Route path="/decks" element={<DeckDashboard />} />
-          <Route path="/deck/:deckId" element={<DeckPreview />} />
-          <Route path="/deck/:deckId/edit" element={<DeckEdit />} />
-          <Route path="/deck/new" element={<DeckEdit />} />
-          <Route path="/help" element={<Welcome />} />
-        </Routes>
+        <AppRoutes user={user} />
       </div>
     </div>
+  );
+}
+
+interface AppRoutesProps {
+  user: User | null;
+}
+
+function AppRoutes({ user }: AppRoutesProps) {
+  const routes = [
+    { path: "/", element: user ? <CardDashboard /> : <Welcome /> },
+    { path: "/collection", element: <CardDashboard /> },
+    { path: "/deck/:deckId", element: <DeckPreview /> },
+    { path: "/deck/:deckId/edit", element: <DeckEdit /> },
+    { path: "/deck/new", element: <DeckEdit /> },
+    { path: "/decks", element: <DeckDashboard /> },
+    { path: "/help", element: <Welcome /> },
+  ];
+
+  return (
+    <Routes>
+      {routes.map((route) => (
+        <Route path={route.path} element={route.element} />
+      ))}
+    </Routes>
   );
 }

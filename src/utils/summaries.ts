@@ -10,7 +10,6 @@ export function getCollectionSummary(cards?: CollectionCard[]): {
       const price = parseFloat(card.price?.toString() ?? "0");
 
       acc.size += quantity;
-      // If is a valid number
       if (!isNaN(price)) {
         acc.value += quantity * price;
       }

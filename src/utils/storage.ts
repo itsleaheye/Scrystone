@@ -8,7 +8,6 @@ export async function getCardsFromStorage(): Promise<CollectionCard[]> {
   if (!uid) return [];
 
   const snapshot = await getDocs(collection(db, "users", uid, "cards"));
-
   return snapshot.docs.map((doc) => doc.data() as CollectionCard);
 }
 
@@ -19,9 +18,10 @@ export async function getDecksFromStorage(deckId?: number): Promise<Deck[]> {
   const snapshot = await getDocs(collection(db, "users", uid, "decks"));
   const decks = snapshot.docs.map((doc) => doc.data() as Deck);
 
+  // Handle querying for a single deck or all
   if (deckId === undefined) {
     return decks;
   } else {
-    return decks.filter((d) => d.id == deckId);
+    return decks.filter((deck) => deck.id == deckId);
   }
 }

@@ -2,9 +2,9 @@ import { findCardByName, findCardByNameAndSet } from "./cards";
 import { normalizeCardName, normalizeMana, normalizeSet } from "./normalize";
 
 interface ScryfallDetails {
+  imageUrl?: string;
   manaTypes?: string[];
   name: string;
-  imageUrl?: string;
   price: number;
   set: string;
   setName: string;
@@ -23,7 +23,6 @@ export async function getScryfallCard({
   tcgPlayerId,
 }: getScryfallCardProps): Promise<ScryfallDetails | undefined> {
   const normalizedName = normalizeCardName(cardName);
-
   const localMatch =
     (set && findCardByNameAndSet(cardName, set)) || findCardByName(cardName);
   if (localMatch) {

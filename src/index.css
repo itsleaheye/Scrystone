@@ -5,17 +5,15 @@
 :root {
   font-family: "Quattrocento Sans", sans-serif;
   line-height: 1;
-
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.945);
   background-color: var(--black);
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  /* Colour variables */
+  /* Colours */
   --white: #f5f5f5;
   --off-white: #d9d9d9;
   --gray: #9698a7;
@@ -31,6 +29,7 @@
   --red: #e56060;
   --purple: #815d98;
 
+  /* Fonts */
   --font-size-xs: 10px;
   --font-size-sm: 14px;
   --font-size-base: 16px;
@@ -39,6 +38,7 @@
   --font-size-xl: 28px;
   --font-size-xxl: 42px;
 
+  /* Spacing */
   --pad-xxxs: 0.4rem;
   --pad-xxs: 0.5rem;
   --pad-xs: 1rem;
@@ -50,7 +50,8 @@
   --border-radius-lg: 0.75rem;
   --border-radius-xl: 0.9rem;
 
-  --ease-in: 0.3s ease-in;
+  /* Animations */
+  --ease-in: all 0.3s ease-in;
 }
 
 body {

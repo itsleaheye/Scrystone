@@ -6,7 +6,6 @@ import { useMediaQuery } from "../../hooks/useMediaQuery";
 interface NavButtonProps {
   isActive?: boolean;
   label: string;
-  loginMsg?: string;
   path?: string;
   requireLogin?: boolean;
 }
@@ -14,7 +13,6 @@ interface NavButtonProps {
 export function NavButton({
   isActive = false,
   label,
-  loginMsg,
   path,
   requireLogin = false,
 }: NavButtonProps) {
@@ -25,14 +23,17 @@ export function NavButton({
 
   const showConfirmation =
     location.pathname.includes("/new") || location.pathname.includes("/edit");
+  const loginPrompt = `Please log in to access your ${
+    label === "Decks" ? "decks" : "collection"
+  }`;
 
   const navigateWithConfirm = (
     path?: string,
     requireLogin = false,
-    loginMsg?: string
+    loginPrompt?: string
   ) => {
     if (requireLogin && !user) {
-      alert(loginMsg || "Please log in.");
+      alert(loginPrompt || "Please log in.");
       return;
     }
     if (showConfirmation && !window.confirm("Discard changes?")) return;
@@ -51,7 +52,7 @@ export function NavButton({
       onClick={() =>
         isAuthButton
           ? handleLogout()
-          : navigateWithConfirm(path, requireLogin ?? false, loginMsg)
+          : navigateWithConfirm(path, requireLogin ?? false, loginPrompt)
       }
     >
       <p>

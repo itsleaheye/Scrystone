@@ -9,31 +9,21 @@ import { normalizeCardName } from "./normalize";
 import { getCardsFromStorage, getDecksFromStorage } from "./storage";
 
 export function getDeckManaSummary(cards: DeckCard[]) {
-  const allSymbols: string[] = [];
+  const allManaTypes = new Set<string>();
 
   for (const card of cards) {
-    if (!card.manaTypes) continue;
-
-    for (const symbol of card.manaTypes) {
-      const upper = symbol.toUpperCase();
-      if (/^[A-Z]$/.test(upper)) {
-        allSymbols.push(upper);
+    for (const manaType of card.manaTypes ?? []) {
+      const upper = manaType.toUpperCase();
+      if (upper.length === 1 && upper >= "A" && upper <= "Z") {
+        allManaTypes.add(upper);
       }
     }
   }
-
-  return Array.from(new Set(allSymbols)).sort();
+  return [...allManaTypes].sort();
 }
 
-export function getDeckCost(cards: Card[] | DeckCard[]) {
-  return (
-    cards.reduce(
-      (sum, card) =>
-        sum +
-        (typeof card.price === "number" ? card.price : Number(card.price) || 0),
-      0
-    ) ?? 0
-  );
+export function getDeckCost(cards: (Card | DeckCard)[]): number {
+  return cards.reduce((sum, { price }) => sum + (Number(price) || 0), 0);
 }
 
 export function generateUniqueDeckId() {
@@ -42,15 +32,15 @@ export function generateUniqueDeckId() {
 
 export async function getDeckTypeSummary(cards: DeckCard[]) {
   const ownedCards: CollectionCard[] = await getCardsFromStorage();
+  const ownedMap = new Map<string, number>();
 
-  const totalQuantityByName = new Map<string, number>();
-  ownedCards.forEach((card) => {
-    const normalizedName = normalizeCardName(card.name);
-    totalQuantityByName.set(
-      normalizedName,
-      (totalQuantityByName.get(normalizedName) ?? 0) + (card.quantityOwned ?? 0)
+  for (const card of ownedCards) {
+    const normalizedCardName = normalizeCardName(card.name);
+    ownedMap.set(
+      normalizedCardName,
+      (ownedMap.get(normalizedCardName) ?? 0) + (card.quantityOwned ?? 0)
     );
-  });
+  }
 
   const deckCountByName = new Map<
     string,
@@ -81,7 +71,6 @@ export async function getDeckTypeSummary(cards: DeckCard[]) {
       type,
       (quantityNeededByType.get(type) ?? 0) + quantityNeeded
     );
-
     quantityOwnedByType.set(
       type,
       (quantityOwnedByType.get(type) ?? 0) +
@@ -102,9 +91,9 @@ const DEFAULT_TYPES = [
   "Artifact",
   "Creature",
   "Enchantment",
+  "Instant",
   "Land",
   "Sorcery",
-  "Instant",
 ];
 
 export async function getDeckTypeSummaryWithDefaults(
@@ -124,6 +113,7 @@ export function isDeckReady(deck: Deck): boolean {
     (sum, card) => sum + (card.quantityNeeded || 0),
     0
   );
+
   let requiredSize = 60;
   switch (deck.format) {
     case "Commander":
@@ -136,7 +126,7 @@ export function isDeckReady(deck: Deck): boolean {
       requiredSize = 40;
       break;
     default:
-      requiredSize = 60; // Default to standard size
+      requiredSize = 60; // Default to standard
       break;
   }
 
@@ -169,10 +159,9 @@ export async function isCardInOtherDecks({
     id: deck.id,
     name: deck.name,
   }));
-  const count = otherDecksMap.length;
 
   return {
     inOtherDecks: otherDecksMap,
-    count,
+    count: otherDecksMap.length,
   };
 }

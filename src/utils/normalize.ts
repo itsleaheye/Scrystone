@@ -1,6 +1,6 @@
 export function normalizeCardName(name: string): string {
   return name
-    .normalize("NFD") // Required for accents
+    .normalize("NFD") // Handles accents
     .replace(/\s*\([^)]+\)/g, "") // Remove all '()' groups
     .split(" - ")[0] // Use only the part before ' - s'
     .split("//")[0] // Use only the part before '//'
@@ -17,9 +17,8 @@ export function normalizeDeckName(name: string): string {
 export function normalizeMana(manaCostStr: string): {
   colours?: string[];
 } {
-  if (!manaCostStr || typeof manaCostStr !== "string") return {}; // Catches double faced cards which struggle with scryfall
+  if (!manaCostStr || typeof manaCostStr !== "string") return {}; // Catches double faced cards which struggle with Scryfall data
 
-  // manaCostStr comes from Scryfall as '{2}{B}' or '{2}{W}{W}'
   const manaTokens = manaCostStr
     .match(/{([^}]+)}/g)
     ?.map((t) => t.slice(1, -1));
@@ -27,7 +26,7 @@ export function normalizeMana(manaCostStr: string): {
 
   const colours = [
     ...new Set(manaTokens.filter((token) => /^[WUBRG]$/.test(token))),
-  ];
+  ]; // Utilize a set so only unique mana is stored
 
   return {
     colours: colours.length ? colours : undefined,
@@ -38,31 +37,12 @@ export function normalizeCardType(type?: string) {
   if (!type) return undefined;
 
   if (type.includes("Creature")) return "Creature";
-  if (type.includes("Sorcery")) return "Sorcery";
   if (type.includes("Instant")) return "Instant";
-  if (
-    ([
-      "Swamp",
-      "Plains",
-      "Mountain",
-      "Forest",
-      "Island",
-      "Reef",
-      "Cave",
-      "Grotto",
-      "Orchard",
-    ].includes(type ?? "") &&
-      type == "Instant") ||
-    type == "Basic" ||
-    type.includes("Land") ||
-    type == "Basic Land"
-  ) {
-    return (type = "Land");
-  }
-  if (type.includes("Planeswalker")) return "Creature";
+  if (type.includes("Sorcery")) return "Sorcery";
+  if (type.includes("Land") || type == "Basic Land") return "Land";
   if (type.includes("Artifact")) return "Artifact";
+  if (type.includes("Planeswalker")) return "Creature";
 
-  // Default
   return type;
 }
 
