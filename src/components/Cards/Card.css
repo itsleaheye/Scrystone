@@ -161,7 +161,7 @@
 }
 
 .cardListRow {
-  display: grid;
+  display: grid !important;
   padding: var(--pad-xxs);
   gap: var(--pad-xs);
   grid-template-columns: 52% 18% 20% 10%;
@@ -323,16 +323,6 @@
 }
 
 @media only screen and (min-width: 900px) {
-  /* .cardListRow {
-    .setDetails {
-      width: 250px;
-    }
-
-    .primaryDetails {
-      width: 400px;
-    }
-  } */
-
   .cardListPreview {
     .emptyInfo {
       min-width: 275px;
