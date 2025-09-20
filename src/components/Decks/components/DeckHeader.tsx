@@ -4,7 +4,6 @@ import type {
   DeckCard,
   DeckFormat,
 } from "../../../types/MagicTheGathering";
-import { ManaRow } from "./ManaRow";
 import { DeckField } from "./DeckField";
 import { TypeSummary } from "../../shared/TypeSummary";
 import { IconItem } from "../../shared/IconItem";
@@ -18,6 +17,7 @@ import { TbCardsFilled } from "react-icons/tb";
 import { useMediaQuery } from "../../../hooks/useMediaQuery";
 import { FaEdit } from "react-icons/fa";
 import { FeatureModal } from "./FeatureModal";
+import { DeckManaBreakdown } from "./DeckManaBreakdown";
 
 interface DeckPreviewProps {
   deck?: Deck;
@@ -108,143 +108,152 @@ export function DeckHeader({
   const activeFeatureCard = formDetails?.featureCard ?? deck?.featureCard;
 
   return (
-    <div
-      className="deckOverview"
-      style={{
-        backgroundImage:
-          !isMobile && activeFeatureCard?.imageUrl
-            ? `linear-gradient(
+    <>
+      <div
+        className="deckOverview"
+        style={{
+          backgroundImage:
+            !isMobile && activeFeatureCard?.imageUrl
+              ? `linear-gradient(
           to right,
           rgba(245, 245, 245, 0.6) 0%,
           rgba(245, 245, 245, 0.85) 10%,
           rgba(245, 245, 245, 1) 30%,
           rgba(245, 245, 245, 1) 100%
         ), url(${activeFeatureCard.imageUrl})`
-            : "",
-        backgroundPosition: "center center,-40px -100px",
-        backgroundRepeat: "repeat-y",
-      }}
-    >
-      {isModalOpen && formDetails ? (
-        <FeatureModal
-          setIsModalOpen={setIsModalOpen}
-          setFeatureCard={formDetails.setFeatureCard}
-          featureCard={activeFeatureCard ?? null}
-          cards={cards ?? deck?.cards}
-        />
-      ) : (
-        <div className="flexSwap">
-          {/* Overview col 1 */}
-          <div className={`deckCol1 ${!editable ? "staticDeckCol1" : ""}`}>
-            <div
-              className={"flexRow manaAndCoverRow"}
-              style={{
-                justifyContent:
-                  editable || !isMobile ? "space-between" : "center",
-              }}
-            >
-              <ManaRow colours={deckColours} />
-
-              {featureEditable && (
-                <button
-                  className={"actionButton"}
-                  style={{
-                    marginBottom: "var(--pad-xs)",
-                  }}
-                  onClick={() => {
-                    setIsModalOpen(true);
-                  }}
-                >
-                  Change Cover
-                  <FaEdit />
-                </button>
-              )}
-            </div>
-
-            <div className="deckFields">
-              {editable ? (
-                <>
-                  <DeckField
-                    onChange={formDetails.setName}
-                    placeholder="Deck name..."
-                    value={formDetails.name}
-                  />
-                  <DeckField
-                    onChange={(value) => {
-                      const validFormat: DeckFormat = formDetails.isValidFormat(
-                        value
-                      )
-                        ? value
-                        : "Commander";
-                      formDetails.setFormat(validFormat);
+              : "",
+          backgroundPosition: "center center,-40px -100px",
+          backgroundRepeat: "repeat-y",
+        }}
+      >
+        {isModalOpen && formDetails ? (
+          <FeatureModal
+            setIsModalOpen={setIsModalOpen}
+            setFeatureCard={formDetails.setFeatureCard}
+            featureCard={activeFeatureCard ?? null}
+            cards={cards ?? deck?.cards}
+          />
+        ) : (
+          <div className="flexSwap">
+            {/* Overview col 1 */}
+            <div className={`deckCol1 ${!editable ? "staticDeckCol1" : ""}`}>
+              <div
+                className={"flexRow manaAndCoverRow"}
+                style={{
+                  justifyContent:
+                    editable || !isMobile ? "space-between" : "center",
+                }}
+              >
+                {featureEditable && (
+                  <button
+                    className={"actionButton"}
+                    style={{
+                      marginBottom: "var(--pad-xs)",
                     }}
-                    placeholder=""
-                    type="select"
-                    value={formDetails.format}
-                  />
-                </>
+                    onClick={() => {
+                      setIsModalOpen(true);
+                    }}
+                  >
+                    Change Cover
+                    <FaEdit />
+                  </button>
+                )}
+              </div>
+
+              <div className="deckFields">
+                {editable ? (
+                  <>
+                    <DeckField
+                      onChange={formDetails.setName}
+                      placeholder="Deck name..."
+                      value={formDetails.name}
+                    />
+                    <DeckField
+                      onChange={(value) => {
+                        const validFormat: DeckFormat =
+                          formDetails.isValidFormat(value)
+                            ? value
+                            : "Commander";
+                        formDetails.setFormat(validFormat);
+                      }}
+                      placeholder=""
+                      type="select"
+                      value={formDetails.format}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <p className="bold deckName overflowElipse">{deck?.name}</p>
+                    <div className="formatTag">
+                      <p>{deck?.format}</p>
+                    </div>
+                  </>
+                )}
+              </div>
+              {editable ? (
+                <DeckField
+                  onChange={formDetails.setDescription}
+                  placeholder="Deck description..."
+                  type="textarea"
+                  value={formDetails.description || ""}
+                />
               ) : (
-                <>
-                  <p className="bold deckName overflowElipse">{deck?.name}</p>
-                  <div className="formatTag">
-                    <p>{deck?.format}</p>
-                  </div>
-                </>
+                <p>{deck?.description}</p>
               )}
             </div>
-            {editable ? (
-              <DeckField
-                onChange={formDetails.setDescription}
-                placeholder="Deck description..."
-                type="textarea"
-                value={formDetails.description || ""}
-              />
-            ) : (
-              <p>{deck?.description}</p>
-            )}
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Overview col 2  */}
-      <TypeSummary summary={summary} hasBorder={true} />
+        {/* Overview col 2  */}
+        <TypeSummary summary={summary} hasBorder={true} />
 
-      {/* Overview col 3 */}
-      <div className="deckBreakdown flexSwapInverse">
-        <IconItem
-          icon={<GiCash />}
-          text={
-            <>
-              <p>Deck Cost</p>
-              <p className="subtext">
-                ${deck ? getDeckCost(deck.cards).toFixed(2) : 0.0}
-              </p>
-            </>
-          }
-        />
-        <IconItem
-          icon={<TbCardsFilled />}
-          text={
-            <>
-              <p>Total Cards</p>
-              <p className="subtext">
-                {currentDeckSize}/{requiredDeckSize}
-              </p>
-            </>
-          }
-        />
-        <IconItem
-          icon={isDeckReady ? <RiCheckboxCircleFill /> : <RiErrorWarningFill />}
-          text={
-            <>
-              <p>{isDeckReady ? "Deck is ready" : "Status"}</p>
-              <p className="subtext">
-                {isDeckReady ? " " : `${totalMissingCards} Missing`}{" "}
-              </p>
-            </>
-          }
-        />
+        {/* Overview col 3 */}
+        {/* <div className="deckBreakdown flexSwapInverse">
+          <IconItem
+            icon={<GiCash />}
+            text={
+              <>
+                <p>Deck Cost</p>
+                <p className="subtext">
+                  ${deck ? getDeckCost(deck.cards).toFixed(2) : 0.0}
+                </p>
+              </>
+            }
+          />
+          <IconItem
+            icon={<TbCardsFilled />}
+            text={
+              <>
+                <p>Total Cards</p>
+                <p className="subtext">
+                  {currentDeckSize}/{requiredDeckSize}
+                </p>
+              </>
+            }
+          />
+          <IconItem
+            icon={
+              isDeckReady ? <RiCheckboxCircleFill /> : <RiErrorWarningFill />
+            }
+            text={
+              <>
+                <p>{isDeckReady ? "Deck is ready" : "Status"}</p>
+                <p className="subtext">
+                  {isDeckReady ? " " : `${totalMissingCards} Missing`}{" "}
+                </p>
+              </>
+            }
+          />
+        </div> */}
       </div>
-    </div>
+      <DeckManaBreakdown
+        colours={deckColours}
+        deck={deck as Deck}
+        deckSize={currentDeckSize}
+        isDeckReady={isDeckReady}
+        requiredDeckSize={requiredDeckSize}
+        totalMissingCards={totalMissingCards}
+      />
+    </>
   );
 }

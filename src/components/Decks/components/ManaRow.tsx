@@ -7,7 +7,7 @@ import manaBlue from "../../../assets/manaBlue.svg";
 import manaRed from "../../../assets/manaRed.svg";
 import manaDefault from "../../../assets/manaDefault.svg";
 
-const manaIcon: Record<string, string> = {
+export const manaIcon: Record<string, string> = {
   B: manaBlack,
   W: manaWhite,
   U: manaBlue,

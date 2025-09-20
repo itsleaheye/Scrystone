@@ -475,13 +475,12 @@ button:hover {
 
 .deckOverview {
   background: var(--white);
-  border-radius: var(--border-radius-base);
-  display: grid;
+  border-top-left-radius: var(--border-radius-base);
+  border-top-right-radius: var(--border-radius-base);
   display: grid;
   flex-direction: column;
   gap: var(--pad-xs);
   grid-template-columns: 1fr;
-  margin-bottom: var(--pad-sm);
   overflow: hidden;
   padding: var(--pad-xs);
 
@@ -517,6 +516,7 @@ button:hover {
     width: 100%;
     display: flex;
     flex-direction: column;
+    justify-content: center;
   }
   .flexSwapInverse {
     flex-direction: row;
@@ -531,6 +531,56 @@ button:hover {
     justify-content: space-between;
     border-top: 2px solid var(--off-white);
     padding-top: var(--pad-xxs);
+  }
+}
+
+.deckManaOverview {
+  border-top: 2px var(--off-white) solid;
+  background: var(--white);
+  border-bottom-left-radius: var(--border-radius-base);
+  border-bottom-right-radius: var(--border-radius-base);
+  color: var(--black);
+  margin-bottom: var(--pad-sm);
+  padding: var(--pad-xs);
+  display: grid;
+  grid-template-columns: 33% 33% 33%;
+  text-align: center;
+
+  .manaGraph {
+    border-left: 2px var(--off-white) solid;
+    border-right: 2px var(--off-white) solid;
+  }
+
+  .manaColours {
+    h3 {
+      margin-bottom: var(--pad-xs);
+    }
+
+    .manaColourList {
+      display: flex;
+      flex-direction: row;
+      gap: var(--pad-xs);
+      justify-content: center;
+
+      .manaColourItem {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-weight: 600;
+
+        img {
+          width: 2.25rem;
+          height: 2.25rem;
+          margin: var(--pad-xxs);
+        }
+
+        p {
+          line-height: 20px;
+          margin-top: -4px;
+          color: var(--dark-gray);
+        }
+      }
+    }
   }
 }
 
@@ -769,8 +819,7 @@ button:hover {
   }
   .deckOverview {
     padding: var(--pad-sm);
-    grid-template-columns: 37% 23% 40%;
-    height: 275px;
+    grid-template-columns: 65% 35%;
 
     .staticDeckCol1 {
       margin: 0;
@@ -822,7 +871,7 @@ button:hover {
 
 @media only screen and (min-width: 1200px) {
   .deckOverview {
-    grid-template-columns: 50% 15% 25%;
+    grid-template-columns: 65% 35%;
   }
 }
 

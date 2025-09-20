@@ -58,6 +58,10 @@
   }
 }
 
+.deckMetricsBreakdown {
+  justify-content: center;
+}
+
 .importContainer {
   border: 2px solid var(--white);
   padding: var(--pad-xxs) var(--pad-xs);

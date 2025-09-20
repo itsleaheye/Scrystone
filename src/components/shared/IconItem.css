@@ -14,13 +14,13 @@
     margin-top: 0;
     font-size: var(--font-size-base) !important;
     text-align: center;
-    line-height: 16px;
+    line-height: 20px;
   }
 
   svg {
     margin: var(--pad-xxs);
-    width: 3rem;
-    height: 3rem;
+    width: 2.5rem;
+    height: 2.5rem;
   }
 }
 
