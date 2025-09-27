@@ -15,6 +15,7 @@
     align-items: center;
     display: flex;
     text-decoration: none;
+    height: 27.5px;
 
     svg {
       margin-right: var(--pad-xxs);

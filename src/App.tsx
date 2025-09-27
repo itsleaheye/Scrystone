@@ -90,6 +90,7 @@ export default function App() {
             {navItems.map((navItem) => {
               return (
                 <NavButton
+                  key={navItem.label}
                   isActive={
                     navItem.path === "/"
                       ? location.pathname === "/"

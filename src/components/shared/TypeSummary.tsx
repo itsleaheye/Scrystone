@@ -21,9 +21,7 @@ export function TypeSummary({ summary, hasBorder = false }: TypeSummaryProps) {
 
           return (
             <li key={type}>
-              {/* <span className={showWarning ? "redText" : ""}> */}
               {getTypeIcon(type)}
-              {/* </span> */}
               {typeLabel}s
               <span
                 className={`${

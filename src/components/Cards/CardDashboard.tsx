@@ -24,11 +24,13 @@ export function CardDashboard() {
 
   return (
     <div className="contentContainer">
-      <CardPreview
-        collectionCards={cards}
-        viewPreference="Grid"
-        loading={loading}
-      />
+      {cards && (
+        <CardPreview
+          collectionCards={cards}
+          viewPreference="Grid"
+          loading={loading}
+        />
+      )}
     </div>
   );
 }

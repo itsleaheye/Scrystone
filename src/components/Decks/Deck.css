@@ -58,6 +58,13 @@
   }
 }
 
+.deckTop p {
+  height: 30px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .importContainer {
   border: 2px solid var(--white);
   padding: var(--pad-xxs) var(--pad-xs);

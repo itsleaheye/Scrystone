@@ -15,19 +15,19 @@ export async function parseCsvToCollection(
   const total = rawCards.length;
 
   const processCard = async (rawCard: any): Promise<CollectionCard | null> => {
-    const cardName = normalizeCardName(rawCard.Name);
+    if (!rawCard.Name && !rawCard["Product Name"]) return null;
+    const cardName = normalizeCardName(rawCard.Name || rawCard["Product Name"]);
 
-    // Skip unplayable cards
     if (
       !cardName ||
       cardName.toLowerCase().includes("token") ||
       cardName.toLowerCase().includes("checklist") ||
       cardName.toLowerCase().includes("art card")
     ) {
-      return null;
+      return null; // Skips unplayable cards
     }
 
-    // TCGPlayer has a bug that SetCodes are not being exported. This works around their bug:
+    // TCGPlayer has a bug that no longer includes a "Set Code" in the export. This works around their bug:
     const { setCodeToNameMap, setNameToCodeMap } = await fetchScryfallSetMaps();
     const resolveSetCode = (
       rawSetCode?: string,
@@ -53,21 +53,24 @@ export async function parseCsvToCollection(
       return undefined;
     };
 
-    const setCode = resolveSetCode(rawCard["Set Code"], rawCard["Set"]);
+    const setCode = resolveSetCode(
+      rawCard["Set Code"], // TCGPlayer retired "Set Code" for future .csv's 09/2025
+      rawCard["Set"] || rawCard["Set Name"] // TCGPlayer swapped from "Set" to "Set Name" for future .csv's 09/2025
+    );
 
     try {
       const scryfallData = await getScryfallCard({
         cardName,
         set: setCode,
-        tcgPlayerId: rawCard["Product ID"],
+        tcgPlayerId: rawCard["Product ID"] || rawCard["TCGplayer Id"], //TCGPlayer swapped their .csv from "Product ID" to "TCGplayer Id" 09/2025
       });
       if (!scryfallData) return null;
 
       return {
         ...scryfallData,
         set: setCode ?? "Any",
-        setName: rawCard["Set"],
-        quantityOwned: rawCard["Quantity"] || 1,
+        setName: rawCard["Set"] || rawCard["Set Name"], // TCGPlayer swapped from "Set" to "Set Name" for future .csv's 09/2025
+        quantityOwned: rawCard["Quantity"] || rawCard["Add to Quantity"] || 1, // TCGPlayer swapped from "Qauntity" to "Add to Quantity" for future .csv's 09/2025
       };
     } catch (error) {
       console.warn(`Failed to fetch card: ${cardName}`, error);
