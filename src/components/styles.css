@@ -584,13 +584,17 @@ button:hover {
   background: var(--white);
   border-radius: var(--border-radius-base);
   display: grid;
-  display: grid;
   flex-direction: column;
   margin-bottom: var(--pad-xs);
   gap: var(--pad-xs);
   grid-template-columns: 1fr;
   overflow: hidden;
   padding: var(--pad-xs);
+
+  /* Prevents links from breaking page formating */
+  overflow-wrap: break-word; /* modern browsers */
+  word-wrap: break-word; /* legacy browsers */
+  word-break: break-word; /* fallback */
 
   p {
     margin-top: var(--pad-xxs);
