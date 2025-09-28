@@ -238,80 +238,11 @@ export function DeckHeader({
               </>
             }
           />
-          {missingCards.length > 0 ? (
-            <Tooltip
-              content={
-                <div className="tooltipMissingCards">
-                  <h4>Cards Not Owned:</h4>
-                  {missingCards.slice(0, 10).map((card) => (
-                    <p className="overflowElipse" key={card.name}>
-                      {`(${
-                        (card.quantityNeeded ?? 0) - (card.quantityOwned ?? 0)
-                      }) ${card.name}`}
-                    </p>
-                  ))}
-                  {missingCards.length > 10 && (
-                    <span className="italic subtext">
-                      Export your deck to see all...
-                    </span>
-                  )}
-                </div>
-              }
-              theme="light"
-            >
-              <IconItem
-                icon={
-                  isDeckReady ? (
-                    <RiCheckboxCircleFill />
-                  ) : (
-                    <RiErrorWarningFill />
-                  )
-                }
-                text={
-                  <>
-                    <p>
-                      {isDeckReady
-                        ? "Deck is ready"
-                        : currentDeckSize != requiredDeckSize
-                        ? "Deck not ready"
-                        : "Status"}
-                    </p>
-                    <p className="subtext">
-                      {isDeckReady
-                        ? " "
-                        : currentDeckSize != requiredDeckSize
-                        ? "Not enough cards for format"
-                        : `${totalMissingCards} missing`}
-                    </p>
-                  </>
-                }
-              />
-            </Tooltip>
-          ) : (
-            <IconItem
-              icon={
-                isDeckReady ? <RiCheckboxCircleFill /> : <RiErrorWarningFill />
-              }
-              text={
-                <>
-                  <p>
-                    {isDeckReady
-                      ? "Deck is ready"
-                      : currentDeckSize != requiredDeckSize
-                      ? "Not ready"
-                      : "Status"}
-                  </p>
-                  <p className="subtext">
-                    {isDeckReady
-                      ? " "
-                      : currentDeckSize != requiredDeckSize
-                      ? "for format"
-                      : `${totalMissingCards} missing`}
-                  </p>
-                </>
-              }
-            />
-          )}
+          <IconItemStatus
+            isDeckReady={isDeckReady}
+            missingCards={missingCards}
+            hasFormatSize={currentDeckSize == requiredDeckSize || false}
+          />
           <IconItem
             icon={<TbCardsFilled />}
             text={
@@ -364,5 +295,64 @@ export function DeckHeader({
         </div>
       )}
     </>
+  );
+}
+
+interface IconItemStatusProps {
+  isDeckReady: boolean;
+  missingCards: DeckCard[];
+  hasFormatSize: boolean;
+}
+
+function IconItemStatus({
+  isDeckReady,
+  missingCards,
+  hasFormatSize,
+}: IconItemStatusProps): React.JSX.Element {
+  const icon = isDeckReady ? <RiCheckboxCircleFill /> : <RiErrorWarningFill />;
+  const statusText = "Status";
+  const subtext = isDeckReady
+    ? "Ready to play"
+    : !hasFormatSize
+    ? "Incomplete"
+    : `${missingCards.length} missing`;
+
+  const iconItem = (
+    <IconItem
+      icon={icon}
+      text={
+        <>
+          <p>{statusText}</p>
+          <p className="subtext">{subtext}</p>
+        </>
+      }
+    />
+  );
+
+  return missingCards.length > 0 ? (
+    <Tooltip
+      content={
+        <div className="tooltipMissingCards">
+          <h4>Cards Not Owned:</h4>
+          {missingCards.slice(0, 10).map((card) => (
+            <p className="overflowElipse" key={card.name}>
+              {`(${(card.quantityNeeded ?? 0) - (card.quantityOwned ?? 0)}) ${
+                card.name
+              }`}
+            </p>
+          ))}
+          {missingCards.length > 10 && (
+            <span className="italic subtext">
+              Export your deck to see all...
+            </span>
+          )}
+        </div>
+      }
+      theme="light"
+    >
+      {iconItem}
+    </Tooltip>
+  ) : (
+    iconItem
   );
 }
