@@ -21,6 +21,7 @@ export const DeckField = ({
         placeholder={placeholder}
         rows={3}
         value={value}
+        maxLength={375}
       />
     );
   } else if (type === "select") {
@@ -38,6 +39,7 @@ export const DeckField = ({
         placeholder={placeholder}
         type="text"
         value={value}
+        maxLength={100}
       />
     );
   }

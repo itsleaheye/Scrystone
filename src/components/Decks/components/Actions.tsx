@@ -26,25 +26,27 @@ import type {
 } from "../../../hooks/useDeckFiltersAndSort";
 import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 import Select from "react-select";
+import { type DrawnCard } from "../../../utils/decks";
 
 interface DeckActionsProps {
-  editable?: boolean;
   deck?: Deck;
+  editable?: boolean;
   isMobile?: boolean;
-  onBack: () => void;
-  onPrimary: () => void;
-  onCardsImport?: (e: ChangeEvent<HTMLInputElement>) => void;
   loading?: boolean;
+  onBack: () => void;
+  onCardsImport?: (e: ChangeEvent<HTMLInputElement>) => void;
+  onPrimary: () => void;
+  setPreviewHand?: Dispatch<SetStateAction<DrawnCard[]>>;
 }
 
 export const DeckActions = ({
-  editable = false,
   deck,
+  editable = false,
   isMobile = false,
-  onBack,
-  onPrimary,
-  onCardsImport,
   loading = false,
+  onBack,
+  onCardsImport,
+  onPrimary,
 }: DeckActionsProps) => {
   const { onDeckDelete, onDeckExport } = useDeckParser();
   const navigate = useNavigate();
@@ -75,6 +77,7 @@ export const DeckActions = ({
             variation="destroy"
           />
         )}
+
         {deck && !editable && (
           <ActionButton
             hideLabel={isMobile}

@@ -356,10 +356,10 @@ export function CardPreview({
             location.pathname.includes("new")
               ? "Search for a card name in the above search bar to add it to your deck"
               : isDeckView
-              ? "No cards added to this deck"
-              : "Upload your collection to start previewing card"
+              ? "No cards found in this deck"
+              : "Upload your collection to start previewing cards"
           }
-          title="No cards yet"
+          title="Oh no!"
         />
       )}
     </>

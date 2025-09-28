@@ -34,7 +34,7 @@ export function FeatureModal({
         <h2 style={{ color: "var(--black)" }}>Select Cover Card</h2>
         <button
           disabled={!featureCard}
-          className={"actionButton"}
+          className="actionButton"
           onClick={() => {
             handleSubmit();
           }}

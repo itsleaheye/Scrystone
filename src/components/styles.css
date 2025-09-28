@@ -22,6 +22,67 @@ button:hover {
   transition: var(--ease-in);
 }
 
+.tooltip {
+  border-radius: var(--border-radius-base);
+  padding: var(--pad-xs);
+  box-shadow: 0 5px 5px rgba(37, 40, 53, 0.25),
+    0 -5px 5px rgba(37, 40, 53, 0.25);
+  z-index: 100;
+  position: fixed;
+  pointer-events: none;
+  transform: translate(-50%, -125%);
+  min-width: 150px;
+
+  h4 {
+    text-align: center;
+  }
+}
+
+.tooltip::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  bottom: -5px;
+}
+
+.darkTooltip {
+  background-color: var(--darkest-gray);
+  color: var(--white);
+}
+.darkTooltip::after {
+  border-top: 6px solid var(--darkest-gray);
+}
+
+.lightTooltip {
+  background-color: var(--white);
+  color: var(--blackest);
+}
+.lightTooltip::after {
+  border-top: 6px solid var(--white);
+}
+
+.tooltipMissingCards {
+  max-height: 350px;
+
+  p {
+    /* font-size: var(--font-size-sm); */
+    line-height: 1.2;
+  }
+
+  .subtext {
+    line-height: 2;
+    padding-top: var(--pad-sm);
+    font-size: var(--font-size-sm);
+    color: var(--darker-gray);
+    font-weight: bold;
+  }
+}
+
 .pageTitle {
   background-color: var(--blackest);
   display: flex;
@@ -473,15 +534,61 @@ button:hover {
   }
 }
 
+.handHeader {
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--pad-xxs);
+
+  h3 {
+    font-size: var(--font-size-base);
+  }
+
+  .secondaryButton {
+    background-color: var(--darkest-gray);
+  }
+
+  .tertiaryButton {
+    padding: var(--pad-xxs) var(--pad-xs);
+    background-color: var(--darkest-gray);
+  }
+}
+
+.handGrid {
+  gap: var(--pad-xs) !important;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  margin-top: var(--pad-xs);
+
+  img {
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2), 0 -5px 5px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.deckOverviewSecondary {
+  background: var(--darkest-gray);
+  border-radius: var(--border-radius-base);
+  margin-bottom: var(--pad-sm);
+  overflow: hidden;
+  padding: var(--pad-xxs);
+
+  h3 {
+    color: var(--white);
+  }
+  button {
+    margin-bottom: 0 !important;
+  }
+}
+
 .deckOverview {
   background: var(--white);
   border-radius: var(--border-radius-base);
   display: grid;
   display: grid;
   flex-direction: column;
+  margin-bottom: var(--pad-xs);
   gap: var(--pad-xs);
   grid-template-columns: 1fr;
-  margin-bottom: var(--pad-sm);
   overflow: hidden;
   padding: var(--pad-xs);
 
@@ -634,6 +741,14 @@ button:hover {
   .deckOverview .deckBreakdown {
     justify-content: space-evenly;
   }
+
+  .deckOverviewSecondary {
+    padding: var(--pad-xs);
+
+    .handGrid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
 }
 
 @media only screen and (min-width: 650px) {
@@ -641,6 +756,10 @@ button:hover {
     padding: var(--pad-sm);
     margin: 0 auto;
     max-width: 1600px;
+  }
+
+  .deckOverviewSecondary .handGrid {
+    grid-template-columns: repeat(4, 1fr);
   }
 
   .headingContainer {
@@ -702,6 +821,8 @@ button:hover {
 
       p {
         text-align: center;
+        max-height: 130px;
+        overflow-y: hidden;
       }
 
       .deckFields {
@@ -750,6 +871,14 @@ button:hover {
 }
 
 @media only screen and (min-width: 900px) {
+  .deckOverviewSecondary {
+    padding: var(--pad-xs) var(--pad-sm);
+
+    .handGrid {
+      grid-template-columns: repeat(7, 1fr);
+    }
+  }
+
   .filtersRow {
     gap: var(--pad-xs);
     max-width: 1600px;

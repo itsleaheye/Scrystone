@@ -165,3 +165,36 @@ export async function isCardInOtherDecks({
     count: otherDecksMap.length,
   };
 }
+
+export interface DrawnCard {
+  name: string;
+  imageUrl?: string;
+}
+
+export function drawHand(deck: Deck) {
+  if (!deck || !deck.cards || deck.cards.length === 0) {
+    console.warn("Deck is empty. Cannot draw opening hand.");
+    return [];
+  }
+
+  const AMOUNT_DRAWN = 7;
+
+  const expandedCardList: DrawnCard[] = [];
+  deck.cards.forEach((card) => {
+    const quantity = card.quantityNeeded ?? 1;
+    for (let i = 0; i < quantity; i++) {
+      expandedCardList.push({ name: card.name, imageUrl: card.imageUrl });
+    }
+  });
+
+  // Fisher-Yates shuffle algorithm, chosen for being the most common for simulated shuffling
+  for (let i = expandedCardList.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [expandedCardList[i], expandedCardList[j]] = [
+      expandedCardList[j],
+      expandedCardList[i],
+    ];
+  }
+
+  return expandedCardList.slice(0, AMOUNT_DRAWN);
+}

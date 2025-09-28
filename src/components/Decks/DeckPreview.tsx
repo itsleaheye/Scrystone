@@ -4,12 +4,14 @@ import "../styles.css";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { DeckHeader } from "./components/DeckHeader";
 import { useEffect, useState } from "react";
-import { getDeckTypeSummaryWithDefaults } from "../../utils/decks";
+import {
+  getDeckTypeSummaryWithDefaults,
+  type DrawnCard,
+} from "../../utils/decks";
 import { CardPreview } from "../Cards/CardPreview";
 import { DeckActions } from "./components/Actions";
 import type { CardTypeSummary, Deck } from "../../types/MagicTheGathering";
 import { DeckHeaderLoading } from "./components/DeckHeaderLoading";
-
 export function DeckPreview() {
   const { deckId } = useParams<{ deckId: string }>();
   const [deck, setDeck] = useState<Deck | undefined>();
@@ -53,6 +55,8 @@ export function DeckPreview() {
     loadSummary();
   }, [cards, deck]);
 
+  const [previewHand, setPreviewHand] = useState<DrawnCard[]>([]);
+
   return (
     <div className="contentContainer" style={{ maxWidth: "1600px" }}>
       {/* Actions header */}
@@ -65,11 +69,17 @@ export function DeckPreview() {
         onPrimary={() => {
           navigate(`/deck/${deck?.id}/edit`);
         }}
+        setPreviewHand={setPreviewHand}
       />
 
       {/* Deck overview */}
       {deck ? (
-        <DeckHeader deck={deck} summary={summary} />
+        <DeckHeader
+          deck={deck}
+          summary={summary}
+          previewHand={previewHand}
+          setPreviewHand={setPreviewHand}
+        />
       ) : (
         <DeckHeaderLoading />
       )}
