@@ -11,10 +11,13 @@ export function CardHeader({
   quantityNeeded,
   quantityOwned,
 }: CardHeaderProps) {
+  const showWarning = quantityOwned < quantityNeeded && quantityNeeded > 0;
   return (
     <div className={`cardHeader ${isMobile ? "mobileAlwaysVisible" : ""}`}>
       <div className="cardChipTopLeft rounded-br-[100%] rounded-tl-[10%]">
-        <p>{`${quantityOwned}/${quantityNeeded}`}</p>
+        <p
+          style={{ color: showWarning ? "var(--red)" : "var(--white)" }}
+        >{`x${quantityNeeded}`}</p>
       </div>
     </div>
   );

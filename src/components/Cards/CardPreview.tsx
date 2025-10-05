@@ -66,48 +66,32 @@ export function CardPreview({
     if (!setCards) return;
 
     setCards((prevCards) => {
-      const updatedCards = prevCards
-        .map((card) => {
-          if (normalizeCardName(card.name) === normalizeCardName(cardName)) {
-            const isLand = card.type?.toLowerCase().includes("land");
+      const normalizedName = normalizeCardName(cardName);
+      let totalNeeded = 0;
+      let totalOwned = 0;
 
-            let newQuantity = Math.max(0, (card.quantityNeeded ?? 0) + amount);
-            if (!isLand && newQuantity > 4) {
-              newQuantity = 4;
-            }
+      prevCards.forEach((card) => {
+        if (normalizeCardName(card.name) === normalizedName) {
+          totalNeeded += card.quantityNeeded ?? 0;
+          totalOwned += card.quantityOwned ?? 0;
+        }
+      });
 
-            return {
-              ...card,
-              quantityNeeded: newQuantity,
-            };
-          }
-          return card;
-        })
-        .filter((card): card is DeckCard => (card.quantityNeeded ?? 1) > 0);
+      let newQuantityNeeded = totalNeeded + amount;
 
-      const changedCard = updatedCards.find(
-        (card) => normalizeCardName(card.name) === normalizeCardName(cardName)
+      const mergedCard: DeckCard = {
+        ...prevCards.find(
+          (card) => normalizeCardName(card.name) === normalizedName
+        )!,
+        quantityNeeded: newQuantityNeeded,
+        quantityOwned: totalOwned,
+      };
+
+      const filteredCards = prevCards.filter(
+        (card) => normalizeCardName(card.name) !== normalizedName
       );
-      if (!changedCard || (changedCard.quantityNeeded ?? 0) <= 0) {
-        setCardFocused(undefined);
-      } else {
-        // Update cardFocused if it matches the changed card. Keeps quantity in sync
-        setCardFocused((prevFocused) => {
-          if (!prevFocused) return prevFocused;
-          if (
-            normalizeCardName(prevFocused.name) === normalizeCardName(cardName)
-          ) {
-            return {
-              ...prevFocused,
-              quantityNeeded: changedCard.quantityNeeded,
-              quantityOwned: changedCard.quantityOwned,
-            };
-          }
-          return prevFocused;
-        });
-      }
 
-      return updatedCards;
+      return [...filteredCards, mergedCard];
     });
   }
 

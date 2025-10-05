@@ -12,7 +12,7 @@ import { GiCash } from "react-icons/gi";
 import { drawHand, getDeckCost, type DrawnCard } from "../../../utils/decks";
 import { useEffect, useMemo, useState } from "react";
 import { RiCheckboxCircleFill, RiErrorWarningFill } from "react-icons/ri";
-import { getColoursFromCards } from "../../../utils/cards";
+import { getCardKey, getColoursFromCards } from "../../../utils/cards";
 import "../../styles.css";
 import { TbCardsFilled } from "react-icons/tb";
 import { useMediaQuery } from "../../../hooks/useMediaQuery";
@@ -67,61 +67,65 @@ export function DeckHeader({
     }
   }, [editable, formDetails?.format, deck?.format]);
 
+  const cardList = useMemo(
+    () => cards ?? deck?.cards ?? [],
+    [cards, deck?.cards]
+  );
+
   const currentDeckSize = useMemo(
+    () => cardList.reduce((sum, card) => sum + (card.quantityNeeded || 0), 0),
+    [cardList]
+  );
+
+  const missingCards = useMemo(
     () =>
-      cards !== undefined
-        ? cards.reduce((sum, card) => sum + (card.quantityNeeded || 0), 0)
-        : deck?.cards.reduce(
-            (sum, card) => sum + (card.quantityNeeded || 0),
-            0
-          ),
-    [cards]
+      cardList.filter(
+        (card) => (card.quantityOwned ?? 0) < (card.quantityNeeded ?? 0)
+      ),
+    [cardList]
   );
 
   const isDeckReady = useMemo(() => {
-    const cardList = cards ?? deck?.cards ?? [];
-    const ownsAllCards = cardList.every(
-      (card) => (card.quantityOwned ?? 0) >= (card.quantityNeeded ?? 0)
-    );
     const correctSize = currentDeckSize === requiredDeckSize;
-
-    return ownsAllCards && correctSize;
-  }, [cards, deck?.cards]);
+    return missingCards.length === 0 && correctSize;
+  }, [missingCards, currentDeckSize, requiredDeckSize]);
 
   const totalMissingCards = useMemo(() => {
-    return summary.reduce(
-      (sum, { quantityNeeded, quantityOwned }) =>
-        sum + Math.max(0, quantityNeeded - quantityOwned),
+    return missingCards.reduce(
+      (sum, card) =>
+        sum +
+        Math.max(0, (card.quantityNeeded ?? 0) - (card.quantityOwned ?? 0)),
       0
     );
-  }, [summary]);
+  }, [missingCards]);
 
   const deckColours =
-    cards && cards.length > 0 ? getColoursFromCards(cards) : deck?.colours;
+    cardList.length > 0 ? getColoursFromCards(cards) : deck?.colours;
 
   const [featureEditable, setFeatureEditable] = useState<boolean>(
-    (editable &&
-      ((deck?.cards && deck.cards.length > 0) ||
-        (cards && cards.length > 0))) ??
-      false
+    editable && cardList.length > 0
   );
+
   useEffect(() => {
-    const hasCards =
-      (deck?.cards && deck.cards.length > 0) || (cards && cards.length > 0);
-    if (editable && hasCards) {
-      setFeatureEditable(true);
-    } else {
-      setFeatureEditable(false);
-    }
+    setFeatureEditable(editable && cardList.length > 0);
   }, [deck?.cards, editable, cards]);
 
-  const activeFeatureCard = formDetails?.featureCard ?? deck?.featureCard;
+  const activeFeatureCard = useMemo(() => {
+    const featureCard = formDetails?.featureCard ?? deck?.featureCard;
+    if (!featureCard) return undefined;
+
+    const cardKey = getCardKey(featureCard.name, featureCard.set);
+    if (!cardKey) return undefined;
+
+    const cardMatches = cardList.find((card) => {
+      const rowKey = getCardKey(card.name, card.set);
+      return rowKey === cardKey;
+    });
+
+    return cardMatches ?? featureCard;
+  }, [formDetails?.featureCard, deck?.featureCard]);
+
   const activeHand = previewHand && previewHand.length > 0;
-  const missingCards = deck?.cards
-    ? deck?.cards.filter(
-        (card) => (card.quantityOwned ?? 0) < (card.quantityNeeded ?? 0)
-      )
-    : [];
 
   return (
     <>
@@ -239,9 +243,11 @@ export function DeckHeader({
             }
           />
           <IconItemStatus
+            currentDeckSize={currentDeckSize}
             isDeckReady={isDeckReady}
             missingCards={missingCards}
-            hasFormatSize={currentDeckSize == requiredDeckSize || false}
+            missingCardsCount={totalMissingCards}
+            requiredDeckSize={requiredDeckSize}
           />
           <IconItem
             icon={<TbCardsFilled />}
@@ -299,31 +305,37 @@ export function DeckHeader({
 }
 
 interface IconItemStatusProps {
+  currentDeckSize: number;
   isDeckReady: boolean;
   missingCards: DeckCard[];
-  hasFormatSize: boolean;
+  missingCardsCount?: number;
+  requiredDeckSize: number;
 }
 
 function IconItemStatus({
+  currentDeckSize,
   isDeckReady,
   missingCards,
-  hasFormatSize,
+  missingCardsCount = 0,
+  requiredDeckSize,
 }: IconItemStatusProps): React.JSX.Element {
   const icon = isDeckReady ? <RiCheckboxCircleFill /> : <RiErrorWarningFill />;
-  const statusText = "Status";
-  const subtext = isDeckReady
-    ? "Ready to play"
-    : !hasFormatSize
-    ? "Incomplete"
-    : `${missingCards.length} missing`;
+
+  const getSubtext = () => {
+    if (isDeckReady) return "Ready to play";
+    if (currentDeckSize > requiredDeckSize) return "Exceeds limit";
+    if (currentDeckSize !== requiredDeckSize) return "Incomplete";
+
+    return `${missingCardsCount} missing`;
+  };
 
   const iconItem = (
     <IconItem
       icon={icon}
       text={
         <>
-          <p>{statusText}</p>
-          <p className="subtext">{subtext}</p>
+          <p>Status</p>
+          <p className="subtext">{getSubtext()}</p>
         </>
       }
     />

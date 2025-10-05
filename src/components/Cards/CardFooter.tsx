@@ -19,12 +19,17 @@ export function CardFooter({
   quantityNeeded,
   quantityOwned,
 }: CardFooterProps) {
+  const showWarning = !isDeckView
+    ? false
+    : quantityOwned < quantityNeeded && quantityNeeded > 0;
   const quantityChip = (
     <div className="quantity rounded-tr-[100%] rounded-bl-[10%]">
-      <p>
-        {isDeckView
-          ? `${quantityOwned}/${quantityNeeded}`
-          : `x${quantityOwned}`}
+      <p
+        style={{
+          color: isDeckView && showWarning ? "var(--red)" : "var(--white)",
+        }}
+      >
+        {`x${isDeckView ? quantityNeeded : quantityOwned}`}
       </p>
     </div>
   );

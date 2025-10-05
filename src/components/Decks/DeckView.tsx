@@ -2,7 +2,7 @@ import type { Deck } from "../../types/MagicTheGathering";
 import "../styles.css";
 import { ManaRow } from "./components/ManaRow";
 import { useNavigate } from "react-router-dom";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { PiWarningCircleBold } from "react-icons/pi";
 
 interface Props {
@@ -24,10 +24,13 @@ export function DeckView({ deck }: Props) {
     });
   }, [deck.cards]);
 
+  const [loading, setLoading] = useState(true);
+
   return (
     <div
       className={"deck cursor-pointer"}
       onClick={handleClick}
+      onLoad={() => setLoading(false)}
       style={{
         backgroundImage: deck?.featureCard?.imageUrl
           ? `linear-gradient(
@@ -38,6 +41,8 @@ export function DeckView({ deck }: Props) {
       ), url(${deck.featureCard.imageUrl})`
           : "",
         backgroundPosition: "center -100px",
+        opacity: loading ? 0 : 1,
+        transition: "var(--ease-in)",
       }}
     >
       <div className="deckTop">

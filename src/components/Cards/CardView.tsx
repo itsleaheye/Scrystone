@@ -3,7 +3,7 @@ import { CardFooter } from "./CardFooter";
 import "./Card.css";
 import { CardHeader } from "./CardHeader";
 import cardDefault from "../../assets/cardBackDefault.jpg";
-import React from "react";
+import React, { useState } from "react";
 
 interface CardViewProps {
   card:
@@ -22,8 +22,13 @@ export const CardView = React.memo(function CardView({
   isMobile = false,
   onChangeQuantity,
 }: CardViewProps) {
+  const [loading, setLoading] = useState(true);
+
   return (
-    <div className={`${editable ? "editableCard card" : "card"}`}>
+    <div
+      className={`${editable ? "editableCard card" : "card"}`}
+      style={{ opacity: loading ? 0 : 1, transition: "var(--ease-in)" }}
+    >
       <img
         loading="lazy"
         alt={card.name}
@@ -32,6 +37,7 @@ export const CardView = React.memo(function CardView({
             ? "opacity-50"
             : ""
         }`}
+        onLoad={() => setLoading(false)}
         src={card.imageUrl ?? cardDefault}
       />
       {editable && (
