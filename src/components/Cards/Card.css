@@ -164,7 +164,7 @@
   display: grid !important;
   padding: var(--pad-xxs);
   gap: var(--pad-xs);
-  grid-template-columns: 52% 18% 20% 10%;
+  grid-template-columns: 50% 10% 15% 15%;
   align-items: center;
   overflow-x: hidden;
 
@@ -188,7 +188,9 @@
   svg {
     height: 1rem;
     width: 1rem;
-    margin-right: var(--pad-xs);
+    min-width: 1rem;
+    min-height: 1rem;
+    margin-right: var(--pad-xxs);
   }
 
   &:hover {
@@ -197,6 +199,15 @@
     transition: var(--ease-in);
     background-color: var(--darker-gray);
     border-radius: 3px;
+  }
+
+  .priceDetails,
+  .setDetails {
+    text-align: end;
+  }
+
+  .setDetails {
+    text-transform: uppercase;
   }
 }
 
@@ -281,16 +292,13 @@
   }
 }
 
-@media only screen and (min-width: 600px) {
-  /* .cardListRow {
-    .setDetails {
-      width: 100px;
-    }
+@media only screen and (max-width: 650px) {
+  .cardListContainer {
+    grid-template-columns: 1fr !important;
+  }
+}
 
-    .primaryDetails {
-      width: 200px;
-    }
-  } */
+@media only screen and (min-width: 600px) {
   .cardListContainer {
     grid-template-columns: 1fr minmax(0, 275px);
     justify-content: space-between;
@@ -327,6 +335,15 @@
     .emptyInfo {
       min-width: 275px;
       height: 380px;
+    }
+  }
+
+  .cardListRow {
+    grid-template-columns: 45% 30% 10% 15%;
+
+    .priceDetails,
+    .setDetails {
+      text-align: left;
     }
   }
 }

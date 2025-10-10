@@ -53,6 +53,7 @@ export function CardList({
   hasCards,
 }: CardListProps) {
   const isMobile = useMediaQuery("(max-width: 650px)");
+  const isTablet = useMediaQuery("(max-width: 900px)");
 
   return (
     <div className="cardListContainer">
@@ -63,6 +64,7 @@ export function CardList({
               card={card}
               isDeckView={isDeckView}
               isMobile={isMobile}
+              isTablet={isTablet}
               key={index}
               setCardFocused={setCardFocused}
             />
@@ -131,6 +133,7 @@ interface CardListItemProps {
     | (CollectionCard & { quantityOwned: number; quantityNeeded?: number });
   isDeckView: boolean;
   isMobile: boolean;
+  isTablet: boolean;
   setCardFocused?: React.Dispatch<
     React.SetStateAction<
       | DeckCard
@@ -147,6 +150,7 @@ const CardListItem = memo(function CardListItem({
   card,
   isDeckView,
   isMobile,
+  isTablet,
   setCardFocused,
 }: CardListItemProps) {
   const showWarning = (card.quantityOwned ?? 0) < (card.quantityNeeded ?? 1);
@@ -240,7 +244,7 @@ const CardListItem = memo(function CardListItem({
           {otherUses.count > 0 && (
             <>
               <FaStar />{" "}
-              {!isMobile && (
+              {!isTablet && (
                 <p>
                   In {otherUses.count} other deck
                   {otherUses.count === 1 ? "" : "s"}!
@@ -249,9 +253,9 @@ const CardListItem = memo(function CardListItem({
             </>
           )}
         </div>
-        {!isMobile && (
-          <p className="overflowElipse setDetails">({card.setName})</p>
-        )}
+
+        <p className="overflowElipse setDetails">({card.set})</p>
+
         <p className="priceDetails">
           {typeof card.price === "number"
             ? `$${card.price.toFixed(2)}`

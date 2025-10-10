@@ -41,7 +41,7 @@ export function DeckView({ deck }: Props) {
       ), url(${deck.featureCard.imageUrl})`
           : "",
         backgroundPosition: "center -100px",
-        opacity: loading ? 0 : 1,
+        opacity: !deck?.featureCard?.imageUrl ? 1 : loading ? 0 : 1,
         transition: "var(--ease-in)",
       }}
     >

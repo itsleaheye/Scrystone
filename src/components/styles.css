@@ -222,10 +222,9 @@ button:hover {
 
   p {
     letter-spacing: 1px;
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs);
     margin: 0 !important;
     color: var(--white) !important;
-    text-transform: uppercase;
   }
 }
 
@@ -837,7 +836,7 @@ button:hover {
     .deckCol1 {
       .deckFields {
         flex-direction: column;
-        justify-content: start;
+        justify-content: center;
         align-items: center;
         display: flex;
       }
@@ -921,7 +920,6 @@ button:hover {
       border-left: 2px solid var(--off-white);
       padding-top: 0;
       gap: 0;
-      padding-left: var(--pad-xs);
     }
     .flexSwapInverse {
       flex-direction: row;

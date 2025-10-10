@@ -76,6 +76,7 @@ export function DeckPreview() {
       {deck ? (
         <DeckHeader
           deck={deck}
+          cards={deck.cards}
           summary={summary}
           previewHand={previewHand}
           setPreviewHand={setPreviewHand}

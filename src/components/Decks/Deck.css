@@ -1,5 +1,5 @@
 .deck {
-  background: var(--blackest);
+  background: var(--darkest-gray);
   border-radius: var(--border-radius-base);
   box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2), 0 -5px 5px rgba(0, 0, 0, 0.2);
   display: flex;
