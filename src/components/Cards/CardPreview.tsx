@@ -79,6 +79,15 @@ export function CardPreview({
 
       let newQuantityNeeded = totalNeeded + amount;
 
+      const filteredCards = prevCards.filter(
+        (card) => normalizeCardName(card.name) !== normalizedName
+      );
+
+      if (newQuantityNeeded <= 0) {
+        setCardFocused(undefined);
+        return filteredCards;
+      } // Removes card if quantity is zero or less
+
       const mergedCard: DeckCard = {
         ...prevCards.find(
           (card) => normalizeCardName(card.name) === normalizedName
@@ -86,10 +95,6 @@ export function CardPreview({
         quantityNeeded: newQuantityNeeded,
         quantityOwned: totalOwned,
       };
-
-      const filteredCards = prevCards.filter(
-        (card) => normalizeCardName(card.name) !== normalizedName
-      );
 
       return [...filteredCards, mergedCard];
     });

@@ -234,10 +234,9 @@ const CardListItem = memo(function CardListItem({
         >
           {getTypeIcon(card.type)}
           <p className="bold overflowElipse">
-            {card.name}{" "}
-            {isDeckView
-              ? `${card.quantityOwned}/${card.quantityNeeded}`
-              : `x${card.quantityOwned}`}
+            {`${card.name} x${
+              isDeckView ? card.quantityNeeded : card.quantityOwned
+            }`}
           </p>
         </div>
         <div>
